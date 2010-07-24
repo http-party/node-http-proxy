@@ -8,6 +8,7 @@
  
 var vows = require('vows'),
     sys = require('sys'),
+    eyes = require('eyes'),
     assert = require('assert'),
     http = require('http');
 
@@ -19,7 +20,7 @@ var NodeProxy = require('node-proxy').NodeProxy;
 // Simple 'hello world' response for test purposes
 //
 var helloWorld = function(req, res) {
-  res.sendHeader(200, {'Content-Type': 'text/plain'});
+  res.writeHead(200, {'Content-Type': 'text/plain'});
   res.write('hello world')
 	res.end();
 };
@@ -54,22 +55,20 @@ var startProxyTest = function () {
   return proxy;
 };
 
-var proxy = startProxyTest();
-proxy.emitter.addListener('something', function (body) {
-  sys.puts(body);
-})
 
-/*vows.describe('node-proxy').addBatch({
+vows.describe('node-proxy').addBatch({
   "When an incoming request is proxied to the helloNode server" : {
     topic: function () {
+      // Create the proxy and start listening
       var proxy = startProxyTest();
       proxy.emitter.addListener('end', this.callback);
+
       var client = http.createClient(8080, '127.0.0.1');
-      client.request('GET', '/');
+      var request = client.request('GET', '/');
+      request.end();
     },
-    "it should received 'hello world'": function (num) {
-      sys.puts('got callback');
-      //assert.equal(body, 'hello world');
+    "it should received 'hello world'": function (err, body) {
+      assert.equal(body, 'hello world');
     }
   }
-}).export(module);*/
+}).export(module);
