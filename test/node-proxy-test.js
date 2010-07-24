@@ -8,7 +8,6 @@
  
 var vows = require('vows'),
     sys = require('sys'),
-    eyes = require('eyes'),
     assert = require('assert'),
     http = require('http');
 
