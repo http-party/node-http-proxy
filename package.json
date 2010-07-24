@@ -1,0 +1,13 @@
+{
+  "name": "node-http-proxy",
+  "description": "A full-featured http reverse proxy for node.js",
+  "version": "0.5.0",
+  "author": "Charlie Robbins <charlie.robbins@gmail.com>",
+  "contributors": [ 
+    { "name": "Marak Squires", "email": "marak.squires@gmail.com" }, 
+  ],
+  "keywords": ["reverse", "proxy", "http"],
+  "directories": { "lib" },
+  "scripts": { "test": "vows" },
+  "engines": { "node": ">= 0.1.98" }
+}
