@@ -12,14 +12,53 @@ var vows = require('vows'),
     assert = require('assert'),
     http = require('http');
 
-require.paths.unshift(require('path').join(__dirname, '../lib/'));
-
-
-sys.puts('node-http-proxy has started!'.rainbow);
-
-
 var NodeProxy = require('./lib/node-proxy').NodeProxy;
 var testServers = {};
+
+
+// regular http server
+http.createServer(function (req, res){
+  // Initialize the nodeProxy and start proxying the request
+  var proxy = new (NodeProxy);
+  proxy.init(req, res);
+  // lets proxy the request to another service
+  proxy.proxyRequest('localhost', '8081', req, res);
+  
+}).listen(8080);
+sys.puts('started a http server on port 8080'.green)
+
+// http server with latency
+http.createServer(function (req, res){
+  // Initialize the nodeProxy and start proxying the request
+  var proxy = new (NodeProxy);
+  proxy.init(req, res);
+  
+  // lets proxy the request to another service
+  setTimeout(function(){
+    proxy.proxyRequest('localhost', '8090', req, res);
+  }, 200)
+  
+}).listen(8081);
+sys.puts('started a http server with latency on port 8081'.green)
+
+
+
+http.createServer(function (req, res){
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.write('foo');
+  res.end();
+}).listen(8090);
+sys.puts('started another http server on port 8090'.green)
+
+
+sys.puts('to test the proxy server, request http://localhost:8080/ in your browser.');
+sys.puts('your request will proxy to the server running on port 8081');
+  
+
+/*
+
+return;
+
 
 //
 // Simple 'hello world' response for test purposes
@@ -30,19 +69,6 @@ var helloWorld = function(req, res) {
 	res.end();
 };
 
-//
-// Creates the reverse proxy server
-//
-var startProxyServer = function (server, port, proxy) {
-  var proxyServer = http.createServer(function (req, res){
-    // Initialize the nodeProxy and start proxying the request
-    proxy.init(req, res);
-    proxy.proxyRequest(server, port, req, res);
-  });
-  
-  proxyServer.listen(8080);
-  return proxyServer;
-};
 
 // 
 // Creates the reverse proxy server with a specified latency
@@ -90,6 +116,20 @@ var startTestWithLatency = function (proxy, port) {
   testServers.latency.push(startTargetServer(port));
 };
 
+
+sys.puts('node-http-proxy has started!'.green);
+
+// start the http-proxy
+var proxy = new (NodeProxy);
+startTest(proxy, 8082);
+
+
+// start a second http server (which we will reverse proxy our requests to)
+
+
+return;
+
+
 vows.describe('node-proxy').addBatch({
   "When an incoming request is proxied to the helloNode server" : {
     "with no latency" : {
@@ -128,3 +168,5 @@ vows.describe('node-proxy').addBatch({
     }
   }
 }).export(module);
+
+*/
