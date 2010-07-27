@@ -27,10 +27,28 @@ Let's suppose you were running multiple http application servers, but you only w
 
 ### How to use node-http-proxy
 
-#### usage 1:&nbsp;&nbsp;&nbsp;creating a stand-alone proxy server
- 
-#### usage 2:&nbsp;&nbsp;&nbsp;proxying existing http.Server requests
+#### &nbsp;&nbsp;&nbsp;proxying requests using http.Server
 
+      var sys = require('sys'),
+          colors = require('colors')
+          http = require('http');
+
+      var httpProxy = require('./lib/node-http-proxy').httpProxy;
+
+      http.createServer(function (req, res){
+        var proxy = new httpProxy;
+        proxy.init(req, res);
+        sys.puts('proxying request to http://localhost:9000');
+        proxy.proxyRequest('localhost', '9000', req, res);
+      }).listen(8000);
+
+      http.createServer(function (req, res){
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
+        res.end();
+      }).listen(9000);
+
+see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
 if you have a suggestion for a feature currently not supported, feel free to open a [support issue](https://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy https request from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy

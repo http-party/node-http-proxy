@@ -6,14 +6,11 @@
  *
  */
  
-var vows = require('vows'),
-    sys = require('sys'),
+var sys = require('sys'),
     colors = require('colors')
-    assert = require('assert'),
     http = require('http');
 
-var httpProxy = require('./lib/node-http-proxy');
-var testServers = {};
+var httpProxy = require('./lib/node-http-proxy').httpProxy;
 
 
 // ascii art from http://github.com/marak/asciimo
@@ -27,20 +24,10 @@ var welcome = '\
 sys.puts(welcome.rainbow.bold);
 
 
-// create regular http proxy server
-httpProxy.createServer('localhost', 9000, function (req, res){
-
-  sys.puts('any requests going to 8002 will get proxied to 9000');
-
-}).listen('localhost', 8002);
-
-sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-
-
 
 // create regular http proxy server
 http.createServer(function (req, res){
-  var proxy = new httpProxy.httpProxy;
+  var proxy = new httpProxy;
   proxy.init(req, res);
   sys.puts('proxying request to http://localhost:9000');
   proxy.proxyRequest('localhost', '9000', req, res);
