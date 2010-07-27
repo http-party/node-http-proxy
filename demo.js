@@ -12,14 +12,14 @@ var vows = require('vows'),
     assert = require('assert'),
     http = require('http');
 
-var NodeProxy = require('./lib/node-proxy').NodeProxy;
+var HttpProxy = require('./lib/node-http-proxy').HttpProxy;
 var testServers = {};
 
 
 // regular http server
 http.createServer(function (req, res){
   // Initialize the nodeProxy and start proxying the request
-  var proxy = new (NodeProxy);
+  var proxy = new (HttpProxy);
   proxy.init(req, res);
   // lets proxy the request to another service
   proxy.proxyRequest('localhost', '8081', req, res);
@@ -30,7 +30,7 @@ sys.puts('started a http server on port 8080'.green)
 // http server with latency
 http.createServer(function (req, res){
   // Initialize the nodeProxy and start proxying the request
-  var proxy = new (NodeProxy);
+  var proxy = new (HttpProxy);
   proxy.init(req, res);
   
   // lets proxy the request to another service

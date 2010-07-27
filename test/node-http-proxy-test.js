@@ -1,5 +1,5 @@
 /*
- * node-proxy-test.js: Tests for node-proxy. Reverse proxy for node.js
+ * node-http-proxy-test.js: Tests for node-http-proxy. Reverse proxy for node.js
  *
  * (C) 2010 Charlie Robbins
  * MIT LICENSE
@@ -13,7 +13,7 @@ var vows = require('vows'),
 
 require.paths.unshift(require('path').join(__dirname, '../lib/'));
 
-var NodeProxy = require('node-proxy').NodeProxy;
+var HttpProxy = require('node-http-proxy').HttpProxy;
 var testServers = {};
 
 //
@@ -89,7 +89,7 @@ vows.describe('node-proxy').addBatch({
   "When an incoming request is proxied to the helloNode server" : {
     "with no latency" : {
       topic: function () {
-        var proxy = new (NodeProxy);
+        var proxy = new (HttpProxy);
         startTest(proxy, 8082);
         proxy.emitter.addListener('end', this.callback);
 
@@ -106,7 +106,7 @@ vows.describe('node-proxy').addBatch({
     },
     "with latency": {
       topic: function () {
-        var proxy = new (NodeProxy);
+        var proxy = new (HttpProxy);
         startTestWithLatency(proxy, 8083);
         proxy.emitter.addListener('end', this.callback);
 
