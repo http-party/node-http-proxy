@@ -13,7 +13,7 @@ var vows = require('vows'),
 
 require.paths.unshift(require('path').join(__dirname, '../lib/'));
 
-var HttpProxy = require('node-http-proxy').HttpProxy;
+var httpProxy = require('node-http-proxy');
 var testServers = {};
 
 //
@@ -89,7 +89,7 @@ vows.describe('node-proxy').addBatch({
   "When an incoming request is proxied to the helloNode server" : {
     "with no latency" : {
       topic: function () {
-        var proxy = new (HttpProxy);
+        var proxy = new httpProxy.httpProxy;
         startTest(proxy, 8082);
         proxy.emitter.addListener('end', this.callback);
 
@@ -106,7 +106,7 @@ vows.describe('node-proxy').addBatch({
     },
     "with latency": {
       topic: function () {
-        var proxy = new (HttpProxy);
+        var proxy = new httpProxy.httpProxy;
         startTestWithLatency(proxy, 8083);
         proxy.emitter.addListener('end', this.callback);
 

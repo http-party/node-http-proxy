@@ -1,7 +1,7 @@
 /*
  * node-proxy-test.js: Tests for node-proxy. Reverse proxy for node.js
  *
- * (C) 2010 Charlie Robbins
+ * (C) 2010 Charlie Robbins, Marak Squires
  * MIT LICENSE
  *
  */
@@ -12,7 +12,7 @@ var vows = require('vows'),
     assert = require('assert'),
     http = require('http');
 
-var HttpProxy = require('./lib/node-http-proxy').HttpProxy;
+var httpProxy = require('./lib/node-http-proxy');
 var testServers = {};
 
 
@@ -26,17 +26,30 @@ var welcome = '\
 #    #   #     #   #            #      #    #  ####  #    #   #   \n';
 sys.puts(welcome.rainbow.bold);
 
+
+// create regular http proxy server
+httpProxy.createServer('localhost', 9000, function (req, res){
+
+  sys.puts('any requests going to 8002 will get proxied to 9000');
+
+}).listen('localhost', 8002);
+
+sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
+
+
+
 // create regular http proxy server
 http.createServer(function (req, res){
-  var proxy = new (HttpProxy);
+  var proxy = new httpProxy.httpProxy;
   proxy.init(req, res);
+  sys.puts('proxying request to http://localhost:9000');
   proxy.proxyRequest('localhost', '9000', req, res);
 }).listen(8000);
 sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 
 // http proxy server with latency
 http.createServer(function (req, res){
-  var proxy = new (HttpProxy);
+  var proxy = new (httpProxy);
   proxy.init(req, res);
   setTimeout(function(){
     proxy.proxyRequest('localhost', '9000', req, res);
@@ -47,9 +60,7 @@ sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '
 // create regular http server 
 http.createServer(function (req, res){
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('foo');
+  res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);
 sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
-//sys.puts('to test the proxy server, request http://localhost:8080/ in your browser.');
-//sys.puts('your request will proxy to the server running on port 8081');
