@@ -34,7 +34,7 @@ Let's suppose you were running multiple http application servers, but you only w
       var sys = require('sys'),
           colors = require('colors')
           http = require('http'),
-          httpProxy = require('./lib/node-http-proxy').httpProxy;
+          httpProxy = require('http-proxy').httpProxy;
 
       http.createServer(function (req, res){
         var proxy = new httpProxy;
