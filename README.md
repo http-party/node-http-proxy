@@ -54,10 +54,7 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
 
 if you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http request from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy
 
-### Todo
-- add ability to black list ip addresses
-
-
+<br/><br/><br/><br/><br/>
 ### License
 
 (The MIT License)
