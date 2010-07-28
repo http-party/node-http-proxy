@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [ 
-    { "name": "Marak Squires", "email": "marak.squires@gmail.com" }, 
+    { "name": "Marak Squires", "email": "marak.squires@gmail.com" } 
   ],
   "keywords": ["reverse", "proxy", "http"],
   "dependencies": {
