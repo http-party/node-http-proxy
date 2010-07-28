@@ -8,9 +8,8 @@
  
 var sys = require('sys'),
     colors = require('colors')
-    http = require('http');
-
-var httpProxy = require('./lib/node-http-proxy').httpProxy;
+    http = require('http'),
+    httpProxy = require('./lib/node-http-proxy').httpProxy;
 
 
 // ascii art from http://github.com/marak/asciimo
