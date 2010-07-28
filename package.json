@@ -8,7 +8,7 @@
   ],
   "keywords": ["reverse", "proxy", "http"],
   "dependencies": {
-    "colors": ">= 0.0.3"
+    "colors": ">= 0.3.0"
   },
   "main": "./lib/node-http-proxy",
   "scripts": { "test": "vows" },
