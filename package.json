@@ -10,7 +10,7 @@
   "dependencies": {
     "colors": ">= 0.0.1"
   },
-  "directories": { "lib" },
+  "directories": { "lib":"./lib" },
   "scripts": { "test": "vows" },
   "engines": { "node": ">= 0.1.98" }
 }
