@@ -39,7 +39,6 @@ Let's suppose you were running multiple http application servers, but you only w
       http.createServer(function (req, res){
         var proxy = new httpProxy;
         proxy.init(req, res);
-        sys.puts('proxying request to http://localhost:9000');
         proxy.proxyRequest('localhost', '9000', req, res);
       }).listen(8000);
 
