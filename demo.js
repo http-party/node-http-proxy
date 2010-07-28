@@ -20,7 +20,7 @@ var welcome = '\
 #    #   #     #   #####        #####  #####  #    #   ##     #   \n\
 #    #   #     #   #            #      #   #  #    #  #  #    #   \n\
 #    #   #     #   #            #      #    #  ####  #    #   #   \n';
-sys.puts(welcome.green.bold);
+sys.puts(welcome.rainbow.bold);
 
 
 
