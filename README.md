@@ -52,7 +52,7 @@ Let's suppose you were running multiple http application servers, but you only w
 see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
-if you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http request from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy
+if you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy
 
 <br/><br/><br/><br/><br/>
 ### License
