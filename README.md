@@ -2,7 +2,7 @@
 
 <img src = "http://i.imgur.com/dSSUX.png"/>
 
-## Battle-hardened node.js http reverse proxy
+## Battle-hardened node.js http proxy
 
 ### Features
 
