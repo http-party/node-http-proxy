@@ -32,7 +32,7 @@ Let's suppose you were running multiple http application servers, but you only w
 ### How to use node-http-proxy
 
       var sys = require('sys'),
-          colors = require('colors')
+          colors = require('colors'),
           http = require('http'),
           httpProxy = require('http-proxy').httpProxy;
 
