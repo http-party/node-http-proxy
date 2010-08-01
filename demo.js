@@ -60,7 +60,7 @@ sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '
 // create regular http server 
 http.createServer(function (req, res){
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
+  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);
 sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
