@@ -52,15 +52,20 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
       httpProxy = require('http-proxy');
 
   httpProxy.createServer(function (req, res, proxy) {
-    //
     // Put your custom server logic here
-    //
     proxy.proxyRequest('localhost', '9000', req, res);
   }).listen(8000);
 
   http.createServer(function (req, res){
+    var proxy = new httpProxy.HttpProxy;
+    proxy.watch(req, res);
+    // Put your custom server logic here
+    proxy.proxyRequest('localhost', 9000, req, res);
+  }).listen(8001);
+
+  http.createServer(function (req, res){
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
+    res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
     res.end();
   }).listen(9000);
   
