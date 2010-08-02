@@ -63,6 +63,7 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
     res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
     res.end();
   }).listen(9000);
+  
 </pre>
 
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
