@@ -51,10 +51,24 @@ httpProxy.createServer(function (req, res, proxy){
 }).listen(8001);
 sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with latency'.magenta.underline );
 
+
+// http proxy server with latency
+http.createServer(function (req, res){
+  setTimeout(function(){
+    
+    var proxy = new httpProxy.HttpProxy;
+    proxy.watch(req, res);
+    proxy.proxyRequest('localhost', 9000, req, res);
+    
+  }, 200)
+}).listen(8002);
+sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with latency'.magenta.underline );
+
+
 // create regular http server 
 http.createServer(function (req, res){
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
+  res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);
 sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
