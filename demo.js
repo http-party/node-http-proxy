@@ -27,7 +27,7 @@
 var sys = require('sys'),
     colors = require('colors')
     http = require('http'),
-    httpProxy = require('http-proxy').HttpProxy;
+    httpProxy = require('./lib/node-http-proxy');
 
 // ascii art from http://github.com/marak/asciimo
 var welcome = '\
@@ -40,13 +40,13 @@ var welcome = '\
 sys.puts(welcome.rainbow.bold);
 
 // create regular http proxy server
-httpProxy.createServer('localhost', '9000').listen(8000);
+httpProxy.createServer('localhost', 9000).listen(8000);
 sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 
 // http proxy server with latency
 httpProxy.createServer(function (req, res, proxy){
   setTimeout(function(){
-    proxy.proxyRequest('localhost', '9000', req, res);
+    proxy.proxyRequest('localhost', 9000, req, res);
   }, 200)
 }).listen(8001);
 sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with latency'.magenta.underline );
