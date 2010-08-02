@@ -51,11 +51,14 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
   var http = require('http'),
       httpProxy = require('http-proxy');
 
+
+  // create a proxy server with custom application logic
   httpProxy.createServer(function (req, res, proxy) {
     // Put your custom server logic here
     proxy.proxyRequest('localhost', '9000', req, res);
   }).listen(8000);
 
+  // create a regular http server and proxy its handler
   http.createServer(function (req, res){
     var proxy = new httpProxy.HttpProxy;
     proxy.watch(req, res);
