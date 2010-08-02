@@ -1,5 +1,5 @@
 /*
-  node-http-proxy.js: http proxy for node.js
+  node-http-proxy-test.js: http proxy for node.js
 
   Copyright (c) 2010 Charlie Robbins & Marak Squires http://github.com/nodejitsu/node-http-proxy
 
@@ -31,28 +31,14 @@ var vows = require('vows'),
 
 require.paths.unshift(require('path').join(__dirname, '../lib/'));
 
-var httpProxy = require('node-http-proxy').httpProxy;
+var HttpProxy = require('node-http-proxy').HttpProxy;
 var testServers = {};
-
-//
-// Simple 'hello world' response for test purposes
-//
-var helloWorld = function(req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('hello world')
-	res.end();
-};
 
 //
 // Creates the reverse proxy server
 //
 var startProxyServer = function (server, port, proxy) {
-  var proxyServer = http.createServer(function (req, res){
-    // Initialize the nodeProxy and start proxying the request
-    proxy.init(req, res);
-    proxy.proxyRequest(server, port, req, res);
-  });
-  
+  var proxyServer = proxy.createServer(server, port); 
   proxyServer.listen(8080);
   return proxyServer;
 };
@@ -61,9 +47,8 @@ var startProxyServer = function (server, port, proxy) {
 // Creates the reverse proxy server with a specified latency
 //
 var startLatentProxyServer = function (server, port, proxy, latency) {
-  var proxyServer = http.createServer(function (req, res){
-    // Initialize the nodeProxy and start proxying the request
-    proxy.init(req, res);
+  // Initialize the nodeProxy and start proxying the request
+  var proxyServer = proxy.createServer(function (req, res, proxy) {
     setTimeout(function () {
       proxy.proxyRequest(server, port, req, res);
     }, latency);
@@ -78,8 +63,10 @@ var startLatentProxyServer = function (server, port, proxy, latency) {
 //
 var startTargetServer = function (port) {
   var targetServer = http.createServer(function (req, res) {
-    helloWorld(req, res);
-  })
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.write('hello world')
+  	res.end();
+  });
   
   targetServer.listen(port);
   return targetServer;
@@ -107,7 +94,7 @@ vows.describe('node-proxy').addBatch({
   "When an incoming request is proxied to the helloNode server" : {
     "with no latency" : {
       topic: function () {
-        var proxy = new httpProxy;
+        var proxy = new (HttpProxy);
         startTest(proxy, 8082);
         proxy.emitter.addListener('end', this.callback);
 
@@ -124,7 +111,7 @@ vows.describe('node-proxy').addBatch({
     },
     "with latency": {
       topic: function () {
-        var proxy = new httpProxy;
+        var proxy = new (HttpProxy);
         startTestWithLatency(proxy, 8083);
         proxy.emitter.addListener('end', this.callback);
 
