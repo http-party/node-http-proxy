@@ -27,7 +27,7 @@
 var sys = require('sys'),
     colors = require('colors')
     http = require('http'),
-    httpProxy = require('http-proxy').httpProxy;
+    httpProxy = require('./lib/node-http-proxy');
 
 // ascii art from http://github.com/marak/asciimo
 var welcome = '\
@@ -39,25 +39,31 @@ var welcome = '\
 #    #   #     #   #            #      #    #  ####  #    #   #   \n';
 sys.puts(welcome.rainbow.bold);
 
-// create regular http proxy server
-http.createServer(function (req, res){
-  var proxy = new httpProxy;
-  proxy.init(req, res);
-  proxy.proxyRequest('localhost', '9000', req, res);
-}).listen(8000);
+
+/****** basic http proxy server ******/ 
+httpProxy.createServer(9000, 'localhost').listen(8000);
 sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 
-// http proxy server with latency
-http.createServer(function (req, res){
-  var proxy = new (httpProxy);
-  proxy.init(req, res);
+/****** http proxy server with latency******/ 
+httpProxy.createServer(function (req, res, proxy){
   setTimeout(function(){
-    proxy.proxyRequest('localhost', '9000', req, res);
+    proxy.proxyRequest(9000, 'localhost', req, res);
   }, 200)
 }).listen(8001);
 sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with latency'.magenta.underline );
 
-// create regular http server 
+/****** http server with proxyRequest handler and latency******/ 
+http.createServer(function (req, res){
+  var proxy = new httpProxy.HttpProxy;
+  proxy.watch(req, res);
+
+  setTimeout(function(){
+    proxy.proxyRequest(9000, 'localhost', req, res);
+  }, 200);
+}).listen(8002);
+sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
+
+/****** regular http server ******/ 
 http.createServer(function (req, res){
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));

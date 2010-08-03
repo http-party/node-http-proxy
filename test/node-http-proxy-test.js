@@ -1,5 +1,5 @@
 /*
-  node-http-proxy.js: http proxy for node.js
+  node-http-proxy-test.js: http proxy for node.js
 
   Copyright (c) 2010 Charlie Robbins & Marak Squires http://github.com/nodejitsu/node-http-proxy
 
@@ -31,28 +31,14 @@ var vows = require('vows'),
 
 require.paths.unshift(require('path').join(__dirname, '../lib/'));
 
-var httpProxy = require('node-http-proxy').httpProxy;
+var httpProxy = require('node-http-proxy');
 var testServers = {};
-
-//
-// Simple 'hello world' response for test purposes
-//
-var helloWorld = function(req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('hello world')
-	res.end();
-};
 
 //
 // Creates the reverse proxy server
 //
-var startProxyServer = function (server, port, proxy) {
-  var proxyServer = http.createServer(function (req, res){
-    // Initialize the nodeProxy and start proxying the request
-    proxy.init(req, res);
-    proxy.proxyRequest(server, port, req, res);
-  });
-  
+var startProxyServer = function (port, server, proxy) {
+  var proxyServer = proxy.createServer(port, server); 
   proxyServer.listen(8080);
   return proxyServer;
 };
@@ -60,12 +46,11 @@ var startProxyServer = function (server, port, proxy) {
 // 
 // Creates the reverse proxy server with a specified latency
 //
-var startLatentProxyServer = function (server, port, proxy, latency) {
-  var proxyServer = http.createServer(function (req, res){
-    // Initialize the nodeProxy and start proxying the request
-    proxy.init(req, res);
+var startLatentProxyServer = function (port, server, proxy, latency) {
+  // Initialize the nodeProxy and start proxying the request
+  var proxyServer = proxy.createServer(function (req, res, proxy) {
     setTimeout(function () {
-      proxy.proxyRequest(server, port, req, res);
+      proxy.proxyRequest(port, server, req, res);
     }, latency);
   });
   
@@ -78,8 +63,10 @@ var startLatentProxyServer = function (server, port, proxy, latency) {
 //
 var startTargetServer = function (port) {
   var targetServer = http.createServer(function (req, res) {
-    helloWorld(req, res);
-  })
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.write('hello world')
+  	res.end();
+  });
   
   targetServer.listen(port);
   return targetServer;
@@ -90,7 +77,7 @@ var startTargetServer = function (port) {
 //
 var startTest = function (proxy, port) {
   testServers.noLatency = [];
-  testServers.noLatency.push(startProxyServer('127.0.0.1', port, proxy));
+  testServers.noLatency.push(startProxyServer(port, 'localhost', proxy));
   testServers.noLatency.push(startTargetServer(port));
 };
 
@@ -99,44 +86,48 @@ var startTest = function (proxy, port) {
 //
 var startTestWithLatency = function (proxy, port) {
   testServers.latency = [];
-  testServers.latency.push(startLatentProxyServer('127.0.0.1', port, proxy, 2000));
+  testServers.latency.push(startLatentProxyServer(port, 'localhost', proxy, 2000));
   testServers.latency.push(startTargetServer(port));
 };
 
-vows.describe('node-proxy').addBatch({
-  "When an incoming request is proxied to the helloNode server" : {
-    "with no latency" : {
-      topic: function () {
-        var proxy = new httpProxy;
-        startTest(proxy, 8082);
-        proxy.emitter.addListener('end', this.callback);
+vows.describe('node-http-proxy').addBatch({
+  "A node-http-proxy": {
+    "when instantiated directly": {
+      "and an incoming request is proxied to the helloNode server" : {
+        "with no latency" : {
+          topic: function () {
+            var proxy = new (httpProxy.HttpProxy);
+            startTest(proxy, 8082);
+            proxy.emitter.addListener('end', this.callback);
 
-        var client = http.createClient(8080, '127.0.0.1');
-        var request = client.request('GET', '/');
-        request.end();
-      },
-      "it should received 'hello world'": function (err, body) {
-        assert.equal(body, 'hello world');
-        testServers.noLatency.forEach(function (server) {
-          server.close();
-        })
-      }
-    },
-    "with latency": {
-      topic: function () {
-        var proxy = new httpProxy;
-        startTestWithLatency(proxy, 8083);
-        proxy.emitter.addListener('end', this.callback);
+            var client = http.createClient(8080, 'localhost');
+            var request = client.request('GET', '/');
+            request.end();
+          },
+          "it should received 'hello world'": function (err, body) {
+            assert.equal(body, 'hello world');
+            testServers.noLatency.forEach(function (server) {
+              server.close();
+            })
+          }
+        },
+        "with latency": {
+          topic: function () {
+            var proxy = new (httpProxy.HttpProxy);
+            startTestWithLatency(proxy, 8083);
+            proxy.emitter.addListener('end', this.callback);
 
-        var client = http.createClient(8081, '127.0.0.1');
-        var request = client.request('GET', '/');
-        request.end();
-      },
-      "it should receive 'hello world'": function (err, body) {
-        assert.equal(body, 'hello world');
-        testServers.latency.forEach(function (server) {
-          server.close();
-        })
+            var client = http.createClient(8081, 'localhost');
+            var request = client.request('GET', '/');
+            request.end();
+          },
+          "it should receive 'hello world'": function (err, body) {
+            assert.equal(body, 'hello world');
+            testServers.latency.forEach(function (server) {
+              server.close();
+            })
+          }
+        }
       }
     }
   }
