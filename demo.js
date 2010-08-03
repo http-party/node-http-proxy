@@ -27,7 +27,7 @@
 var sys = require('sys'),
     colors = require('colors')
     http = require('http'),
-    httpProxy = require('./lib/node-http-proxy');
+    httpProxy = require('http-proxy');
 
 // ascii art from http://github.com/marak/asciimo
 var welcome = '\

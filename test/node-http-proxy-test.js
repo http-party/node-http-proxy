@@ -29,9 +29,7 @@ var vows = require('vows'),
     assert = require('assert'),
     http = require('http');
 
-require.paths.unshift(require('path').join(__dirname, '../lib/'));
-
-var httpProxy = require('node-http-proxy');
+var httpProxy = require('http-proxy');
 var testServers = {};
 
 //
