@@ -46,7 +46,7 @@ var startProxyServer = function (port, server, proxy) {
 // 
 // Creates the reverse proxy server with a specified latency
 //
-var startLatentProxyServer = function (server, port, proxy, latency) {
+var startLatentProxyServer = function (port, server, proxy, latency) {
   // Initialize the nodeProxy and start proxying the request
   var proxyServer = proxy.createServer(function (req, res, proxy) {
     setTimeout(function () {
