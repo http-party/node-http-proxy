@@ -37,8 +37,8 @@ var testServers = {};
 //
 // Creates the reverse proxy server
 //
-var startProxyServer = function (server, port, proxy) {
-  var proxyServer = proxy.createServer(server, port); 
+var startProxyServer = function (port, server, proxy) {
+  var proxyServer = proxy.createServer(port, server); 
   proxyServer.listen(8080);
   return proxyServer;
 };
@@ -50,7 +50,7 @@ var startLatentProxyServer = function (server, port, proxy, latency) {
   // Initialize the nodeProxy and start proxying the request
   var proxyServer = proxy.createServer(function (req, res, proxy) {
     setTimeout(function () {
-      proxy.proxyRequest(server, port, req, res);
+      proxy.proxyRequest(port, server, req, res);
     }, latency);
   });
   
@@ -77,7 +77,7 @@ var startTargetServer = function (port) {
 //
 var startTest = function (proxy, port) {
   testServers.noLatency = [];
-  testServers.noLatency.push(startProxyServer('localhost', port, proxy));
+  testServers.noLatency.push(startProxyServer(port, 'localhost', proxy));
   testServers.noLatency.push(startTargetServer(port));
 };
 
@@ -86,7 +86,7 @@ var startTest = function (proxy, port) {
 //
 var startTestWithLatency = function (proxy, port) {
   testServers.latency = [];
-  testServers.latency.push(startLatentProxyServer('localhost', port, proxy, 2000));
+  testServers.latency.push(startLatentProxyServer(port, 'localhost', proxy, 2000));
   testServers.latency.push(startTargetServer(port));
 };
 

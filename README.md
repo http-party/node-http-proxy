@@ -30,12 +30,12 @@ Let's suppose you were running multiple http application servers, but you only w
   npm install http-proxy
 </pre>
 
-### How to use node-http-proxy
+### How to setup a basic proxy server
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
 
-  httpProxy.createServer('localhost', '9000').listen(8000);
+  httpProxy.createServer('9000', 'localhost').listen(8000);
 
   http.createServer(function (req, res){
     res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -46,24 +46,36 @@ Let's suppose you were running multiple http application servers, but you only w
 
 see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
 
-### How to use node-http-proxy with custom server logic
+### How to setup a proxy server with custom server logic
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
 
-
   // create a proxy server with custom application logic
   httpProxy.createServer(function (req, res, proxy) {
     // Put your custom server logic here
-    proxy.proxyRequest('localhost', '9000', req, res);
+    proxy.proxyRequest('9000', 'localhost', req, res);
   }).listen(8000);
+
+  http.createServer(function (req, res){
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
+    res.end();
+  }).listen(9000);
+  
+</pre>
+
+### How to proxy requests with a regular http server
+<pre>
+  var http = require('http'),
+      httpProxy = require('http-proxy');
 
   // create a regular http server and proxy its handler
   http.createServer(function (req, res){
     var proxy = new httpProxy.HttpProxy;
     proxy.watch(req, res);
     // Put your custom server logic here
-    proxy.proxyRequest('localhost', 9000, req, res);
+    proxy.proxyRequest(9000, 'localhost', req, res);
   }).listen(8001);
 
   http.createServer(function (req, res){
