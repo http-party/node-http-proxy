@@ -35,7 +35,7 @@ Let's suppose you were running multiple http application servers, but you only w
   var http = require('http'),
       httpProxy = require('http-proxy');
 
-  httpProxy.createServer('9000', 'localhost').listen(8000);
+  httpProxy.createServer(9000, 'localhost').listen(8000);
 
   http.createServer(function (req, res){
     res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -54,7 +54,7 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
   // create a proxy server with custom application logic
   httpProxy.createServer(function (req, res, proxy) {
     // Put your custom server logic here
-    proxy.proxyRequest('9000', 'localhost', req, res);
+    proxy.proxyRequest(9000, 'localhost', req, res);
   }).listen(8000);
 
   http.createServer(function (req, res){
