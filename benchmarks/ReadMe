@@ -1,0 +1,3 @@
+Benchmarks are being run on a development laptop using apache ab (everything running locally, on one machine)
+
+These benchmarks should not be considered very accurate, or indicative of actual results. There are numerous factors that could cause these numbers to be inaccurate. These benchmarks should only be considered a very basic baseline to determine changes in performance as we iterate on this project.
