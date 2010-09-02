@@ -11,7 +11,7 @@
 - uses event buffering to support application latency in proxied requests
 - minimal request overhead and latency
 - fully-tested
-- battled-hardened through production usage @ nodejitsu.com
+- battled-hardened through production usage @ [nodejitsu.com][0]
 - written entirely in javascript
 - easy to use api
 
@@ -90,8 +90,7 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
-<br/><br/><br/><br/><br/>
-
+<br/><hr/>
 ### License
 
 (The MIT License)
@@ -116,3 +115,5 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[0]:http://nodejitsu.com "nodejitsu.com"
