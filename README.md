@@ -1,4 +1,4 @@
-# node-http-proxy - v0.1.5
+# node-http-proxy - v0.2.0
 
 <img src = "http://i.imgur.com/dSSUX.png"/>
 
@@ -81,8 +81,7 @@ node-http-proxy supports event buffering, that means if an event (like 'data', o
 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
-<br/><br/><br/><br/><br/>
-
+<br/>
 ### License
 
 (The MIT License)
