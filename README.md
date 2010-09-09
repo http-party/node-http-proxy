@@ -1,4 +1,4 @@
-# node-http-proxy - v0.2.0
+# node-http-proxy - v0.1.5
 
 <img src = "http://i.imgur.com/dSSUX.png"/>
 
@@ -52,9 +52,9 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
       httpProxy = require('http-proxy');
 
   // create a proxy server with custom application logic
-  httpProxy.createServer(function (req, res, proxyRequest) {
+  httpProxy.createServer(function (req, res, proxy) {
     // Put your custom server logic here
-    proxyRequest(9000, 'localhost');
+    proxy.proxyRequest(9000, 'localhost', req, res);
   }).listen(8000);
 
   http.createServer(function (req, res){
@@ -65,28 +65,37 @@ see the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
   
 </pre>
 
-### How to proxy requests with latent operations (IO, etc.)
-
-node-http-proxy supports event buffering, that means if an event (like 'data', or 'end') is raised by the incoming request before you have a chance to perform your custom server logic, those events will be captured and re-raised when you later proxy the request. Here's a simple example:
-
+### How to proxy requests with a regular http server
 <pre>
-  httpProxy.createServer(function (req, res, proxyRequest) {
-    setTimeout(function () {
-      proxyRequest(port, server);
-    }, latency);
-  }).listen(8081);
+  var http = require('http'),
+      httpProxy = require('http-proxy');
+
+  // create a regular http server and proxy its handler
+  http.createServer(function (req, res){
+    var proxy = new httpProxy.HttpProxy;
+    proxy.watch(req, res);
+    // Put your custom server logic here
+    proxy.proxyRequest(9000, 'localhost', req, res);
+  }).listen(8001);
+
+  http.createServer(function (req, res){
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
+    res.end();
+  }).listen(9000);
+  
 </pre>
 
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
-<br/>
+<br/><hr/>
 ### License
 
 (The MIT License)
 
-Copyright (c) 2010 Charlie Robbins, Mikeal Rogers & Marak Squires
+Copyright (c) 2010 Charlie Robbins & Marak Squires http://github.com/nodejitsu/
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
