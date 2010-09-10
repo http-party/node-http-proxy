@@ -45,23 +45,22 @@ httpProxy.createServer(9000, 'localhost').listen(8000);
 sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 
 /****** http proxy server with latency******/ 
-/*httpProxy.createServer(function (req, res, proxy){
+httpProxy.createServer(function (req, res, proxy){
   setTimeout(function(){
-    proxy.proxyRequest(9000, 'localhost', req, res);
+    proxy.proxyRequest(9000, 'localhost');
   }, 200)
 }).listen(8001);
-sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with latency'.magenta.underline );*/
+sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with latency'.magenta.underline );
 
 /****** http server with proxyRequest handler and latency******/ 
-/*http.createServer(function (req, res){
-  var proxy = new httpProxy.HttpProxy;
-  proxy.watch(req, res);
+http.createServer(function (req, res){
+  var proxy = new httpProxy.HttpProxy(req, res);
 
   setTimeout(function(){
-    proxy.proxyRequest(9000, 'localhost', req, res);
+    proxy.proxyRequest(9000, 'localhost');
   }, 200);
 }).listen(8002);
-sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);*/
+sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
 
 /****** regular http server ******/ 
 http.createServer(function (req, res){

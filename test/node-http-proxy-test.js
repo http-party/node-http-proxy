@@ -29,14 +29,14 @@ var vows = require('vows'),
     assert = require('assert'),
     http = require('http');
 
-var httpProxy = require('http-proxy');
+var httpProxy = require('./../lib/node-http-proxy');
 var testServers = {};
 
 //
 // Creates the reverse proxy server
 //
-var startProxyServer = function (port, server, proxy) {
-  var proxyServer = proxy.createServer(port, server); 
+var startProxyServer = function (port, server) {
+  var proxyServer = httpProxy.createServer(port, server); 
   proxyServer.listen(8080);
   return proxyServer;
 };
@@ -44,11 +44,11 @@ var startProxyServer = function (port, server, proxy) {
 // 
 // Creates the reverse proxy server with a specified latency
 //
-var startLatentProxyServer = function (port, server, proxy, latency) {
+var startLatentProxyServer = function (port, server, latency) {
   // Initialize the nodeProxy and start proxying the request
-  var proxyServer = proxy.createServer(function (req, res, proxy) {
+  var proxyServer = httpProxy.createServer(function (req, res, proxy) {
     setTimeout(function () {
-      proxy.proxyRequest(port, server, req, res);
+      proxy.proxyRequest(port, server);
     }, latency);
   });
   
@@ -73,19 +73,29 @@ var startTargetServer = function (port) {
 //
 // The default test bootstrapper with no latency
 //
-var startTest = function (proxy, port) {
+var startTest = function (port) {
+  var proxyServer = startProxyServer(port, 'localhost'),
+      targetServer = startTargetServer(port);
+      
   testServers.noLatency = [];
-  testServers.noLatency.push(startProxyServer(port, 'localhost', proxy));
-  testServers.noLatency.push(startTargetServer(port));
+  testServers.noLatency.push(proxyServer);
+  testServers.noLatency.push(targetServer);
+  
+  return proxyServer;
 };
 
 //
 // The test bootstrapper with some latency
 //
-var startTestWithLatency = function (proxy, port) {
+var startTestWithLatency = function (port) {
+  var proxyServer = startLatentProxyServer(port, 'localhost', 2000),
+      targetServer = startTargetServer(port);
+      
   testServers.latency = [];
-  testServers.latency.push(startLatentProxyServer(port, 'localhost', proxy, 2000));
-  testServers.latency.push(startTargetServer(port));
+  testServers.latency.push(proxyServer);
+  testServers.latency.push(targetServer);
+  
+  return proxyServer;
 };
 
 vows.describe('node-http-proxy').addBatch({
@@ -94,9 +104,8 @@ vows.describe('node-http-proxy').addBatch({
       "and an incoming request is proxied to the helloNode server" : {
         "with no latency" : {
           topic: function () {
-            var proxy = new (httpProxy.HttpProxy);
-            startTest(proxy, 8082);
-            proxy.emitter.addListener('end', this.callback);
+            var proxy = startTest(8082);
+            proxy.addListener('proxy', this.callback);
 
             var client = http.createClient(8080, 'localhost');
             var request = client.request('GET', '/');
@@ -111,9 +120,8 @@ vows.describe('node-http-proxy').addBatch({
         },
         "with latency": {
           topic: function () {
-            var proxy = new (httpProxy.HttpProxy);
-            startTestWithLatency(proxy, 8083);
-            proxy.emitter.addListener('end', this.callback);
+            var proxy = startTestWithLatency(8083);
+            proxy.addListener('proxy', this.callback);
 
             var client = http.createClient(8081, 'localhost');
             var request = client.request('GET', '/');
