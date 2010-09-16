@@ -48,4 +48,7 @@ server.on('upgrade', function(req, socket, head) {
   p.proxyWebSocketRequest(8080, 'localhost');
 });
 
-server.listen(80);
+server.listen(8000);
+
+httpProxy.createServer(8080, 'localhost').listen(8001);
+
