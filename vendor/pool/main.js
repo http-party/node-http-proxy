@@ -84,6 +84,14 @@ Pool.prototype.onFree = function (client) {
   if (this.pending.length > 0) this.pending.shift()(client);
 };
 
+Pool.prototype.getFree = function () {
+  return this.clients.filter(function (client) { return !client.busy }).length;
+};
+
+Pool.prototype.getBusy = function () {
+  return this.clients.filter(function (client) { return client.busy }).length;
+};
+
 Pool.prototype.setMinClients = function (num) {
   this.minClients = num;
   if (this.clients.length < num) {
@@ -98,6 +106,7 @@ Pool.prototype.setMinClients = function (num) {
 Pool.prototype.setMaxClients = function (num) {
   this.maxClients = num;
 };
+
 Pool.prototype.end = function () {
   this.clients.forEach(function (c) {c.end()});
 };
