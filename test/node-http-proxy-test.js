@@ -110,9 +110,13 @@ var startTestWithLatency = function (port) {
 var startWebSocketTest = function(port, callback) {
   var proxyServer = startProxyServer(port, 'localhost'),
       targetServer = startTargetServer(port),
-      ws = new WebSocket('ws://localhost:' + port + '/socket.io/websocket');
+      ws = new WebSocket('ws://localhost:' + port + '/socket.io/websocket',
+                         'borf');
       
-  var socketio = io.listen(targetServer, {log: function() {}});
+  var socketio = io.listen(targetServer, {
+    log: function() {},
+    transports: ['websocket']
+  });
   
   testServers.noLatencyWebSocket = [];
   testServers.noLatencyWebSocket.push(proxyServer);
@@ -128,9 +132,13 @@ var startWebSocketTest = function(port, callback) {
 var startWebSocketLatencyTest = function(port, callback) {
   var proxyServer = startProxyServer(port, 'localhost', 2000),
       targetServer = startTargetServer(port),
-      ws = new WebSocket('ws://localhost:' + port + '/socket.io/websocket');
+      ws = new WebSocket('ws://localhost:' + port + '/socket.io/websocket',
+                         'borf');
       
-  var socketio = io.listen(targetServer, {log: function() {}});
+  var socketio = io.listen(targetServer, {
+    log: function() {},
+    transports: ['websocket']
+  });
   
   testServers.LatencyWebSocket = [];
   testServers.LatencyWebSocket.push(proxyServer);
@@ -197,9 +205,7 @@ vows.describe('node-http-proxy').addBatch({
           "it should connect": function(result) {
             assert.ok(result);
             testServers.noLatencyWebSocket.forEach(function (server) {
-              try {
-                server.close();
-              } catch(E) {}
+              server.close();
             });
           }
         },
@@ -218,12 +224,10 @@ vows.describe('node-http-proxy').addBatch({
               socketio.on('connection', sync);
             });
           },
-          "it should connect": function(result) {
+          "it should connect": function(result) {            
             assert.ok(result);
             testServers.LatencyWebSocket.forEach(function (server) {
-              try {
-                server.close();
-              } catch(E) {}
+              server.close();              
             });
           }
         }
