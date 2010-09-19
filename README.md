@@ -117,7 +117,7 @@ If you have a suggestion for a feature currently not supported, feel free to ope
 
 (The MIT License)
 
-Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, & Marak Squires
+Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
