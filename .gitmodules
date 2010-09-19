@@ -1,3 +1,6 @@
 [submodule "test/io/server"]
 	path = test/io/server
 	url = http://github.com/LearnBoost/Socket.IO-node.git
+[submodule "test/node-websocket-client"]
+	path = test/node-websocket-client
+	url = http://github.com/pgriess/node-websocket-client.git

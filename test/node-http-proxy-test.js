@@ -27,9 +27,14 @@
 var vows = require('vows'),
     sys = require('sys'),
     assert = require('assert'),
-    http = require('http');
+    http = require('http');    
+
 
 var httpProxy = require('./../lib/node-http-proxy');
+
+var io = require('./io/server'),
+    WebSocket = require('./node-websocket-client/lib/websocket').WebSocket;
+
 var testServers = {};
 
 //
@@ -37,6 +42,7 @@ var testServers = {};
 //
 var startProxyServer = function (port, server) {
   var proxyServer = httpProxy.createServer(port, server); 
+  
   proxyServer.listen(8080);
   return proxyServer;
 };
@@ -98,6 +104,43 @@ var startTestWithLatency = function (port) {
   return proxyServer;
 };
 
+//
+// The test bootstrapper with no latency
+//
+var startWebSocketTest = function(port, callback) {
+  var proxyServer = startProxyServer(port, 'localhost'),
+      targetServer = startTargetServer(port),
+      ws = new WebSocket('ws://localhost:' + port + '/socket.io/websocket');
+      
+  var socketio = io.listen(targetServer, {log: function() {}});
+  
+  testServers.noLatencyWebSocket = [];
+  testServers.noLatencyWebSocket.push(proxyServer);
+  testServers.noLatencyWebSocket.push(targetServer);
+  testServers.noLatencyWebSocket.push(ws);
+  
+  callback(socketio, ws);
+}
+
+//
+// The test bootstrapper with latency
+//
+var startWebSocketLatencyTest = function(port, callback) {
+  var proxyServer = startProxyServer(port, 'localhost', 2000),
+      targetServer = startTargetServer(port),
+      ws = new WebSocket('ws://localhost:' + port + '/socket.io/websocket');
+      
+  var socketio = io.listen(targetServer, {log: function() {}});
+  
+  testServers.LatencyWebSocket = [];
+  testServers.LatencyWebSocket.push(proxyServer);
+  testServers.LatencyWebSocket.push(targetServer);
+  testServers.LatencyWebSocket.push(ws);
+  
+  callback(socketio, ws);
+}
+
+
 vows.describe('node-http-proxy').addBatch({
   "A node-http-proxy": {
     "when instantiated directly": {
@@ -132,6 +175,56 @@ vows.describe('node-http-proxy').addBatch({
             testServers.latency.forEach(function (server) {
               server.close();
             })
+          }
+        }
+      },
+      "and incoming request is proxied to the WebSocket server" : {
+        "with no latency" : {
+          topic: function () {
+            var callback = this.callback;
+            startWebSocketTest(8084, function(socketio, ws) {
+              function sync() {
+                sync.times ++;
+                if (sync.times < 2) return;
+                callback(0, true);
+              }
+              sync.times = 0;
+              
+              ws.on('open', sync);
+              socketio.on('connection', sync);
+            });
+          },
+          "it should connect": function(result) {
+            assert.ok(result);
+            testServers.noLatencyWebSocket.forEach(function (server) {
+              try {
+                server.close();
+              } catch(E) {}
+            });
+          }
+        },
+        "with latency" : {
+          topic: function () {
+            var callback = this.callback;
+            startWebSocketLatencyTest(8085, function(socketio, ws) {
+              function sync() {
+                sync.times ++;
+                if (sync.times < 2) return;
+                callback(0, true);
+              }
+              sync.times = 0;
+              
+              ws.on('open', sync);
+              socketio.on('connection', sync);
+            });
+          },
+          "it should connect": function(result) {
+            assert.ok(result);
+            testServers.LatencyWebSocket.forEach(function (server) {
+              try {
+                server.close();
+              } catch(E) {}
+            });
           }
         }
       }
