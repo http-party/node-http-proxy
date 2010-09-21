@@ -20,6 +20,13 @@ sys.inherits(Pool, events.EventEmitter);
 Pool.prototype.getClient = function (cb) {
   for (var i=0;i<this.clients.length;i+=1) {
     if (!this.clients[i].busy) {
+      // Check if the client closed unexpectedly
+      if (this.clients[i].readyState === 'closed') {
+        delete this.clients[i];
+        this.clients[i] = http.createClient(this.port, this.host, this.https, this.credentials);
+        this.clients[i].busy = false;
+      }
+      
       if (this.clients.length > this.maxClients) {
         this.clients[i].end();
         this.clients.splice(i, 1);
