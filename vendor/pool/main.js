@@ -60,7 +60,7 @@ Pool.prototype.request = function () {
   if (args[2]) headers = args[2];
   
   if (!headers) headers = {};
-  if (!headers.Connection) headers.Connection = 'close';
+  if (!headers.Connection) headers.Connection = 'keep-alive';
   
   self.getClient(function (client) {
     var errorListener = function (error) {
