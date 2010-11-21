@@ -40,30 +40,48 @@ var welcome = '\
 sys.puts(welcome.rainbow.bold);
 
 
-/****** basic http proxy server ******/ 
+//
+// Basic Http Proxy Server
+//
 httpProxy.createServer(9000, 'localhost').listen(8000);
 sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 
-/****** http proxy server with latency******/ 
-httpProxy.createServer(function (req, res, proxy){
-  setTimeout(function(){
+//
+// Http Proxy Server with Proxy Table
+//
+httpProxy.createServer({
+  router: {
+    '127.0.0.1': 'localhost:9000'
+  }
+}).listen(8001);
+sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with proxy table'.magenta.underline)
+
+//
+// Http Proxy Server with Latency
+//
+httpProxy.createServer(function (req, res, proxy) {
+  setTimeout(function() {
     proxy.proxyRequest(9000, 'localhost');
   }, 200)
-}).listen(8001);
-sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with latency'.magenta.underline );
+}).listen(8002);
+sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with latency'.magenta.underline);
 
-/****** http server with proxyRequest handler and latency******/ 
-http.createServer(function (req, res){
+//
+// Http Server with proxyRequest Handler and Latency
+//
+http.createServer(function (req, res) {
   var proxy = new httpProxy.HttpProxy(req, res);
 
-  setTimeout(function(){
+  setTimeout(function() {
     proxy.proxyRequest(9000, 'localhost');
   }, 200);
-}).listen(8002);
-sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
+}).listen(8003);
+sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8003 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
 
-/****** regular http server ******/ 
-http.createServer(function (req, res){
+//
+// Target Http Server
+//
+http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();

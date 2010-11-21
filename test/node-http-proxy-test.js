@@ -1,7 +1,7 @@
 /*
   node-http-proxy-test.js: http proxy for node.js
 
-  Copyright (c) 2010 Charlie Robbins & Marak Squires http://github.com/nodejitsu/node-http-proxy
+  Copyright (c) 2010 Charlie Robbins, Marak Squires and Fedor Indutny
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -28,72 +28,35 @@ var vows = require('vows'),
     sys = require('sys'),
     request = require('request'),
     assert = require('assert'),
-    http = require('http');
+    TestRunner = require('./helpers').TestRunner;
     
-var httpProxy = require('./../lib/node-http-proxy');
-var testServers = [];
-
-//
-// Creates the reverse proxy server
-//
-var startProxyServer = function (port, targetPort, server) {
-  var proxyServer = httpProxy.createServer(targetPort, server); 
-  proxyServer.listen(port);
-  testServers.push(proxyServer);
-};
-
-// 
-// Creates the reverse proxy server with a specified latency
-//
-var startLatentProxyServer = function (port, targetPort, server, latency) {
-  // Initialize the nodeProxy and start proxying the request
-  var proxyServer = httpProxy.createServer(function (req, res, proxy) {
-    setTimeout(function () {
-      proxy.proxyRequest(targetPort, server);
-    }, latency);
-  });
-  
-  proxyServer.listen(port);
-  testServers.push(proxyServer);
-};
-
-//
-// Creates the 'hellonode' server
-//
-var startTargetServer = function (port) {
-  var targetServer = http.createServer(function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write('hello world')
-  	res.end();
-  });
-  
-  targetServer.listen(port);
-  testServers.push(targetServer);
-  return targetServer;
-};
+var runner = new TestRunner();
 
 vows.describe('node-http-proxy').addBatch({
-  "An instance of HttpProxy": {
+  "When using server created by httpProxy.createServer()": {
     "an incoming request to the helloNode server": {
       "with no latency" : {
         "and a valid target server": {
           topic: function () {
-            startProxyServer(8080, 8081, 'localhost'),
-            startTargetServer(8081);
+            this.output = 'hello world';
             var options = {
               method: 'GET', 
               uri: 'http://localhost:8080'
             };
+
+            runner.startProxyServer(8080, 8081, 'localhost'),
+            runner.startTargetServer(8081, this.output);
+
             
             request(options, this.callback);
           },
-          "it should received 'hello world'": function (err, res, body) {
-            assert.equal(body, 'hello world');
+          "should received 'hello world'": function (err, res, body) {
+            assert.equal(body, this.output);
           }
         },
         "and without a valid target server": {
           topic: function () {
-            startProxyServer(8082, 9000, 'localhost');
+            runner.startProxyServer(8082, 9000, 'localhost');
             var options = {
               method: 'GET', 
               uri: 'http://localhost:8082'
@@ -101,7 +64,7 @@ vows.describe('node-http-proxy').addBatch({
             
             request(options, this.callback);
           },
-          "it should receive 500 response code": function (err, res, body) {
+          "should receive 500 response code": function (err, res, body) {
             assert.equal(res.statusCode, 500);
           }
         }
@@ -109,22 +72,25 @@ vows.describe('node-http-proxy').addBatch({
       "with latency": {
         "and a valid target server": {
           topic: function () {
-            startLatentProxyServer(8083, 8084, 'localhost', 1000),
-            startTargetServer(8084);
+            this.output = 'hello world';
             var options = {
               method: 'GET', 
               uri: 'http://localhost:8083'
             };
             
+            runner.startLatentProxyServer(8083, 8084, 'localhost', 1000),
+            runner.startTargetServer(8084, this.output);
+            
+            
             request(options, this.callback);
           },
-          "it should receive 'hello world'": function (err, res, body) {
-            assert.equal(body, 'hello world');
+          "should receive 'hello world'": function (err, res, body) {
+            assert.equal(body, this.output);
           }
         },
         "and without a valid target server": {
           topic: function () {
-            startLatentProxyServer(8085, 9000, 'localhost', 1000);
+            runner.startLatentProxyServer(8085, 9000, 'localhost', 1000);
             var options = {
               method: 'GET', 
               uri: 'http://localhost:8085'
@@ -132,7 +98,7 @@ vows.describe('node-http-proxy').addBatch({
             
             request(options, this.callback);
           },
-          "it should receive 500 response code": function (err, res, body) {
+          "should receive 500 response code": function (err, res, body) {
             assert.equal(res.statusCode, 500);
           }
         }
@@ -140,13 +106,13 @@ vows.describe('node-http-proxy').addBatch({
     }
   }
 }).addBatch({
-  "An instance of HttpProxy": {
+  "When using server created by httpProxy.createServer()": {
     "an incoming WebSocket request to the helloNode server": {
       "with no latency" : {
         // Remark: This test is not working
         /*topic: function () {
-          startProxyServer(8086, 8087, 'localhost'),
-          startTargetServer(8087);
+          runner.startProxyServer(8086, 8087, 'localhost'),
+          runner.startTargetServer(8087, 'hello world');
           var options = {
             method: 'GET', 
             uri: 'http://localhost:8086',
@@ -159,7 +125,7 @@ vows.describe('node-http-proxy').addBatch({
           
           request(options, this.callback);
         },
-        "it should receive 'hello world'": function (err, res, body) {
+        "should receive 'hello world'": function (err, res, body) {
           assert.equal(body, 'hello world');
         }*/
       }
@@ -168,11 +134,7 @@ vows.describe('node-http-proxy').addBatch({
 }).addBatch({
   "When the tests are over": {
     topic: function () {
-      testServers.forEach(function (server) {
-        server.close();
-      });
-
-      return testServers;
+      return runner.closeServers();
     },
     "the servers should clean up": function () {
       assert.isTrue(true);

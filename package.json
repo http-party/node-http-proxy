@@ -4,7 +4,7 @@
   "version": "0.3.0",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [
-    { "name": "Mikeal Rogers", "email": 'mikeal.rogers@gmail.com' }, 
+    { "name": "Mikeal Rogers", "email": "mikeal.rogers@gmail.com" }, 
     { "name": "Marak Squires", "email": "marak.squires@gmail.com" } 
   ],
   "repository": {
@@ -14,9 +14,13 @@
   "keywords": ["reverse", "proxy", "http"],
   "dependencies": {
     "colors": ">= 0.3.0",
-    "pool": ">= 0.4.1"
+    "optimist": ">= 0.0.6",
+    "pool": ">= 0.4.1",
+    "request": ">= 0.10.0",
+    "vows": ">= 0.5.2"
   },
   "main": "./lib/node-http-proxy",
-  "scripts": { "test": "vows" },
-  "engines": { "node": ">= 0.2.0" }
+  "bin": { "http-proxy": "./bin/node-http-proxy" },
+  "scripts": { "test": "vows test/*-test.js --spec" },
+  "engines": { "node": ">= 0.3.0" }
 }

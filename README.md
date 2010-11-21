@@ -29,14 +29,25 @@ Let's suppose you were running multiple http application servers, but you only w
   npm install http-proxy
 </pre>
 
-### How to setup a basic proxy server
+## Using node-http-proxy
+
+There are several ways to use node-http-proxy; the library is designed to be flexible so that it can be used by itself, or in conjunction with other node.js libraries / tools:
+
+1. Standalone HTTP Proxy server
+2. Inside of another HTTP server (like Connect)
+3. From the command-line as a proxy daemon
+4. In conjunction with a Proxy Routing Table
+
+### Setup a basic stand-alone proxy server
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
 
+  // Create your proxy server
   httpProxy.createServer(9000, 'localhost').listen(8000);
 
-  http.createServer(function (req, res){
+  // Create your target server
+  http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
     res.end();
@@ -45,7 +56,7 @@ Let's suppose you were running multiple http application servers, but you only w
 
 See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
 
-### How to setup a proxy server with custom server logic
+### Setup a stand-alone proxy server with custom server logic
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
@@ -56,57 +67,72 @@ See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
     proxy.proxyRequest(9000, 'localhost');
   }).listen(8000);
 
-  http.createServer(function (req, res){
+  http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
     res.end();
   }).listen(9000);
 </pre>
 
-### How to setup a proxy server with latency (e.g. IO, etc)
+### Setup a stand-alone proxy server with latency (e.g. IO, etc)
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
 
   // create a proxy server with custom application logic
   httpProxy.createServer(function (req, res, proxy) {
-    // Wait for two seconds then respond
+    // Wait for two seconds then respond: this simulates
+    // performing async actions before proxying a request
     setTimeout(function () {
       proxy.proxyRequest(9000, 'localhost');      
     }, 2000);
   }).listen(8000);
 
-  http.createServer(function (req, res){
+  http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
     res.end();
   }).listen(9000);
 </pre>
 
-### How to proxy requests with a regular http server
+### Proxy requests within another http server
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
 
   // create a regular http server and proxy its handler
-  http.createServer(function (req, res){
+  http.createServer(function (req, res) {
     // Create a new instance of HttProxy for this request
     // each instance is only valid for serving one request
-    // 
-    // Don't worry benchmarks show the object 
-    // creation is lightning fast 
     var proxy = new httpProxy.HttpProxy(req, res);
     
     // Put your custom server logic here, then proxy
     proxy.proxyRequest(9000, 'localhost', req, res);
   }).listen(8001);
 
-  http.createServer(function (req, res){
+  http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
     res.end();
   }).listen(9000); 
 </pre>
+
+### Proxy requests using a ProxyTable
+A Proxy Table is a simple lookup table that maps incoming requests to proxy target locations. Take a look at an example of the options you need to pass to httpProxy.createServer:
+<pre>
+  var options = {
+    router: {
+      'foo.com': '127.0.0.1:8001',
+      'bar.com': '127.0.0.1:8002'
+    }
+  };
+</pre> 
+
+The above route table will take incoming requests to 'foo.com' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'bar.com' and forward them to '127.0.0.1:8002'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
+<pre>
+  var proxyServer = httpProxy.createServer(options);
+  proxyServer.listen(80);
+</pre> 
 
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
