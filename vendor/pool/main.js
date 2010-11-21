@@ -1,5 +1,4 @@
 var sys = require('sys')
-  , eyes = require('eyes')
   , http = require('http')
   , events = require('events')
   ;
