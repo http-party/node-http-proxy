@@ -25,7 +25,7 @@
 */
  
 var vows = require('vows'),
-    sys = require('sys'),
+    util = require('util'),
     request = require('request'),
     assert = require('assert'),
     helpers = require('./helpers'),

@@ -7,7 +7,7 @@
 
 var fs = require('fs'),
     vows = require('vows'),
-    sys = require('sys'),
+    util = require('util'),
     path = require('path'),
     request = require('request'),
     assert = require('assert'),

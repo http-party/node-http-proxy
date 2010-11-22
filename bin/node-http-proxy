@@ -2,8 +2,7 @@
 
 var path = require('path'),
     fs = require('fs'),
-    eyes = require('eyes'),
-    sys  = require('sys'),
+    util  = require('util'),
     argv = require('optimist').argv,
     httpProxy = require('./../lib/node-http-proxy');
 
@@ -21,18 +20,13 @@ var help = [
 ];
 
 if (argv.h || argv.help || Object.keys(argv).length === 2) {
-  sys.puts(help.join('\n'));
+  util.puts(help.join('\n'));
   process.exit(0);
 }
 
 var location, config = {},
     port = argv.port || 80, 
     target = argv.target;
-
-//
-// Check to see if we should silence the logs
-//
-config.silent = argv.silent || false;
 
 //
 // If we were passed a config, parse it
@@ -42,10 +36,15 @@ if (argv.config) {
     var data = fs.readFileSync(argv.config);
     config = JSON.parse(data.toString());
   } catch (ex) {
-    sys.puts('Error starting node-http-proxy: ' + ex);
+    util.puts('Error starting node-http-proxy: ' + ex);
     process.exit(1);
   }
 }
+
+//
+// Check to see if we should silence the logs
+//
+config.silent = typeof argv.silent !== 'undefined' ? argv.silent : config.silent;
 
 //
 // If we were passed a target, parse the url string
@@ -73,5 +72,5 @@ server.listen(port);
 // Notify that the server is started
 //
 if (!config.silent) {
-  sys.puts('node-http-proxy server now listening on port: ' + port);
+  util.puts('node-http-proxy server now listening on port: ' + port);
 }

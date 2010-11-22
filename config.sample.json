@@ -1,5 +1,5 @@
 {
-  "silent": true,
+  "silent": false,
   "router": {
     "localhost": "localhost:9000"
   },

@@ -24,7 +24,7 @@
 
 */
 
-var sys = require('sys'),
+var util = require('util'),
     colors = require('colors')
     http = require('http'),
     httpProxy = require('./lib/node-http-proxy');
@@ -37,24 +37,24 @@ var welcome = '\
 #    #   #     #   #####        #####  #####  #    #   ##     #   \n\
 #    #   #     #   #            #      #   #  #    #  #  #    #   \n\
 #    #   #     #   #            #      #    #  ####  #    #   #   \n';
-sys.puts(welcome.rainbow.bold);
+util.puts(welcome.rainbow.bold);
 
 
 //
 // Basic Http Proxy Server
 //
 httpProxy.createServer(9000, 'localhost').listen(8000);
-sys.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 
 //
 // Http Proxy Server with Proxy Table
 //
 httpProxy.createServer({
   router: {
-    '127.0.0.1': 'localhost:9000'
+    'localhost': 'localhost:9000'
   }
 }).listen(8001);
-sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with proxy table'.magenta.underline)
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with proxy table'.magenta.underline)
 
 //
 // Http Proxy Server with Latency
@@ -64,7 +64,7 @@ httpProxy.createServer(function (req, res, proxy) {
     proxy.proxyRequest(9000, 'localhost');
   }, 200)
 }).listen(8002);
-sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with latency'.magenta.underline);
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with latency'.magenta.underline);
 
 //
 //
@@ -75,7 +75,7 @@ httpProxy.createServer(9000, 'localhost', {
     host: 'localhost'
   }
 }).listen(8003);
-sys.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8003 '.yellow + 'with forward proxy'.magenta.underline)
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8003 '.yellow + 'with forward proxy'.magenta.underline)
 
 //
 // Http Server with proxyRequest Handler and Latency
@@ -87,7 +87,7 @@ http.createServer(function (req, res) {
     proxy.proxyRequest(9000, 'localhost');
   }, 200);
 }).listen(8004);
-sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8004 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8004 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
 
 //
 // Target Http Server
@@ -97,15 +97,15 @@ http.createServer(function (req, res) {
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);
-sys.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
 
 //
 // Target Http Forwarding Server
 //
 http.createServer(function (req, res) {
-  sys.puts('Receiving forward for: ' + req.url)
+  util.puts('Receiving forward for: ' + req.url)
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.write('request successfully forwarded to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9001);
-sys.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9001 '.yellow);
+util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9001 '.yellow);
