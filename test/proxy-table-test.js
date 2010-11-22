@@ -33,7 +33,7 @@ var defaultOptions = {
   }
 };
 
-vows.describe('proxy-table').addBatch({
+vows.describe('node-http-proxy/proxy-table').addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
       topic: function () {

@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+var path = require('path'),
+    fs = require('fs'),
+    eyes = require('eyes'),
+    sys  = require('sys'),
+    argv = require('optimist').argv,
+    httpProxy = require('./../lib/node-http-proxy');
+
+var help = [
+    "usage: node-http-proxy [options] ",
+    "",
+    "All options should be set with the syntax --option=value",
+    "",
+    "options:",
+    "  --port   PORT       Port that the proxy server should run on",
+    "  --target HOST:PORT  Location of the server the proxy will target",
+    "  --config OUTFILE    Location of the configuration file for the proxy server",
+    "  --silent            Silence the log output from the proxy server",
+    "  -h, --help          You're staring at it"
+];
+
+if (argv.h || argv.help || Object.keys(argv).length === 2) {
+  sys.puts(help.join('\n'));
+  process.exit(0);
+}
+
+var location, config = {},
+    port = argv.port || 80, 
+    target = argv.target;
+
+//
+// Check to see if we should silence the logs
+//
+config.silent = argv.silent || false;
+
+//
+// If we were passed a config, parse it
+//
+if (argv.config) {
+  try {
+    var data = fs.readFileSync(argv.config);
+    config = JSON.parse(data.toString());
+  } catch (ex) {
+    sys.puts('Error starting node-http-proxy: ' + ex);
+    process.exit(1);
+  }
+}
+
+//
+// If we were passed a target, parse the url string
+//
+if (target) location = target.split(':');
+
+//
+// Create the server with the specified options
+//
+var server;
+if (location) {
+  var targetPort = location.length === 1 ? 80 : location[1];
+  server = httpProxy.createServer(targetPort, location[0], config);
+}
+else {
+  server = httpProxy.createServer(config);
+}
+
+//
+// Start the server
+//
+server.listen(port);
+
+//
+// Notify that the server is started
+//
+if (!config.silent) {
+  sys.puts('node-http-proxy server now listening on port: ' + port);
+}

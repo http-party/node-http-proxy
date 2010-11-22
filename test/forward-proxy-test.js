@@ -32,7 +32,7 @@ var badForwardOptions = {
   }
 };
 
-vows.describe('node-http-proxy').addBatch({
+vows.describe('node-http-proxy/forward-proxy').addBatch({
   "When using server created by httpProxy.createServer()": {
     "with forwarding enabled": {
       topic: function () {

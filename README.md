@@ -41,6 +41,8 @@ There are several ways to use node-http-proxy; the library is designed to be fle
 4. As a forward-proxy with a reverse proxy 
 5. From the command-line as a proxy daemon
 
+See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
+
 ### Setup a basic stand-alone proxy server
 <pre>
   var http = require('http'),
@@ -56,8 +58,6 @@ There are several ways to use node-http-proxy; the library is designed to be fle
     res.end();
   }).listen(9000);
 </pre>
-
-See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
 
 ### Setup a stand-alone proxy server with custom server logic
 <pre>
@@ -150,6 +150,21 @@ Sometimes in addition to a reverse proxy, you may want your front-facing server 
 </pre> 
 
 The forwarding option can be used in conjunction with the proxy table options by simply including both the 'forward' and 'router' properties in the options passed to 'createServer'.
+
+### Using node-http-proxy from the command line
+When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
+<pre>
+  usage: node-http-proxy [options] 
+
+  All options should be set with the syntax --option=value
+
+  options:
+    --port   PORT       Port that the proxy server should run on
+    --target HOST:PORT  Location of the server the proxy will target
+    --config OUTFILE    Location of the configuration file for the proxy server
+    --silent            Silence the log output from the proxy server
+    -h, --help          You're staring at it
+</pre>
 
 <br/>
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
