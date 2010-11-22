@@ -39,7 +39,7 @@ There are several ways to use node-http-proxy; the library is designed to be fle
 2. Inside of another HTTP server (like Connect)
 3. In conjunction with a Proxy Routing Table
 4. As a forward-proxy with a reverse proxy 
-5. From the command-line as a proxy daemon
+5. From the command-line as a long running process
 
 See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) for further examples.
 
