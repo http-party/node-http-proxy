@@ -28,81 +28,30 @@ var vows = require('vows'),
     sys = require('sys'),
     request = require('request'),
     assert = require('assert'),
-    TestRunner = require('./helpers').TestRunner;
+    helpers = require('./helpers'),
+    TestRunner = helpers.TestRunner;
     
-var runner = new TestRunner();
+var runner = new TestRunner(),
+    assertProxiedWithTarget = helpers.assertProxiedWithTarget,
+    assertProxiedWithNoTarget = helpers.assertProxiedWithNoTarget;
 
 vows.describe('node-http-proxy').addBatch({
   "When using server created by httpProxy.createServer()": {
-    "an incoming request to the helloNode server": {
-      "with no latency" : {
-        "and a valid target server": {
-          topic: function () {
-            this.output = 'hello world';
-            var options = {
-              method: 'GET', 
-              uri: 'http://localhost:8080'
-            };
-
-            runner.startProxyServer(8080, 8081, 'localhost'),
-            runner.startTargetServer(8081, this.output);
-
-            
-            request(options, this.callback);
-          },
-          "should received 'hello world'": function (err, res, body) {
-            assert.equal(body, this.output);
-          }
-        },
-        "and without a valid target server": {
-          topic: function () {
-            runner.startProxyServer(8082, 9000, 'localhost');
-            var options = {
-              method: 'GET', 
-              uri: 'http://localhost:8082'
-            };
-            
-            request(options, this.callback);
-          },
-          "should receive 500 response code": function (err, res, body) {
-            assert.equal(res.statusCode, 500);
-          }
-        }
-      },
-      "with latency": {
-        "and a valid target server": {
-          topic: function () {
-            this.output = 'hello world';
-            var options = {
-              method: 'GET', 
-              uri: 'http://localhost:8083'
-            };
-            
-            runner.startLatentProxyServer(8083, 8084, 'localhost', 1000),
-            runner.startTargetServer(8084, this.output);
-            
-            
-            request(options, this.callback);
-          },
-          "should receive 'hello world'": function (err, res, body) {
-            assert.equal(body, this.output);
-          }
-        },
-        "and without a valid target server": {
-          topic: function () {
-            runner.startLatentProxyServer(8085, 9000, 'localhost', 1000);
-            var options = {
-              method: 'GET', 
-              uri: 'http://localhost:8085'
-            };
-            
-            request(options, this.callback);
-          },
-          "should receive 500 response code": function (err, res, body) {
-            assert.equal(res.statusCode, 500);
-          }
-        }
-      }
+    "with no latency" : {
+      "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8080, 8081, function () {
+        runner.startProxyServer(8080, 8081, 'localhost');
+      }),
+      "and without a valid target server": assertProxiedWithNoTarget(runner, 8082, 500, function () {
+        runner.startProxyServer(8082, 9000, 'localhost');
+      })
+    },
+    "with latency": {
+      "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8083, 8084, function () {
+        runner.startLatentProxyServer(8083, 8084, 'localhost', 1000);
+      }),
+      "and without a valid target server": assertProxiedWithNoTarget(runner, 8085, 500, function () {
+        runner.startLatentProxyServer(8085, 9000, 'localhost', 1000);
+      })
     }
   }
 }).addBatch({

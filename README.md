@@ -9,6 +9,8 @@
 - reverse-proxies incoming http.Server requests
 - can be used as a CommonJS module in node.js
 - uses event buffering to support application latency in proxied requests
+- can proxy based on simple JSON-based configuration
+- forward proxying based on simple JSON-based configuration
 - minimal request overhead and latency
 - fully-tested
 - battled-hardened through production usage @ [nodejitsu.com][0]
@@ -35,8 +37,9 @@ There are several ways to use node-http-proxy; the library is designed to be fle
 
 1. Standalone HTTP Proxy server
 2. Inside of another HTTP server (like Connect)
-3. From the command-line as a proxy daemon
-4. In conjunction with a Proxy Routing Table
+3. In conjunction with a Proxy Routing Table
+4. As a forward-proxy with a reverse proxy 
+5. From the command-line as a proxy daemon
 
 ### Setup a basic stand-alone proxy server
 <pre>
@@ -132,8 +135,23 @@ The above route table will take incoming requests to 'foo.com' and forward them 
 <pre>
   var proxyServer = httpProxy.createServer(options);
   proxyServer.listen(80);
+</pre>
+
+### Proxy requests with an additional forward proxy
+Sometimes in addition to a reverse proxy, you may want your front-facing server to forward traffic to another location. For example, if you wanted to load test your staging environment. This is possible when using node-http-proxy using similar JSON-based configuration to a proxy table: 
+<pre>
+  var proxyServerWithForwarding = httpProxy.createServer(9000, 'localhost', {
+    forward: {
+      port: 9000,
+      host: 'staging.com'
+    }
+  });
+  proxyServerWithForwarding.listen(80);
 </pre> 
 
+The forwarding option can be used in conjunction with the proxy table options by simply including both the 'forward' and 'router' properties in the options passed to 'createServer'.
+
+<br/>
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.

@@ -6,7 +6,62 @@
  */
 
 var http = require('http'),
+    vows = require('vows'),
+    assert = require('assert'),
+    request = require('request'),
     httpProxy = require('./../lib/node-http-proxy');
+
+exports.assertProxiedWithTarget = function (runner, host, proxyPort, port, createProxy) {
+  var assertion = "should receive 'hello " + host + "'",
+      output = 'hello ' + host;
+  
+  var test = {
+    topic: function () {
+      var options = {
+        method: 'GET', 
+        uri: 'http://localhost:' + proxyPort,
+        headers: {
+          host: host
+        }
+      };
+      
+      if (createProxy) createProxy();
+      if (port) runner.startTargetServer(port, output);
+      request(options, this.callback);
+    }
+  };
+  
+  test[assertion] = function (err, res, body) {
+    assert.equal(body, output);
+  };
+  
+  return test;
+};
+
+exports.assertProxiedWithNoTarget = function (runner, proxyPort, statusCode, createProxy) {
+  var assertion = "should receive " + statusCode + " responseCode";
+  
+  var test = {
+    topic: function () {
+      var options = {
+        method: 'GET', 
+        uri: 'http://localhost:' + proxyPort,
+        headers: {
+          host: 'unknown.com'
+        }
+      };
+      
+      if (createProxy) createProxy();
+      request(options, this.callback);
+    }
+  };
+  
+  test[assertion] = function (err, res, body) {
+    assert.equal(res.statusCode, statusCode);
+  };
+  
+  return test;
+}
 
 var TestRunner = function () {
   this.testServers = [];
@@ -65,6 +120,16 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
     proxyTable.close();
   });
   
+  proxyServer.listen(port);
+  this.testServers.push(proxyServer);
+  return proxyServer;
+};
+
+//
+// Creates proxy server forwarding to the specified options
+//
+TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort, host, options) {
+  var proxyServer = httpProxy.createServer(targetPort, host, options); 
   proxyServer.listen(port);
   this.testServers.push(proxyServer);
   return proxyServer;

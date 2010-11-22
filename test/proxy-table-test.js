@@ -11,10 +11,13 @@ var fs = require('fs'),
     path = require('path'),
     request = require('request'),
     assert = require('assert'),
-    TestRunner = require('./helpers').TestRunner;
+    helpers = require('./helpers'),
+    TestRunner = helpers.TestRunner;
     
 var runner = new TestRunner(),
-    routeFile = path.join(__dirname, 'config.json');
+    routeFile = path.join(__dirname, 'config.json'),
+    assertProxiedWithTarget = helpers.assertProxiedWithTarget,
+    assertProxiedWithNoTarget = helpers.assertProxiedWithNoTarget;
 
 var fileOptions = {
   router: {
@@ -30,51 +33,6 @@ var defaultOptions = {
   }
 };
 
-function createTargetTest (host, proxyPort, port) {
-  var assertion = "should receive 'hello " + host + "'",
-      output = 'hello ' + host;
-  
-  var test = {
-    topic: function () {
-      var options = {
-        method: 'GET', 
-        uri: 'http://localhost:' + proxyPort,
-        headers: {
-          host: host
-        }
-      };
-      
-      if (port) runner.startTargetServer(port, output);
-      request(options, this.callback);
-    }
-  };
-  
-  test[assertion] = function (err, res, body) {
-    assert.equal(body, output);
-  };
-  
-  return test;
-};
-
-function createNoTargetTest (proxyPort) {
-  return {
-    topic: function () {
-      var options = {
-        method: 'GET', 
-        uri: 'http://localhost:' + proxyPort,
-        headers: {
-          host: 'unknown.com'
-        }
-      };
-      
-      request(options, this.callback);
-    },
-    "should receive 404 response code": function (err, res, body) {
-      assert.equal(res.statusCode, 404);
-    }
-  };
-}
-
 vows.describe('proxy-table').addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
@@ -82,9 +40,9 @@ vows.describe('proxy-table').addBatch({
         this.server = runner.startProxyServerWithTable(8090, defaultOptions);
         return null;
       },
-      "an incoming request to foo.com": createTargetTest('foo.com', 8090, 8091),
-      "an incoming request to bar.com": createTargetTest('bar.com', 8090, 8092),
-      "an incoming request to unknown.com": createNoTargetTest(8090)
+      "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8090, 8091),
+      "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8090, 8092),
+      "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8090, 404)
     },
     "when passed a routing file": {
       topic: function () {
@@ -95,9 +53,9 @@ vows.describe('proxy-table').addBatch({
         
         return null;
       },
-      "an incoming request to foo.com": createTargetTest('foo.com', 8100, 8101),
-      "an incoming request to bar.com": createTargetTest('bar.com', 8100, 8102),
-      "an incoming request to unknown.com": createNoTargetTest(8100),
+      "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8100, 8101),
+      "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8100, 8102),
+      "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8100, 404),
       "an incoming request to dynamic.com": {
         "after the file has been modified": {
           topic: function () {
@@ -138,9 +96,9 @@ vows.describe('proxy-table').addBatch({
       });
       return null;
     },
-    "an incoming request to foo.com": createTargetTest('foo.com', 8110, 8111),
-    "an incoming request to bar.com": createTargetTest('bar.com', 8110, 8112),
-    "an incoming request to unknown.com": createNoTargetTest(8110)
+    "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8110, 8111),
+    "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8110, 8112),
+    "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8110, 404)
   }
 }).addBatch({
   "When the tests are over": {
