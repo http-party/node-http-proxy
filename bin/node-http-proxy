@@ -17,10 +17,10 @@ var help = [
     "  --config OUTFILE    Location of the configuration file for the proxy server",
     "  --silent            Silence the log output from the proxy server",
     "  -h, --help          You're staring at it"
-];
+].join('\n');
 
 if (argv.h || argv.help || Object.keys(argv).length === 2) {
-  util.puts(help.join('\n'));
+  util.puts(help);
   process.exit(0);
 }
 
@@ -49,7 +49,7 @@ config.silent = typeof argv.silent !== 'undefined' ? argv.silent : config.silent
 //
 // If we were passed a target, parse the url string
 //
-if (target) location = target.split(':');
+if (typeof target === 'string') location = target.split(':');
 
 //
 // Create the server with the specified options
@@ -59,8 +59,11 @@ if (location) {
   var targetPort = location.length === 1 ? 80 : location[1];
   server = httpProxy.createServer(targetPort, location[0], config);
 }
-else {
+else if (config.router) {
   server = httpProxy.createServer(config);
+}
+else {
+  return util.puts(help);
 }
 
 //
