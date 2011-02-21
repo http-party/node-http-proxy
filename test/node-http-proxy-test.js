@@ -28,10 +28,9 @@ var vows = require('vows'),
     util = require('util'),
     request = require('request'),
     assert = require('assert'),
-    helpers = require('./helpers'),
-    TestRunner = helpers.TestRunner;
+    helpers = require('./helpers');
     
-var runner = new TestRunner(),
+var runner = new helpers.TestRunner(),
     assertProxiedWithTarget = helpers.assertProxiedWithTarget,
     assertProxiedWithNoTarget = helpers.assertProxiedWithNoTarget;
 

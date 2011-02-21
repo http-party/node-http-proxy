@@ -63,7 +63,7 @@ exports.assertProxiedWithNoTarget = function (runner, proxyPort, statusCode, cre
   return test;
 }
 
-var TestRunner = function () {
+var TestRunner = exports.TestRunner = function () {
   this.testServers = [];
 }
 
@@ -160,5 +160,3 @@ TestRunner.prototype.closeServers = function () {
 
   return this.testServers;
 };
-
-exports.TestRunner = TestRunner;
