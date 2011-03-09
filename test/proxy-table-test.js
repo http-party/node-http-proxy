@@ -73,8 +73,9 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
                 }
               };
 
-              runner.startTargetServer(8103, that.output);
-              request(options, that.callback);
+              runner.startTargetServer(8103, that.output, function () {
+                request(options, that.callback);
+              });
             });
           },
           "should receive 'hello dynamic.com'": function (err, res, body) {
@@ -88,8 +89,10 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
   "When using an instance of ProxyTable combined with HttpProxy directly": {
     topic: function () {
       this.server = runner.startProxyServerWithTableAndLatency(8110, 100, {
-        'foo.com': 'localhost:8111',
-        'bar.com': 'localhost:8112'
+        router: {
+          'foo.com': 'localhost:8111',
+          'bar.com': 'localhost:8112'
+        }
       }, this.callback);
     },
     "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8110, 8111),
@@ -99,7 +102,7 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
 }).addBatch({
   "When the tests are over": {
     topic: function () {
-      fs.unlinkSync(routeFile);
+      //fs.unlinkSync(routeFile);
       return runner.closeServers();
     },
     "the servers should clean up": function () {
