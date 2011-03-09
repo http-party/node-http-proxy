@@ -17,7 +17,7 @@ exports.assertProxiedWithTarget = function (runner, host, proxyPort, port, creat
   
   var test = {
     topic: function () {
-      var options = {
+      var that = this, options = {
         method: 'GET', 
         uri: 'http://localhost:' + proxyPort,
         headers: {
@@ -25,13 +25,22 @@ exports.assertProxiedWithTarget = function (runner, host, proxyPort, port, creat
         }
       };
       
-      if (createProxy) createProxy();
-      if (port) runner.startTargetServer(port, output);
-      request(options, this.callback);
+      function startTest () {
+        if (port) {
+          return runner.startTargetServer(port, output, function () {
+            request(options, that.callback);
+          });
+        }
+
+        request(options, this.callback);
+      }
+      
+      return createProxy ? createProxy(startTest) : startTest();
     }
   };
   
-  test[assertion] = function (err, res, body) {
+  test[assertion] = function (err, res, body) {;
+    assert.isNull(err);
     assert.equal(body, output);
   };
   
@@ -43,7 +52,7 @@ exports.assertProxiedWithNoTarget = function (runner, proxyPort, statusCode, cre
   
   var test = {
     topic: function () {
-      var options = {
+      var that = this, options = {
         method: 'GET', 
         uri: 'http://localhost:' + proxyPort,
         headers: {
@@ -51,12 +60,18 @@ exports.assertProxiedWithNoTarget = function (runner, proxyPort, statusCode, cre
         }
       };
       
-      if (createProxy) createProxy();
+      if (createProxy) {
+        return createProxy(function () {
+          request(options, that.callback);          
+        });
+      }
+      
       request(options, this.callback);
     }
   };
   
   test[assertion] = function (err, res, body) {
+    assert.isNull(err);
     assert.equal(res.statusCode, statusCode);
   };
   
@@ -65,89 +80,98 @@ exports.assertProxiedWithNoTarget = function (runner, proxyPort, statusCode, cre
 
 var TestRunner = exports.TestRunner = function () {
   this.testServers = [];
-}
+};
 
 //
 // Creates the reverse proxy server
 //
-TestRunner.prototype.startProxyServer = function (port, targetPort, host) {
-  var proxyServer = httpProxy.createServer(targetPort, host); 
-  proxyServer.listen(port);
-  this.testServers.push(proxyServer);
-  return proxyServer;
+TestRunner.prototype.startProxyServer = function (port, targetPort, host, callback) {
+  var that = this, proxyServer = httpProxy.createServer(targetPort, host); 
+  
+  proxyServer.listen(port, function () {
+    that.testServers.push(proxyServer);
+    callback();
+  });  
 };
 
 // 
 // Creates the reverse proxy server with a specified latency
 //
-TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, latency) {
+TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, latency, callback) {
   // Initialize the nodeProxy and start proxying the request
-  var proxyServer = httpProxy.createServer(function (req, res, proxy) {
+  var that = this, proxyServer = httpProxy.createServer(function (req, res, proxy) {
+    var data = proxy.pause(req);
+    
     setTimeout(function () {
-      proxy.proxyRequest(targetPort, host);
+      proxy.proxyRequest(req, res, targetPort, host, data);
     }, latency);
   });
   
-  proxyServer.listen(port);
-  this.testServers.push(proxyServer);
-  return proxyServer;
+  proxyServer.listen(port, function () {
+    that.testServers.push(proxyServer);
+    callback();
+  });
 };
 
 //
 // Creates the reverse proxy server with a ProxyTable
 //
-TestRunner.prototype.startProxyServerWithTable = function (port, options) {
-  var proxyServer = httpProxy.createServer(options); 
-  proxyServer.listen(port);
-  this.testServers.push(proxyServer);
+TestRunner.prototype.startProxyServerWithTable = function (port, options, callback) {
+  var that = this, proxyServer = httpProxy.createServer(options); 
+  proxyServer.listen(port, function () {
+    that.testServers.push(proxyServer);
+    callback();
+  });
+  
   return proxyServer;
 };
 
 //
 // Creates a latent reverse proxy server using a ProxyTable
 //
-TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, latency, router) {
+TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, latency, options, callback) {
   // Initialize the nodeProxy and start proxying the request
-  var proxyTable = new httpProxy.ProxyTable(router);
-  var proxyServer = http.createServer(function (req, res) {
-    var proxy = new httpProxy.HttpProxy(req, res);
+  var proxyServer, that = this, proxy = new httpProxy.HttpProxy(options);
+  proxyServer = http.createServer(function (req, res) {
+    var paused = proxy.pause(req);
     setTimeout(function () {
-      proxyTable.proxyRequest(proxy);
+      proxy.proxyRequest(req, res, paused);
     }, latency);
   });
   
-  proxyServer.on('close', function () {
-    proxyTable.close();
+  proxyServer.listen(port, function () {
+    that.testServers.push(proxyServer);
+    callback();
   });
   
-  proxyServer.listen(port);
-  this.testServers.push(proxyServer);
   return proxyServer;
 };
 
 //
 // Creates proxy server forwarding to the specified options
 //
-TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort, host, options) {
-  var proxyServer = httpProxy.createServer(targetPort, host, options); 
-  proxyServer.listen(port);
-  this.testServers.push(proxyServer);
-  return proxyServer;
+TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort, host, options, callback) {
+  var that = this, proxyServer = httpProxy.createServer(targetPort, host, options); 
+  proxyServer.listen(port, function () {
+    that.testServers.push(proxyServer);
+    callback();
+  });
 };
 
 //
 // Creates the 'hellonode' server
 //
-TestRunner.prototype.startTargetServer = function (port, output) {
-  var targetServer = http.createServer(function (req, res) {
+TestRunner.prototype.startTargetServer = function (port, output, callback) {
+  var that = this, targetServer = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write(output)
+    res.write(output);
   	res.end();
   });
   
-  targetServer.listen(port);
-  this.testServers.push(targetServer);
-  return targetServer;
+  targetServer.listen(port, function () {
+    that.testServers.push(targetServer);
+    callback();
+  });
 };
 
 //

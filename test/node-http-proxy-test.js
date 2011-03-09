@@ -29,7 +29,21 @@ var vows = require('vows'),
     request = require('request'),
     assert = require('assert'),
     helpers = require('./helpers');
-    
+
+var forwardOptions = {
+  forward: {
+    port: 8300,
+    host: 'localhost'
+  }
+};
+
+var badForwardOptions = {
+  forward: {
+    port: 9000,
+    host: 'localhost'
+  }
+};
+
 var runner = new helpers.TestRunner(),
     assertProxiedWithTarget = helpers.assertProxiedWithTarget,
     assertProxiedWithNoTarget = helpers.assertProxiedWithNoTarget;
@@ -37,20 +51,33 @@ var runner = new helpers.TestRunner(),
 vows.describe('node-http-proxy').addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
-      "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8080, 8081, function () {
-        runner.startProxyServer(8080, 8081, 'localhost');
+      "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8080, 8081, function (callback) {
+        runner.startProxyServer(8080, 8081, 'localhost', callback);
       }),
-      "and without a valid target server": assertProxiedWithNoTarget(runner, 8082, 500, function () {
-        runner.startProxyServer(8082, 9000, 'localhost');
+      "and without a valid target server": assertProxiedWithNoTarget(runner, 8082, 500, function (callback) {
+        runner.startProxyServer(8082, 9000, 'localhost', callback);
       })
     },
     "with latency": {
-      "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8083, 8084, function () {
-        runner.startLatentProxyServer(8083, 8084, 'localhost', 1000);
+      "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8083, 8084, function (callback) {
+        runner.startLatentProxyServer(8083, 8084, 'localhost', 1000, callback);
       }),
-      "and without a valid target server": assertProxiedWithNoTarget(runner, 8085, 500, function () {
-        runner.startLatentProxyServer(8085, 9000, 'localhost', 1000);
+      "and without a valid target server": assertProxiedWithNoTarget(runner, 8085, 500, function (callback) {
+        runner.startLatentProxyServer(8085, 9000, 'localhost', 1000, callback);
       })
+    },
+    "with forwarding enabled": {
+      topic: function () {
+        runner.startTargetServer(8300, 'forward proxy', this.callback);
+      },
+      "with no latency" : {
+        "and a valid target server": assertProxiedWithTarget(runner, 'localhost', 8120, 8121, function (callback) {
+          runner.startProxyServerWithForwarding(8120, 8121, 'localhost', forwardOptions, callback);
+        }),
+        "and without a valid forward server": assertProxiedWithTarget(runner, 'localhost', 8122, 8123, function (callback) {
+          runner.startProxyServerWithForwarding(8122, 8123, 'localhost', badForwardOptions, callback);
+        })
+      }
     }
   }
 }).addBatch({

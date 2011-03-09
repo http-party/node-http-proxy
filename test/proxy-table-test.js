@@ -37,8 +37,7 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
       topic: function () {
-        this.server = runner.startProxyServerWithTable(8090, defaultOptions);
-        return null;
+        this.server = runner.startProxyServerWithTable(8090, defaultOptions, this.callback);
       },
       "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8090, 8091),
       "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8090, 8092),
@@ -49,9 +48,7 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
         fs.writeFileSync(routeFile, JSON.stringify(fileOptions));
         this.server = runner.startProxyServerWithTable(8100, {
           router: routeFile
-        });
-        
-        return null;
+        }, this.callback);
       },
       "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8100, 8101),
       "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8100, 8102),
@@ -67,7 +64,7 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
             config.router['dynamic.com'] = "127.0.0.1:8103"
             fs.writeFileSync(routeFile, JSON.stringify(config));
             
-            this.server.on('updateRoutes', function () {
+            this.server.on('routes', function () {
               var options = {
                 method: 'GET', 
                 uri: 'http://localhost:8100',
@@ -93,8 +90,7 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
       this.server = runner.startProxyServerWithTableAndLatency(8110, 100, {
         'foo.com': 'localhost:8111',
         'bar.com': 'localhost:8112'
-      });
-      return null;
+      }, this.callback);
     },
     "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8110, 8111),
     "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8110, 8112),
