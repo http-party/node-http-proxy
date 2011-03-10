@@ -33,15 +33,33 @@ var defaultOptions = {
   }
 };
 
+var hostnameOptions = {
+  hostnameOnly: true,
+  router: {
+    "foo.com": "127.0.0.1:8091",
+    "bar.com": "127.0.0.1:8092"
+  },
+}
+
 vows.describe('node-http-proxy/proxy-table').addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
-      topic: function () {
-        this.server = runner.startProxyServerWithTable(8090, defaultOptions, this.callback);
+      "and routing by RegExp": {
+        topic: function () {
+          this.server = runner.startProxyServerWithTable(8090, defaultOptions, this.callback);
+        },
+        "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8090, 8091),
+        "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8090, 8092),
+        "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8090, 404)
       },
-      "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8090, 8091),
-      "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8090, 8092),
-      "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8090, 404)
+      "and routing by Hostname": {
+        topic: function () {
+          this.server = runner.startProxyServerWithTable(8093, hostnameOptions, this.callback);
+        },
+        "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8093, 8094),
+        "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8093, 8095),
+        "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8093, 404)
+      }
     },
     "when passed a routing file": {
       topic: function () {

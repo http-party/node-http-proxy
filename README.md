@@ -1,4 +1,4 @@
-# node-http-proxy - v0.3.1
+# node-http-proxy - v0.4.0
 
 <img src = "http://i.imgur.com/dSSUX.png"/>
 
@@ -6,16 +6,15 @@
 
 ### Features
 
-- reverse-proxies incoming http.Server requests
-- can be used as a CommonJS module in node.js
-- uses event buffering to support application latency in proxied requests
-- can proxy based on simple JSON-based configuration
-- forward proxying based on simple JSON-based configuration
-- minimal request overhead and latency
-- fully-tested
-- battled-hardened through production usage @ [nodejitsu.com][0]
-- written entirely in javascript
-- easy to use api
+* Reverse proxies incoming http.ServerRequest streams
+* Can be used as a CommonJS module in node.js
+* Uses event buffering to support application latency in proxied requests
+* Reverse or Forward Proxy based on simple JSON-based configuration
+* Minimal request overhead and latency
+* Full suite of functional tests
+* Battled-hardened through __production usage__ @ [nodejitsu.com][0]
+* Written entirely in Javascript
+* Easy to use API
 
 ### When to use node-http-proxy
 
@@ -147,17 +146,33 @@ A Proxy Table is a simple lookup table that maps incoming requests to proxy targ
 <pre>
   var options = {
     router: {
-      'foo.com': '127.0.0.1:8001',
-      'bar.com': '127.0.0.1:8002'
+      'foo.com/baz': '127.0.0.1:8001',
+      'foo.com/buz': '127.0.0.1:8002',
+      'bar.com/buz': '127.0.0.1:8003'
     }
   };
 </pre> 
 
-The above route table will take incoming requests to 'foo.com' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'bar.com' and forward them to '127.0.0.1:8002'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
+The above route table will take incoming requests to 'foo.com/baz' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'foo.com/buz' and forward them to '127.0.0.1:8002'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
 <pre>
   var proxyServer = httpProxy.createServer(options);
   proxyServer.listen(80);
 </pre>
+
+### Proxy requests using a 'Hostname Only' ProxyTable
+As mentioned in the previous section, all routes passes to the ProxyTable are by default converted to regular expressions that are evaluated at proxy-time. This is good for complex URL rewriting of proxy requests, but less efficient when one simply wants to do pure hostname routing based on the HTTP 'Host' header. If you are only concerned with hostname routing, you change the lookup used by the internal ProxyTable:
+
+<pre>
+  var options = {
+    hostnameOnly, true,
+    router: {
+      'foo.com': '127.0.0.1:8001',
+      'bar.com': '127.0.0.1:8002'
+    }
+  }
+</pre>
+
+Notice here that I have not included paths on the individual domains because this is not possible when using only the HTTP 'Host' header. Care to learn more? See [RFC2616: HTTP/1.1, Section 14.23, "Host"][1].
 
 ### Proxy requests with an additional forward proxy
 Sometimes in addition to a reverse proxy, you may want your front-facing server to forward traffic to another location. For example, if you wanted to load test your staging environment. This is possible when using node-http-proxy using similar JSON-based configuration to a proxy table: 
@@ -220,3 +235,4 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [0]: http://nodejitsu.com
+[1]: http://www.ietf.org/rfc/rfc2616.txt

@@ -33,11 +33,15 @@
 
 <h4>@silent {Boolean} Value indicating whether we should suppress logs</h4>
 
+<h4>@hostnameOnly {Boolean} Value indicating if we should route based on <strong>hostname string only</strong></h4>
+
 <p>Constructor function for the ProxyTable responsible for getting
 locations of proxy targets based on ServerRequest headers; specifically
-the HTTP host header.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">ProxyTable</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">ProxyTable</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">router</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
+the HTTP host header.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">ProxyTable</span> <span class="o">=</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">ProxyTable</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">router</span><span class="p">,</span> <span class="nx">silent</span><span class="p">,</span> <span class="nx">hostnameOnly</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">events</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  
   <span class="k">this</span><span class="p">.</span><span class="nx">silent</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">silent</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">?</span> <span class="nx">silent</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">hostnameOnly</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">hostnameOnly</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">?</span> <span class="nx">hostnameOnly</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
   
   <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">router</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>If we are passed an object literal setup 
 the routes with RegExps from the router </p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">setRoutes</span><span class="p">(</span><span class="nx">router</span><span class="p">);</span>
@@ -47,11 +51,11 @@ file path, parse that file and watch it for changes</p>             </td>       
     <span class="k">this</span><span class="p">.</span><span class="nx">routeFile</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">setRoutes</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">router</span><span class="p">)).</span><span class="nx">router</span><span class="p">);</span>
     
-    <span class="nx">fs</span><span class="p">.</span><span class="nx">watchFile</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">routeFile</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">c</span><span class="p">,</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">watchFile</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">routeFile</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">routeFile</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
         <span class="nx">self</span><span class="p">.</span><span class="nx">setRoutes</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nx">router</span><span class="p">);</span>
-        <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;routes&#39;</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">routes</span><span class="p">);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;routes&#39;</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">hostnameOnly</span> <span class="o">===</span> <span class="kc">false</span> <span class="o">?</span> <span class="nx">self</span><span class="p">.</span><span class="nx">routes</span> <span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">router</span><span class="p">);</span>
       <span class="p">});</span>
     <span class="p">});</span>
   <span class="p">}</span>
@@ -65,29 +69,35 @@ file path, parse that file and watch it for changes</p>             </td>       
 <p>Sets the host-based routes to be used by this instance. </p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">ProxyTable</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRoutes</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">router</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">router</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Cannot update ProxyTable routes without router.&#39;</span><span class="p">);</span>
   
-  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">routes</span> <span class="o">=</span> <span class="p">[];</span>
   
-  <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">router</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hostnameOnly</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">routes</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="nx">self</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
-      <span class="nx">route</span><span class="o">:</span> <span class="nx">route</span><span class="p">,</span>
-      <span class="nx">target</span><span class="o">:</span> <span class="nx">router</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">router</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
+
+      <span class="nx">self</span><span class="p">.</span><span class="nx">routes</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+        <span class="nx">route</span><span class="o">:</span> <span class="nx">route</span><span class="p">,</span>
+        <span class="nx">target</span><span class="o">:</span> <span class="nx">router</span><span class="p">[</span><span class="nx">path</span><span class="p">]</span>
+      <span class="p">});</span>
     <span class="p">});</span>
-  <span class="p">});</span>
+  <span class="p">}</span>
 <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h3>function getProxyLocation (req)</h3>
 
 <h4>@req {ServerRequest} The incoming server request to get proxy information about.</h4>
 
 <p>Returns the proxy location based on the HTTP Headers in the  ServerRequest <code>req</code>
 available to this instance.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">ProxyTable</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProxyLocation</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">routes</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">route</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">routes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">route</span><span class="p">))</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">location</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">req</span> <span class="o">||</span> <span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hostnameOnly</span> <span class="o">==</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">))</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">location</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">router</span><span class="p">[</span><span class="nx">target</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span>
           <span class="nx">host</span> <span class="o">=</span> <span class="nx">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
           <span class="nx">port</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="mi">80</span> <span class="o">:</span> <span class="nx">location</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
       
@@ -97,6 +107,24 @@ available to this instance.</p>             </td>             <td class="code"> 
         <span class="nx">port</span><span class="o">:</span> <span class="nx">port</span><span class="p">,</span>
         <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span>
       <span class="p">};</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">target</span> <span class="o">+=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">routes</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">route</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">routes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">route</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">location</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span>
+            <span class="nx">host</span> <span class="o">=</span> <span class="nx">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="nx">port</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="mi">80</span> <span class="o">:</span> <span class="nx">location</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+        <span class="nx">winston</span><span class="p">.</span><span class="nx">verbose</span><span class="p">(</span><span class="s1">&#39;Proxy Table proxying request to: &#39;</span> <span class="o">+</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">port</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+          <span class="nx">port</span><span class="o">:</span> <span class="nx">port</span><span class="p">,</span>
+          <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span>
+        <span class="p">};</span>
+      <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">}</span>
   
