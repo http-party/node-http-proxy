@@ -39,7 +39,6 @@ var welcome = '\
 #    #   #     #   #            #      #    #  ####  #    #   #   \n';
 util.puts(welcome.rainbow.bold);
 
-
 //
 // Basic Http Proxy Server
 //
