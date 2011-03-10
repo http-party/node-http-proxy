@@ -47,11 +47,14 @@ See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
-
+  //
   // Create your proxy server
+  //
   httpProxy.createServer(9000, 'localhost').listen(8000);
 
+  //
   // Create your target server
+  //
   http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
@@ -63,11 +66,15 @@ See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
-
-  // create a proxy server with custom application logic
+      
+  //
+  // Create a proxy server with custom application logic
+  //
   httpProxy.createServer(function (req, res, proxy) {
+    //
     // Put your custom server logic here
-    proxy.proxyRequest(9000, 'localhost');
+    //
+    proxy.proxyRequest(req, res, 9000, 'localhost');
   }).listen(8000);
 
   http.createServer(function (req, res) {
@@ -81,13 +88,23 @@ See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
-
-  // create a proxy server with custom application logic
+  
+  //
+  // Create a proxy server with custom application logic
+  //
   httpProxy.createServer(function (req, res, proxy) {
+    //
+    // Buffer the request so that `data` and `end` events
+    // are not lost during async operation(s).
+    //
+    var buffer = proxy.buffer(req);
+    
+    //
     // Wait for two seconds then respond: this simulates
     // performing async actions before proxying a request
+    //
     setTimeout(function () {
-      proxy.proxyRequest(9000, 'localhost');      
+      proxy.proxyRequest(req, res, 9000, 'localhost', buffer);      
     }, 2000);
   }).listen(8000);
 
@@ -102,15 +119,20 @@ See the [demo](http://github.com/nodejitsu/node-http-proxy/blob/master/demo.js) 
 <pre>
   var http = require('http'),
       httpProxy = require('http-proxy');
+      
+  //
+  // Create a new instance of HttProxy to use in your server
+  //
+  var proxy = new httpProxy.HttpProxy();
 
-  // create a regular http server and proxy its handler
+  //
+  // Create a regular http server and proxy its handler
+  //
   http.createServer(function (req, res) {
-    // Create a new instance of HttProxy for this request
-    // each instance is only valid for serving one request
-    var proxy = new httpProxy.HttpProxy(req, res);
-    
+    //
     // Put your custom server logic here, then proxy
-    proxy.proxyRequest(9000, 'localhost', req, res);
+    //
+    proxy.proxyRequest(req, res, 9000, 'localhost');
   }).listen(8001);
 
   http.createServer(function (req, res) {

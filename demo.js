@@ -59,9 +59,9 @@ util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + 
 // Http Proxy Server with Latency
 //
 httpProxy.createServer(function (req, res, proxy) {
-  var paused = proxy.pause(req);
+  var buffer = proxy.buffer(req);
   setTimeout(function() {
-    proxy.proxyRequest(req, res, 9000, 'localhost', paused);
+    proxy.proxyRequest(req, res, 9000, 'localhost', buffer);
   }, 200)
 }).listen(8002);
 util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with latency'.magenta.underline);
@@ -82,9 +82,9 @@ util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + 
 //
 var standAloneProxy = new httpProxy.HttpProxy();
 http.createServer(function (req, res) {
-  var paused = standAloneProxy.pause(req);
+  var buffer = standAloneProxy.buffer(req);
   setTimeout(function() {
-    proxy.proxyRequest(req, res, 9000, 'localhost', paused);
+    proxy.proxyRequest(req, res, 9000, 'localhost', buffer);
   }, 200);
 }).listen(8004);
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8004 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);

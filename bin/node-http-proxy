@@ -9,7 +9,7 @@ var path = require('path'),
 var help = [
     "usage: node-http-proxy [options] ",
     "",
-    "All options should be set with the syntax --option=value",
+    "Starts a node-http-proxy server using the specified command-line options",
     "",
     "options:",
     "  --port   PORT       Port that the proxy server should run on",
@@ -20,8 +20,7 @@ var help = [
 ].join('\n');
 
 if (argv.h || argv.help || Object.keys(argv).length === 2) {
-  util.puts(help);
-  process.exit(0);
+  return util.puts(help);
 }
 
 var location, config = {},

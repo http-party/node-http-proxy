@@ -100,7 +100,7 @@ TestRunner.prototype.startProxyServer = function (port, targetPort, host, callba
 TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, latency, callback) {
   // Initialize the nodeProxy and start proxying the request
   var that = this, proxyServer = httpProxy.createServer(function (req, res, proxy) {
-    var data = proxy.pause(req);
+    var data = proxy.buffer(req);
     
     setTimeout(function () {
       proxy.proxyRequest(req, res, targetPort, host, data);
@@ -133,9 +133,9 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
   // Initialize the nodeProxy and start proxying the request
   var proxyServer, that = this, proxy = new httpProxy.HttpProxy(options);
   proxyServer = http.createServer(function (req, res) {
-    var paused = proxy.pause(req);
+    var buffer = proxy.buffer(req);
     setTimeout(function () {
-      proxy.proxyRequest(req, res, paused);
+      proxy.proxyRequest(req, res, buffer);
     }, latency);
   });
   
