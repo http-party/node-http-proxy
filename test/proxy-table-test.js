@@ -78,7 +78,6 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
                 data = fs.readFileSync(routeFile),
                 config = JSON.parse(data);
 
-            this.output = 'hello dynamic.com';
             config.router['dynamic.com'] = "127.0.0.1:8103"
             fs.writeFileSync(routeFile, JSON.stringify(config));
             
@@ -91,13 +90,13 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
                 }
               };
 
-              runner.startTargetServer(8103, that.output, function () {
+              runner.startTargetServer(8103, 'hello dynamic.com', function () {
                 request(options, that.callback);
               });
             });
           },
           "should receive 'hello dynamic.com'": function (err, res, body) {
-            assert.equal(body, this.output);
+            assert.equal(body, 'hello dynamic.com');
           }
         }
       }
