@@ -17,7 +17,8 @@
     "colors": ">= 0.3.0",
     "optimist": ">= 0.1.6",
     "request": ">= 1.9.0",
-    "vows": ">= 0.5.8"
+    "vows": ">= 0.5.8",
+    "winston": ">=0.2.5"
   },
   "main": "./lib/node-http-proxy",
   "bin": { "node-http-proxy": "./bin/node-http-proxy" },
