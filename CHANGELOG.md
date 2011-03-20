@@ -1,5 +1,8 @@
 ## ChangeLog for: node-http-proxy
 
+## Version 0.4.1 - 3/20/2011
+- Include missing dependency in package.json                                  (indexzero)
+
 ## Version 0.4.0 - 3/20/2011
 - Update for node.js 0.4.0                                                    (indexzero)
 - Remove pool dependency in favor of http.Agent                               (indexzero)
