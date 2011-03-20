@@ -1,5 +1,15 @@
 ## ChangeLog for: node-http-proxy
 
+## Version 0.4.0 - 3/20/2011
+- Update for node.js 0.4.0                                                    (indexzero)
+- Remove pool dependency in favor of http.Agent                               (indexzero)
+- Store buffered data using `.buffer()` instead of on the HttpProxy instance  (indexzero)
+- Change the ProxyTable to be a lookup table instead of actively proxying     (indexzero)
+- Allow for pure host-only matching in ProxyTable                             (indexzero)
+- Use winston for logging                                                     (indexzero)
+- Improve tests with async setup and more coverage                            (indexzero)
+- Improve code documentation                                                  (indexzero)
+
 ### Version 0.3.1 - 11/22/2010
 - Added node-http-proxy binary script                      (indexzero)
 - Added experimental WebSocket support                     (indutny)
