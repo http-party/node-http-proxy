@@ -4,13 +4,13 @@
   "version": "0.4.1",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [
-    { "name": "Mikeal Rogers", "email": "mikeal.rogers@gmail.com" }, 
+    { "name": "Mikeal Rogers", "email": "mikeal.rogers@gmail.com" },
     { "name": "Marak Squires", "email": "marak.squires@gmail.com" },
     { "name": "Fedor Indutny", "email": "fedor.indutny@gmail.com" }
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/nodejitsu/node-http-proxy.git" 
+    "url": "http://github.com/nodejitsu/node-http-proxy.git"
   },
   "keywords": ["reverse", "proxy", "http"],
   "dependencies": {
@@ -18,7 +18,8 @@
     "optimist": ">= 0.1.6",
     "request": ">= 1.9.0",
     "vows": ">= 0.5.8",
-    "winston": ">= 0.2.5"
+    "winston": ">= 0.2.5",
+    "eyes": ">= 0.1.6"
   },
   "main": "./lib/node-http-proxy",
   "bin": { "node-http-proxy": "./bin/node-http-proxy" },
