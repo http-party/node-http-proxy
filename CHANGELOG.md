@@ -1,5 +1,9 @@
 ## ChangeLog for: node-http-proxy
 
+## Version 0.5.0 - 4/15/2011
+- Remove winston in favor of custom events                 (indexzero)
+
+
 ## Version 0.4.1 - 3/20/2011
 - Include missing dependency in package.json                                  (indexzero)
 
