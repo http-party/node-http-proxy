@@ -26,8 +26,7 @@
 
 <span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;util&#39;</span><span class="p">),</span>
     <span class="nx">events</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">),</span>
-    <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
-    <span class="nx">winston</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;winston&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>function ProxyTable (router, silent)</h3>
+    <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>function ProxyTable (router, silent)</h3>
 
 <h4>@router {Object} Object containing the host based routes</h4>
 
@@ -101,8 +100,6 @@ available to this instance.</p>             </td>             <td class="code"> 
           <span class="nx">host</span> <span class="o">=</span> <span class="nx">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
           <span class="nx">port</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="mi">80</span> <span class="o">:</span> <span class="nx">location</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
       
-      <span class="nx">winston</span><span class="p">.</span><span class="nx">verbose</span><span class="p">(</span><span class="s1">&#39;Proxy Table proxying request to: &#39;</span> <span class="o">+</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">port</span><span class="p">);</span>
-      
       <span class="k">return</span> <span class="p">{</span>
         <span class="nx">port</span><span class="o">:</span> <span class="nx">port</span><span class="p">,</span>
         <span class="nx">host</span><span class="o">:</span> <span class="nx">host</span>
@@ -117,8 +114,6 @@ available to this instance.</p>             </td>             <td class="code"> 
         <span class="kd">var</span> <span class="nx">location</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span>
             <span class="nx">host</span> <span class="o">=</span> <span class="nx">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="nx">port</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="mi">80</span> <span class="o">:</span> <span class="nx">location</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-
-        <span class="nx">winston</span><span class="p">.</span><span class="nx">verbose</span><span class="p">(</span><span class="s1">&#39;Proxy Table proxying request to: &#39;</span> <span class="o">+</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">port</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="p">{</span>
           <span class="nx">port</span><span class="o">:</span> <span class="nx">port</span><span class="p">,</span>
