@@ -2,7 +2,12 @@
 
 ## Version 0.5.0 - 4/15/2011
 - Remove winston in favor of custom events                 (indexzero)
-
+- Add x-forwarded-for Header                               (indexzero)
+- Fix WebSocket support                                    (indexzero)
+- Add tests / examples for WebSocket support               (indexzero)
+- Update .proxyRequest() and .proxyWebSocketRequest() APIs (indexzero)
+- Add HTTPS support                                        (indexzero)
+- Add tests / examples for HTTPS support                   (indexzero)
 
 ## Version 0.4.1 - 3/20/2011
 - Include missing dependency in package.json                                  (indexzero)

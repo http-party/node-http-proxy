@@ -41,6 +41,15 @@ if (argv.config) {
 }
 
 //
+// If `config.https` is set, then load those files into the config options.
+//
+if (options.config) {
+  Object.keys(options.config).forEach(function (key) {
+    options.config[key] = fs.readFileSync(options.config[key], 'utf8');
+  });
+}
+
+//
 // Check to see if we should silence the logs
 //
 config.silent = typeof argv.silent !== 'undefined' ? argv.silent : config.silent;

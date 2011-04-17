@@ -198,7 +198,7 @@ TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort
 //
 TestRunner.prototype.startTargetServer = function (port, output, callback) {
   var that = this, targetServer, handler = function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(output);
   	res.end();
   };

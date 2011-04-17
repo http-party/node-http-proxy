@@ -28,7 +28,17 @@ var util = require('util'),
     colors = require('colors')
     http = require('http'),
     httpProxy = require('./../lib/node-http-proxy');
-    
+
+// ascii art from http://github.com/marak/asciimo
+var welcome = '\
+#    # ##### ##### #####        #####  #####   ####  #    # #   # \n\
+#    #   #     #   #    #       #    # #    # #    #  #  #   # #  \n\
+######   #     #   #    # ##### #    # #    # #    #   ##     #   \n\
+#    #   #     #   #####        #####  #####  #    #   ##     #   \n\
+#    #   #     #   #            #      #   #  #    #  #  #    #   \n\
+#    #   #     #   #            #      #    #  ####  #    #   #   \n';
+util.puts(welcome.rainbow.bold);
+
 //
 // Basic Http Proxy Server
 //
@@ -38,7 +48,7 @@ httpProxy.createServer(9000, 'localhost').listen(8000);
 // Target Http Server
 //
 http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);

@@ -43,7 +43,7 @@ httpProxy.createServer(9000, 'localhost', {
 // Target Http Server
 //
 http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);
@@ -53,7 +53,7 @@ http.createServer(function (req, res) {
 //
 http.createServer(function (req, res) {
   util.puts('Receiving forward for: ' + req.url)
-  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully forwarded to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9001);
