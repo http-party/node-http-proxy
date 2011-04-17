@@ -26,7 +26,7 @@
 
 var sys = require('sys'),
     http = require('http'),
-    websocket = require('./websocket'),
+    websocket = require('./../vendor/websocket'),
     utils = require('socket.io/lib/socket.io/utils'),
     io = require('socket.io'),
     httpProxy = require('./../lib/node-http-proxy');

@@ -90,7 +90,7 @@ TestRunner.prototype.startProxyServer = function (port, targetPort, host, callba
   
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
-    callback();
+    callback(null, proxyServer);
   });  
 };
 
@@ -160,7 +160,7 @@ TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort
   var that = this, proxyServer = httpProxy.createServer(targetPort, host, options); 
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
-    callback();
+    callback(null, proxyServer);
   });
 };
 
@@ -176,7 +176,7 @@ TestRunner.prototype.startTargetServer = function (port, output, callback) {
   
   targetServer.listen(port, function () {
     that.testServers.push(targetServer);
-    callback();
+    callback(null, targetServer);
   });
 };
 

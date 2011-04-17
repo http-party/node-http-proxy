@@ -81,32 +81,6 @@ vows.describe('node-http-proxy').addBatch({
     }
   }
 }).addBatch({
-  "When using server created by httpProxy.createServer()": {
-    "an incoming WebSocket request to the helloNode server": {
-      "with no latency" : {
-        // Remark: This test is not working
-        /*topic: function () {
-          runner.startProxyServer(8086, 8087, 'localhost'),
-          runner.startTargetServer(8087, 'hello world');
-          var options = {
-            method: 'GET', 
-            uri: 'http://localhost:8086',
-            headers: {
-              'Upgrade': 'WebSocket', 
-              'Connection': 'WebSocket',
-              'Host': 'localhost'
-            }
-          };
-          
-          request(options, this.callback);
-        },
-        "should receive 'hello world'": function (err, res, body) {
-          assert.equal(body, 'hello world');
-        }*/
-      }
-    }
-  }
-}).addBatch({
   "When the tests are over": {
     topic: function () {
       return runner.closeServers();
