@@ -296,7 +296,13 @@ Websockets are handled automatically when using the `httpProxy.createServer()`, 
 <br/>
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
-If you have a suggestion for a feature currently not supported, feel free to open a [support issue](http://github.com/nodejitsu/node-http-proxy/issues). node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
+If you have a suggestion for a feature currently not supported, feel free to open a [support issue][6]. node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
+
+## Run Tests
+<pre>
+  vows test/*-test.js --spec
+  vows test/*-test.js --spec --https
+</pre>
 
 <br/>
 ### License
@@ -330,3 +336,4 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [3]: https://github.com/nodejitsu/node-http-proxy/tree/v0.5.0/examples
 [4]: http://www.ietf.org/rfc/rfc2616.txt
 [5]: http://socket.io
+[6]: http://github.com/nodejitsu/node-http-proxy/issues
