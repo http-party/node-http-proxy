@@ -36,7 +36,11 @@ var proxy = new httpProxy.HttpProxy();
 http.createServer(function (req, res) {
   var buffer = proxy.buffer(req);
   setTimeout(function() {
-    proxy.proxyRequest(req, res, 9000, 'localhost', buffer);
+    proxy.proxyRequest(req, res, {
+      port: 9000, 
+      host: 'localhost', 
+      buffer: buffer
+    });
   }, 200);
 }).listen(8004);
 
