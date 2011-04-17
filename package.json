@@ -1,7 +1,7 @@
 {
   "name": "http-proxy",
   "description": "A full-featured http reverse proxy for node.js",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [
     { "name": "Mikeal Rogers", "email": "mikeal.rogers@gmail.com" }, 
@@ -15,12 +15,12 @@
   "keywords": ["reverse", "proxy", "http"],
   "dependencies": {
     "colors": ">= 0.3.0",
-    "optimist": ">= 0.1.6",
+    "optimist": ">= 0.1.9",
     "request": ">= 1.9.0",
     "vows": ">= 0.5.8"
   },
   "main": "./lib/node-http-proxy",
   "bin": { "node-http-proxy": "./bin/node-http-proxy" },
   "scripts": { "test": "vows test/*-test.js --spec" },
-  "engines": { "node": ">= 0.4.3" }
+  "engines": { "node": ">= 0.4.6" }
 }
