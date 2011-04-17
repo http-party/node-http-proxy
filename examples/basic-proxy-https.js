@@ -1,5 +1,5 @@
 /*
-  standalone-proxy.js: Example of proxying over HTTP inside of a standalone HTTP server.
+  basic-proxy-https.js: Basic example of proxying over HTTPS
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
@@ -24,34 +24,30 @@
 
 */
 
-var util = require('util'),
-    colors = require('colors')
+var https = require('https'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    util = require('util'),
+    colors = require('colors'),
+    httpProxy = require('./../lib/node-http-proxy'),
+    helpers = require('./../test/helpers');
     
-//
-// Http Server with proxyRequest Handler and Latency
-//
-var proxy = new httpProxy.HttpProxy();
-http.createServer(function (req, res) {
-  var buffer = proxy.buffer(req);
-  setTimeout(function() {
-    proxy.proxyRequest(req, res, {
-      port: 9000, 
-      host: 'localhost', 
-      buffer: buffer
-    });
-  }, 200);
-}).listen(8004);
+var opts = helpers.loadHttps();
 
 //
-// Target Http Server
+// Crete the target HTTPS server 
 //
-http.createServer(function (req, res) {
+https.createServer(opts, function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
-}).listen(9000);
+  res.write('hello https\n');
+	res.end();
+}).listen(8000);
 
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8004 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+//
+// Create the proxy server listening on port 443.
+//
+httpProxy.createServer(443, 'localhost', {
+  https: opts,
+}).listen(8080);
+
+util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
+util.puts('https server '.blue + 'started '.green.bold + 'on port '.blue + '8080 '.yellow);

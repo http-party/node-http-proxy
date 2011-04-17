@@ -1,5 +1,5 @@
 /*
-  demo.js: http proxy for node.js
+  basic-proxy.js: Basic example of proxying over HTTP
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 

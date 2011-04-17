@@ -1,5 +1,5 @@
 /*
-  demo.js: http proxy for node.js
+  forward-proxy.js: Example of proxying over HTTP with additional forward proxy
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 

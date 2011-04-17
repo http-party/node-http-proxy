@@ -1,5 +1,5 @@
 /*
-  demo.js: http proxy for node.js
+  proxy-table.js: Example of proxying over HTTP with proxy table
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 

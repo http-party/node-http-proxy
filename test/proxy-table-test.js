@@ -12,12 +12,12 @@ var fs = require('fs'),
     request = require('request'),
     assert = require('assert'),
     helpers = require('./helpers'),
+    argv = require('optimist').argv,
     TestRunner = helpers.TestRunner;
-    
-var runner = new TestRunner(),
-    routeFile = path.join(__dirname, 'config.json'),
-    assertProxiedWithTarget = helpers.assertProxiedWithTarget,
-    assertProxiedWithNoTarget = helpers.assertProxiedWithNoTarget;
+  
+var protocol = argv.https ? 'https' : 'http',
+    runner = new TestRunner(protocol),
+    routeFile = path.join(__dirname, 'config.json');
 
 var fileOptions = {
   router: {
@@ -38,27 +38,27 @@ var hostnameOptions = {
   router: {
     "foo.com": "127.0.0.1:8091",
     "bar.com": "127.0.0.1:8092"
-  },
-}
+  }
+};
 
-vows.describe('node-http-proxy/proxy-table').addBatch({
+vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
       "and routing by RegExp": {
         topic: function () {
           this.server = runner.startProxyServerWithTable(8090, defaultOptions, this.callback);
         },
-        "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8090, 8091),
-        "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8090, 8092),
-        "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8090, 404)
+        "an incoming request to foo.com": runner.assertProxied('foo.com', 8090, 8091),
+        "an incoming request to bar.com": runner.assertProxied('bar.com', 8090, 8092),
+        "an incoming request to unknown.com": runner.assertResponseCode(8090, 404)
       },
       "and routing by Hostname": {
         topic: function () {
           this.server = runner.startProxyServerWithTable(8093, hostnameOptions, this.callback);
         },
-        "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8093, 8094),
-        "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8093, 8095),
-        "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8093, 404)
+        "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8094),
+        "an incoming request to bar.com": runner.assertProxied('bar.com', 8093, 8095),
+        "an incoming request to unknown.com": runner.assertResponseCode(8093, 404)
       }
     },
     "when passed a routing file": {
@@ -68,9 +68,9 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
           router: routeFile
         }, this.callback);
       },
-      "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8100, 8101),
-      "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8100, 8102),
-      "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8100, 404),
+      "an incoming request to foo.com": runner.assertProxied('foo.com', 8100, 8101),
+      "an incoming request to bar.com": runner.assertProxied('bar.com', 8100, 8102),
+      "an incoming request to unknown.com": runner.assertResponseCode(8100, 404),
       "an incoming request to dynamic.com": {
         "after the file has been modified": {
           topic: function () {
@@ -112,9 +112,9 @@ vows.describe('node-http-proxy/proxy-table').addBatch({
         }
       }, this.callback);
     },
-    "an incoming request to foo.com": assertProxiedWithTarget(runner, 'foo.com', 8110, 8111),
-    "an incoming request to bar.com": assertProxiedWithTarget(runner, 'bar.com', 8110, 8112),
-    "an incoming request to unknown.com": assertProxiedWithNoTarget(runner, 8110, 404)
+    "an incoming request to foo.com": runner.assertProxied('foo.com', 8110, 8111),
+    "an incoming request to bar.com": runner.assertProxied('bar.com', 8110, 8112),
+    "an incoming request to unknown.com": runner.assertResponseCode(8110, 404)
   }
 }).addBatch({
   "When the tests are over": {
