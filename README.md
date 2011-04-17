@@ -226,7 +226,7 @@ You have all the full flexibility of node-http-proxy offers in HTTPS as well as 
 <pre>
   var fs = require('fs'),
       https = require('https'),
-      httpProxy = require('httpProxy');
+      httpProxy = require('http-proxy');
       
   var options = {
     https: {
@@ -265,7 +265,7 @@ You have all the full flexibility of node-http-proxy offers in HTTPS as well as 
 Websockets are handled automatically when using the `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
 <pre>
   var http = require('http'),
-      httpProxy = require('httpProxy');
+      httpProxy = require('http-proxy');
       
   //
   // Create an instance of node-http-proxy

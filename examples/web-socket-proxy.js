@@ -26,10 +26,19 @@
 
 var sys = require('sys'),
     http = require('http'),
+    colors = require('colors'),
     websocket = require('./../vendor/websocket'),
-    utils = require('socket.io/lib/socket.io/utils'),
-    io = require('socket.io'),
     httpProxy = require('./../lib/node-http-proxy');
+
+try {
+  var utils = require('socket.io/lib/socket.io/utils'),
+      io = require('socket.io');  
+}
+catch (ex) {
+  console.error('Socket.io is required for this example:');
+  console.error('npm ' + 'install'.green + ' socket.io'.magenta);
+  process.exit(1);
+}
 
 //
 // Create the target HTTP server

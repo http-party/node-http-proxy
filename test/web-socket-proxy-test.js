@@ -26,12 +26,21 @@
  
 var vows = require('vows'),
     util = require('util'),
+    colors = require('colors'),
     request = require('request'),
     assert = require('assert'),
-    io = require('socket.io'),
-    utils = require('socket.io/lib/socket.io/utils'),
     websocket = require('./../vendor/websocket'),
     helpers = require('./helpers');
+
+try {
+  var utils = require('socket.io/lib/socket.io/utils'),
+      io = require('socket.io');  
+}
+catch (ex) {
+  console.error('Socket.io is required for this test:');
+  console.error('npm ' + 'install'.green + ' socket.io'.magenta);
+  process.exit(1);
+}
 
 var runner = new helpers.TestRunner();
 
