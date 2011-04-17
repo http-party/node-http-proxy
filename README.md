@@ -1,6 +1,6 @@
 # node-http-proxy - v0.5.0
 
-<img src="http://i.imgur.com/9BrV7.png" />
+<img src="http://i.imgur.com/8fTt9.png" />
 
 ## Battle-hardened node.js http proxy
 
