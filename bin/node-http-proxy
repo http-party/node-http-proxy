@@ -43,9 +43,9 @@ if (argv.config) {
 //
 // If `config.https` is set, then load those files into the config options.
 //
-if (options.config) {
-  Object.keys(options.config).forEach(function (key) {
-    options.config[key] = fs.readFileSync(options.config[key], 'utf8');
+if (config.https) {
+  Object.keys(config.https).forEach(function (key) {
+    config.https[key] = fs.readFileSync(config.https[key], 'utf8');
   });
 }
 
