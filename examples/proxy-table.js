@@ -25,10 +25,10 @@
 */
 
 var util = require('util'),
-    colors = require('colors')
+    colors = require('colors'),
     http = require('http'),
     httpProxy = require('./../lib/node-http-proxy');
-    
+
 //
 // Http Proxy Server with Proxy Table
 //
@@ -47,5 +47,5 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9000);
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with proxy table'.magenta.underline)
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8001 '.yellow + 'with proxy table'.magenta.underline);
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);

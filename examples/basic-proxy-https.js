@@ -46,7 +46,7 @@ https.createServer(opts, function (req, res) {
 // Create the proxy server listening on port 443.
 //
 httpProxy.createServer(443, 'localhost', {
-  https: opts,
+  https: opts
 }).listen(8080);
 
 util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);

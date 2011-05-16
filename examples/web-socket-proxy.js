@@ -32,7 +32,7 @@ var sys = require('sys'),
 
 try {
   var utils = require('socket.io/lib/socket.io/utils'),
-      io = require('socket.io');  
+      io = require('socket.io');
 }
 catch (ex) {
   console.error('Socket.io is required for this example:');
@@ -55,11 +55,11 @@ server.listen(8080);
 var socket = io.listen(server);
 socket.on('connection', function (client) {
   sys.debug('Got websocket connection');
-  
+
   client.on('message', function (msg) {
     sys.debug('Got message from client: ' + msg);
   });
-  
+
   socket.broadcast('from server');
 });
 

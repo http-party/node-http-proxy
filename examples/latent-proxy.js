@@ -25,10 +25,10 @@
 */
 
 var util = require('util'),
-    colors = require('colors')
+    colors = require('colors'),
     http = require('http'),
     httpProxy = require('./../lib/node-http-proxy');
-    
+
 //
 // Http Proxy Server with Latency
 //
@@ -36,11 +36,11 @@ httpProxy.createServer(function (req, res, proxy) {
   var buffer = proxy.buffer(req);
   setTimeout(function() {
     proxy.proxyRequest(req, res, {
-      port: 9000, 
-      host: 'localhost', 
+      port: 9000,
+      host: 'localhost',
       buffer: buffer
     });
-  }, 200)
+  }, 200);
 }).listen(8002);
 
 //
