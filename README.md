@@ -23,12 +23,12 @@
 Let's suppose you were running multiple http application servers, but you only wanted to expose one machine to the internet. You could setup node-http-proxy on that one machine and then reverse-proxy the incoming http requests to locally running services which were not exposed to the outside network. 
 
 ### Installing npm (node package manager)
-``` js
+```
 curl http://npmjs.org/install.sh | sh
 ```
 
 ### Installing node-http-proxy
-``` js
+```
 npm install http-proxy
 ```
 
@@ -299,7 +299,7 @@ server.on('upgrade', function(req, socket, head) {
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue][6]. node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
 ## Run Tests
-``` js
+```
 vows test/*-test.js --spec
 vows test/*-test.js --spec --https
 ```
