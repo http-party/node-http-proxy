@@ -182,7 +182,7 @@ As mentioned in the previous section, all routes passes to the ProxyTable are by
 
 <pre>
   var options = {
-    hostnameOnly, true,
+    hostnameOnly: true,
     router: {
       'foo.com': '127.0.0.1:8001',
       'bar.com': '127.0.0.1:8002'
