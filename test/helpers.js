@@ -37,7 +37,7 @@ var TestRunner = exports.TestRunner = function (protocol) {
   this.options     = {};
   this.protocol    = protocol;
   this.testServers = [];
-  
+
   if (protocol === 'https') {
     this.options.https = loadHttps();
   }
@@ -47,17 +47,17 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
   var self = this,
       assertion = "should receive 'hello " + host + "'",
       output = 'hello ' + host;
-  
+
   var test = {
     topic: function () {
       var that = this, options = {
-        method: 'GET', 
+        method: 'GET',
         uri: self.protocol + '://localhost:' + proxyPort,
         headers: {
           host: host
         }
       };
-      
+
       function startTest () {
         if (port) {
           return self.startTargetServer(port, output, function () {
@@ -67,47 +67,48 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
 
         request(options, this.callback);
       }
-      
+
       return createProxy ? createProxy(startTest) : startTest();
     }
   };
-  
-  test[assertion] = function (err, res, body) {;
+
+  test[assertion] = function (err, res, body) {
     assert.isNull(err);
     assert.equal(body, output);
   };
-  
+
   return test;
 };
 
 TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, createProxy) {
-  var assertion = "should receive " + statusCode + " responseCode";
-  
+  var assertion = "should receive " + statusCode + " responseCode",
+      protocol = this.protocol;
+
   var test = {
     topic: function () {
       var that = this, options = {
-        method: 'GET', 
-        uri: 'http://localhost:' + proxyPort,
+        method: 'GET',
+        uri: protocol + '://localhost:' + proxyPort,
         headers: {
           host: 'unknown.com'
         }
       };
-      
+
       if (createProxy) {
         return createProxy(function () {
-          request(options, that.callback);          
+          request(options, that.callback);
         });
       }
-      
+
       request(options, this.callback);
     }
   };
-  
+
   test[assertion] = function (err, res, body) {
     assert.isNull(err);
     assert.equal(res.statusCode, statusCode);
   };
-  
+
   return test;
 };
 
@@ -115,26 +116,28 @@ TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, creat
 // Creates the reverse proxy server
 //
 TestRunner.prototype.startProxyServer = function (port, targetPort, host, callback) {
-  var that = this, proxyServer = httpProxy.createServer(targetPort, host); 
-  
+  var that = this,
+      options = that.options,
+      proxyServer = httpProxy.createServer(targetPort, host, options);
+
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
     callback(null, proxyServer);
-  });  
+  });
 };
 
-// 
+//
 // Creates the reverse proxy server with a specified latency
 //
 TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, latency, callback) {
   // Initialize the nodeProxy and start proxying the request
   var that = this, proxyServer = httpProxy.createServer(function (req, res, proxy) {
     var buffer = proxy.buffer(req);
-    
+
     setTimeout(function () {
       proxy.proxyRequest(req, res, {
-        port: targetPort, 
-        host: host, 
+        port: targetPort,
+        host: host,
         buffer: buffer
       });
     }, latency);
@@ -150,12 +153,12 @@ TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, 
 // Creates the reverse proxy server with a ProxyTable
 //
 TestRunner.prototype.startProxyServerWithTable = function (port, options, callback) {
-  var that = this, proxyServer = httpProxy.createServer(merge({}, options, this.options)); 
+  var that = this, proxyServer = httpProxy.createServer(merge({}, options, this.options));
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
     callback();
   });
-  
+
   return proxyServer;
 };
 
@@ -164,21 +167,28 @@ TestRunner.prototype.startProxyServerWithTable = function (port, options, callba
 //
 TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, latency, options, callback) {
   // Initialize the nodeProxy and start proxying the request
-  var proxyServer, that = this, proxy = new httpProxy.HttpProxy(merge({}, options, this.options));
-  proxyServer = http.createServer(function (req, res) {
+  var proxyServer,
+      that = this,
+      proxy = new httpProxy.HttpProxy(merge({}, options, that.options));
+
+  var handler = function (req, res) {
     var buffer = proxy.buffer(req);
     setTimeout(function () {
       proxy.proxyRequest(req, res, {
         buffer: buffer
       });
     }, latency);
-  }, this.options);
-  
+  };
+
+  proxyServer = that.options.https
+                ? https.createServer(that.options.https, handler, that.options)
+                : http.createServer(handler, that.options);
+
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
     callback();
   });
-  
+
   return proxyServer;
 };
 
@@ -186,7 +196,7 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
 // Creates proxy server forwarding to the specified options
 //
 TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort, host, options, callback) {
-  var that = this, proxyServer = httpProxy.createServer(targetPort, host, merge({}, options, this.options)); 
+  var that = this, proxyServer = httpProxy.createServer(targetPort, host, merge({}, options, this.options));
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
     callback(null, proxyServer);
@@ -200,13 +210,13 @@ TestRunner.prototype.startTargetServer = function (port, output, callback) {
   var that = this, targetServer, handler = function (req, res) {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(output);
-  	res.end();
+    res.end();
   };
-  
-  targetServer = this.options.https 
+
+  targetServer = this.options.https
     ? https.createServer(this.options.https, handler)
     : http.createServer(handler);
-  
+
   targetServer.listen(port, function () {
     that.testServers.push(targetServer);
     callback(null, targetServer);

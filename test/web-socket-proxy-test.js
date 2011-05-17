@@ -23,7 +23,7 @@
   WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
- 
+
 var vows = require('vows'),
     util = require('util'),
     colors = require('colors'),
@@ -34,7 +34,7 @@ var vows = require('vows'),
 
 try {
   var utils = require('socket.io/lib/socket.io/utils'),
-      io = require('socket.io');  
+      io = require('socket.io');
 }
 catch (ex) {
   console.error('Socket.io is required for this test:');
@@ -50,16 +50,16 @@ vows.describe('node-http-proxy/websocket').addBatch({
       "when an inbound message is sent from a WebSocket client": {
         topic: function () {
           var that = this;
-          
+
           runner.startTargetServer(8130, 'hello websocket', function (err, target) {
             var socket = io.listen(target);
-            
+
             socket.on('connection', function (client) {
               client.on('message', function (msg) {
                 that.callback(null, msg);
               });
             });
-            
+
             runner.startProxyServer(8131, 8130, 'localhost', function (err, proxy) {
               //
               // Setup the web socket against our proxy
@@ -70,23 +70,23 @@ vows.describe('node-http-proxy/websocket').addBatch({
                 ws.send(utils.encode('from client'));
               });
             });
-          })
+          });
         },
         "the target server should receive the message": function (err, msg) {
           assert.equal(msg, 'from client');
-        } 
+        }
       },
       "when an outbound message is sent from the target server": {
         topic: function () {
           var that = this;
-          
+
           runner.startTargetServer(8132, 'hello websocket', function (err, target) {
             var socket = io.listen(target);
-            
+
             socket.on('connection', function (client) {
               socket.broadcast('from server');
             });
-            
+
             runner.startProxyServer(8133, 8132, 'localhost', function (err, proxy) {
               //
               // Setup the web socket against our proxy
@@ -100,11 +100,11 @@ vows.describe('node-http-proxy/websocket').addBatch({
                 }
               });
             });
-          })
+          });
         },
         "the client should receive the message": function (err, msg) {
           assert.equal(msg, 'from server');
-        } 
+        }
       }
     }
   }
