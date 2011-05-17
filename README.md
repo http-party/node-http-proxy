@@ -23,11 +23,13 @@
 Let's suppose you were running multiple http application servers, but you only wanted to expose one machine to the internet. You could setup node-http-proxy on that one machine and then reverse-proxy the incoming http requests to locally running services which were not exposed to the outside network. 
 
 ### Installing npm (node package manager)
+
 ```
 curl http://npmjs.org/install.sh | sh
 ```
 
 ### Installing node-http-proxy
+
 ```
 npm install http-proxy
 ```
@@ -51,6 +53,7 @@ In each of these scenarios node-http-proxy can handle any of these types of requ
 See the [examples][3] for more working sample code.
 
 ### Setup a basic stand-alone proxy server
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
@@ -70,6 +73,7 @@ http.createServer(function (req, res) {
 ```
 
 ### Setup a stand-alone proxy server with custom server logic
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
@@ -95,6 +99,7 @@ http.createServer(function (req, res) {
 ```
 
 ### Setup a stand-alone proxy server with latency (e.g. IO, etc)
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
@@ -130,6 +135,7 @@ http.createServer(function (req, res) {
 ```
 
 ### Proxy requests within another http server
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
@@ -161,6 +167,7 @@ http.createServer(function (req, res) {
 
 ### Proxy requests using a ProxyTable
 A Proxy Table is a simple lookup table that maps incoming requests to proxy target locations. Take a look at an example of the options you need to pass to httpProxy.createServer:
+
 ``` js
 var options = {
   router: {
@@ -172,6 +179,7 @@ var options = {
 ```
 
 The above route table will take incoming requests to 'foo.com/baz' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'foo.com/buz' and forward them to '127.0.0.1:8002'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
+
 ``` js
 var proxyServer = httpProxy.createServer(options);
 proxyServer.listen(80);
@@ -194,6 +202,7 @@ Notice here that I have not included paths on the individual domains because thi
 
 ### Proxy requests with an additional forward proxy
 Sometimes in addition to a reverse proxy, you may want your front-facing server to forward traffic to another location. For example, if you wanted to load test your staging environment. This is possible when using node-http-proxy using similar JSON-based configuration to a proxy table: 
+
 ``` js
 var proxyServerWithForwarding = httpProxy.createServer(9000, 'localhost', {
   forward: {
@@ -208,6 +217,7 @@ The forwarding option can be used in conjunction with the proxy table options by
 
 ### Using node-http-proxy from the command line
 When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
+
 ``` js
 usage: node-http-proxy [options] 
 
@@ -223,6 +233,7 @@ options:
 
 ### Proxying over HTTPS
 You have all the full flexibility of node-http-proxy offers in HTTPS as well as HTTP. The two basic scenarios are: with a stand-alone proxy server or in conjunction with another HTTPS server.
+
 ``` js
 var fs = require('fs'),
     https = require('https'),
@@ -263,6 +274,7 @@ https.createServer(options.https, function (req, res) {
 
 ### Proxying WebSockets
 Websockets are handled automatically when using the `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
@@ -299,6 +311,7 @@ server.on('upgrade', function(req, socket, head) {
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue][6]. node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
 ## Run Tests
+
 ```
 vows test/*-test.js --spec
 vows test/*-test.js --spec --https
