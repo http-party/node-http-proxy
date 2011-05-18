@@ -1,4 +1,4 @@
-# node-http-proxy - v0.5.0
+# node-http-proxy - v0.5.3
 
 <img src="http://i.imgur.com/8fTt9.png" />
 
@@ -49,6 +49,7 @@ In each of these scenarios node-http-proxy can handle any of these types of requ
 1. HTTP Requests (http://)
 2. HTTPS Requests (https://)
 3. WebSocket Requests (ws://)
+4. Secure WebSocket Requests (wss://)
 
 See the [examples][3] for more working sample code.
 
