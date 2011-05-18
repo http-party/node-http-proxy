@@ -29,6 +29,7 @@ var vows = require('vows'),
     colors = require('colors'),
     request = require('request'),
     assert = require('assert'),
+    argv = require('optimist').argv,
     websocket = require('./../vendor/websocket'),
     helpers = require('./helpers');
 
@@ -42,8 +43,11 @@ catch (ex) {
   process.exit(1);
 }
 
-var runner = new helpers.TestRunner();
+var protocol = argv.https ? 'https' : 'http',
+    wsprotocol = argv.https ? 'wss' : 'ws',
+    runner = new helpers.TestRunner(protocol);
 
+require('eyes').inspect(protocol);
 vows.describe('node-http-proxy/websocket').addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
@@ -65,8 +69,8 @@ vows.describe('node-http-proxy/websocket').addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket('ws://localhost:8131/socket.io/websocket/', 'borf', {
-                origin: 'http://localhost'
+              var ws = new websocket.WebSocket(wsprotocol + '://localhost:8131/socket.io/websocket/', 'borf', {
+                origin: 'https://localhost'
               });
               
               ws.on('wsupgrade', function (req, res) {
@@ -101,8 +105,8 @@ vows.describe('node-http-proxy/websocket').addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket('ws://localhost:8133/socket.io/websocket/', 'borf', {
-                origin: 'http://localhost'
+              var ws = new websocket.WebSocket(wsprotocol + '://localhost:8133/socket.io/websocket/', 'borf', {
+                origin: 'https://localhost'
               });
               
               ws.on('wsupgrade', function (req, res) {

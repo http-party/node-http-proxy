@@ -35,6 +35,7 @@ var buffer = require('buffer');
 var crypto = require('crypto');
 var events = require('events');
 var http = require('http');
+var https = require('https');
 var net = require('net');
 var urllib = require('url');
 var sys = require('sys');
@@ -176,16 +177,6 @@ var str2hex = function(str) {
     }
 
     return out.trim();
-};
-
-// Get the scheme for a URL, undefined if none is found
-var getUrlScheme = function(url) {
-    var i = url.indexOf(':');
-    if (i == -1) {
-        return undefined;
-    }
-
-    return url.substring(0, i);
 };
 
 // Set a constant on the given object
@@ -501,125 +492,140 @@ var WebSocket = function(url, proto, opts) {
         //      that http.Client passes its constructor arguments through,
         //      un-inspected to net.Stream.connect(). The latter accepts a
         //      string as its first argument to connect to a UNIX socket.
-        var httpClient = undefined;
-        switch (getUrlScheme(url)) {
-        case 'ws':
-            var u = urllib.parse(url);
-            httpClient = http.createClient(u.port || 80, u.hostname);
+        var protocol, agent, port, u = urllib.parse(url);
+        if (u.protocol === 'ws:' || u.protocol === 'wss:') {
+          require('eyes').inspect(u);
+            protocol = u.protocol === 'ws:' ? http : https;
+            port = u.protocol === 'ws:' ? 80 : 443;
+            agent = u.protocol === 'ws:' ? protocol.getAgent(u.hostname, u.port || port) : protocol.getAgent({
+              host: u.hostname,
+              port: u.port || port
+            });
+
             httpPath = (u.pathname || '/') + (u.search || '');
             httpHeaders.Host = u.hostname + (u.port ? (":" + u.port) : "");
-            break;
-
-        case 'ws+unix':
-            var sockPath = url.substring('ws+unix://'.length, url.length);
-            httpClient = http.createClient(sockPath);
-            httpHeaders.Host = 'localhost';
-            break;
-
-        default:
+        }
+        else if (urlScheme === 'ws+unix') {
+            throw new Error('ws+unix is not implemented');
+            // var sockPath = url.substring('ws+unix://'.length, url.length);
+            // httpClient = http.createClient(sockPath);
+            // httpHeaders.Host = 'localhost';
+        }
+        else {
             throw new Error('Invalid URL scheme \'' + urlScheme + '\' specified.');
         }
+        
+        if (!agent._events || agent._events['upgrade'].length === 0) {
+            agent.on('upgrade', (function() {
+                var data = undefined;
 
-        httpClient.on('upgrade', (function() {
-            var data = undefined;
+                return function(res, s, head) {
+                    stream = s;
 
-            return function(res, s, head) {
-                stream = s;
-
-                //
-                // Emit the `wsupgrade` event to inspect the raw
-                // arguments returned from the websocket request.
-                //
-                self.emit('wsupgrade', httpHeaders, res, s, head);
+                    //
+                    // Emit the `wsupgrade` event to inspect the raw
+                    // arguments returned from the websocket request.
+                    //
+                    self.emit('wsupgrade', httpHeaders, res, s, head);
                 
-                stream.on('data', function(d) {
-                    if (d.length <= 0) {
-                        return;
-                    }
+                    stream.on('data', function(d) {
+                        if (d.length <= 0) {
+                            return;
+                        }
                     
-                    if (!data) {
-                        data = d;
-                    } else {
-                        var data2 = new buffer.Buffer(data.length + d.length);
+                        if (!data) {
+                            data = d;
+                        } else {
+                            var data2 = new buffer.Buffer(data.length + d.length);
 
-                        data.copy(data2, 0, 0, data.length);
-                        d.copy(data2, data.length, 0, d.length);
+                            data.copy(data2, 0, 0, data.length);
+                            d.copy(data2, data.length, 0, d.length);
 
-                        data = data2;
-                    }
+                            data = data2;
+                        }
 
-                    if (data.length >= 16) {
-                        var expected = computeSecretKeySignature(key1, key2, challenge);
-                        var actual = data.slice(0, 16).toString('binary');
+                        if (data.length >= 16) {
+                            var expected = computeSecretKeySignature(key1, key2, challenge);
+                            var actual = data.slice(0, 16).toString('binary');
 
-                        // Handshaking fails; we're donezo
-                        if (actual != expected) {
-                            debug(
-                                'expected=\'' + str2hex(expected) + '\'; ' +
-                                'actual=\'' + str2hex(actual) + '\''
-                            );
-
-                            process.nextTick(function() {
-                                // N.B. Emit 'wserror' here, as 'error' is a reserved word in the
-                                //      EventEmitter world, and gets thrown.
-                                self.emit(
-                                    'wserror',
-                                    new Error('Invalid handshake from server:' +
-                                        'expected \'' + str2hex(expected) + '\', ' +
-                                        'actual \'' + str2hex(actual) + '\''
-                                    )
+                            // Handshaking fails; we're donezo
+                            if (actual != expected) {
+                                debug(
+                                    'expected=\'' + str2hex(expected) + '\'; ' +
+                                    'actual=\'' + str2hex(actual) + '\''
                                 );
 
-                                if (self.onerror) {
-                                    self.onerror();
-                                }
+                                process.nextTick(function() {
+                                    // N.B. Emit 'wserror' here, as 'error' is a reserved word in the
+                                    //      EventEmitter world, and gets thrown.
+                                    self.emit(
+                                        'wserror',
+                                        new Error('Invalid handshake from server:' +
+                                            'expected \'' + str2hex(expected) + '\', ' +
+                                            'actual \'' + str2hex(actual) + '\''
+                                        )
+                                    );
 
-                                finishClose();
-                            });
-                        }
+                                    if (self.onerror) {
+                                        self.onerror();
+                                    }
 
-                        // Un-register our data handler and add the one to be used
-                        // for the normal, non-handshaking case. If we have extra
-                        // data left over, manually fire off the handler on
-                        // whatever remains.
-                        //
-                        // XXX: This is lame. We should only remove the listeners
-                        //      that we added.
-                        httpClient.removeAllListeners('upgrade');
-                        stream.removeAllListeners('data');
-                        stream.on('data', dataListener);
-
-                        readyState = OPEN;
-
-                        process.nextTick(function() {
-                            self.emit('open');
-
-                            if (self.onopen) {
-                                self.onopen();
+                                    finishClose();
+                                });
                             }
-                        });
 
-                        // Consume any leftover data
-                        if (data.length > 16) {
-                            stream.emit('data', data.slice(16, data.length));
+                            //
+                            // Un-register our data handler and add the one to be used
+                            // for the normal, non-handshaking case. If we have extra
+                            // data left over, manually fire off the handler on
+                            // whatever remains.
+                            //
+                            stream.removeAllListeners('data');
+                            stream.on('data', dataListener);
+
+                            readyState = OPEN;
+
+                            process.nextTick(function() {
+                                self.emit('open');
+
+                                if (self.onopen) {
+                                    self.onopen();
+                                }
+                            });
+
+                            // Consume any leftover data
+                            if (data.length > 16) {
+                                stream.emit('data', data.slice(16, data.length));
+                            }
                         }
-                    }
-                });
-                stream.on('fd', fdListener);
-                stream.on('error', errorListener);
-                stream.on('close', function() {
-                    errorListener(new Error('Stream closed unexpectedly.'));
-                });
+                    });
+                    stream.on('fd', fdListener);
+                    stream.on('error', errorListener);
+                    stream.on('close', function() {
+                        errorListener(new Error('Stream closed unexpectedly.'));
+                    });
 
-                stream.emit('data', head);
-            };
-        })());
-        httpClient.on('error', function(e) {
-            httpClient.end();
+                    stream.emit('data', head);
+                };
+            })());
+        }
+        
+        agent.on('error', function (e) {
             errorListener(e);
         });
 
-        var httpReq = httpClient.request(httpPath, httpHeaders);
+        
+        var x = {
+          host: u.hostname,
+          method: 'GET',
+          agent: agent,
+          port: u.port,
+          path: httpPath, 
+          headers: httpHeaders
+        };
+        require('eyes').inspect(x);
+        var httpReq = protocol.request(x);
+        
         httpReq.write(challenge, 'binary');
         httpReq.end();
     })();
