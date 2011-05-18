@@ -23,18 +23,19 @@
   WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
- 
+
 var vows = require('vows'),
     util = require('util'),
     colors = require('colors'),
     request = require('request'),
     assert = require('assert'),
+    argv = require('optimist').argv,
     websocket = require('./../vendor/websocket'),
     helpers = require('./helpers');
 
 try {
   var utils = require('socket.io/lib/socket.io/utils'),
-      io = require('socket.io');  
+      io = require('socket.io');
 }
 catch (ex) {
   console.error('Socket.io is required for this test:');
@@ -42,7 +43,9 @@ catch (ex) {
   process.exit(1);
 }
 
-var runner = new helpers.TestRunner();
+var protocol = argv.https ? 'https' : 'http',
+    wsprotocol = argv.https ? 'wss' : 'ws',
+    runner = new helpers.TestRunner(protocol);
 
 vows.describe('node-http-proxy/websocket').addBatch({
   "When using server created by httpProxy.createServer()": {
@@ -50,61 +53,83 @@ vows.describe('node-http-proxy/websocket').addBatch({
       "when an inbound message is sent from a WebSocket client": {
         topic: function () {
           var that = this;
-          
+
           runner.startTargetServer(8130, 'hello websocket', function (err, target) {
-            var socket = io.listen(target);
-            
+            var socket = io.listen(target),
+                headers = {};
+
             socket.on('connection', function (client) {
               client.on('message', function (msg) {
-                that.callback(null, msg);
+                that.callback(null, msg, headers);
               });
             });
-            
+
             runner.startProxyServer(8131, 8130, 'localhost', function (err, proxy) {
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket('ws://localhost:8131/socket.io/websocket/', 'borf');
+              var ws = new websocket.WebSocket(wsprotocol + '://home.devjitsu.com:8131/socket.io/websocket/', 'borf', {
+                origin: protocol + '://home.devjitsu.com'
+              });
+              
+              ws.on('wsupgrade', function (req, res) {
+                headers.request = req;
+                headers.response = res.headers;
+              });
 
               ws.on('open', function () {
                 ws.send(utils.encode('from client'));
               });
             });
-          })
+          });
         },
-        "the target server should receive the message": function (err, msg) {
+        "the target server should receive the message": function (err, msg, headers) {
           assert.equal(msg, 'from client');
-        } 
+        },
+        "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
+        }
       },
       "when an outbound message is sent from the target server": {
         topic: function () {
           var that = this;
-          
+
           runner.startTargetServer(8132, 'hello websocket', function (err, target) {
-            var socket = io.listen(target);
-            
+            var socket = io.listen(target),
+                headers = {};
+
             socket.on('connection', function (client) {
               socket.broadcast('from server');
             });
-            
+
             runner.startProxyServer(8133, 8132, 'localhost', function (err, proxy) {
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket('ws://localhost:8133/socket.io/websocket/', 'borf');
+              var ws = new websocket.WebSocket(wsprotocol + '://home.devjitsu.com:8133/socket.io/websocket/', 'borf', {
+                origin: protocol + '://home.devjitsu.com'
+              });
+              
+              ws.on('wsupgrade', function (req, res) {
+                headers.request = req;
+                headers.response = res.headers;
+              });
 
               ws.on('message', function (msg) {
                 msg = utils.decode(msg);
                 if (!/\d+/.test(msg)) {
-                  that.callback(null, msg);
+                  that.callback(null, msg, headers);
                 }
               });
             });
-          })
+          });
         },
-        "the client should receive the message": function (err, msg) {
+        "the client should receive the message": function (err, msg, headers) {
           assert.equal(msg, 'from server');
-        } 
+        },
+        "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
+        }
       }
     }
   }

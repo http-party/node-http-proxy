@@ -1,4 +1,4 @@
-# node-http-proxy - v0.5.0
+# node-http-proxy - v0.5.3
 
 <img src="http://i.imgur.com/8fTt9.png" />
 
@@ -23,14 +23,16 @@
 Let's suppose you were running multiple http application servers, but you only wanted to expose one machine to the internet. You could setup node-http-proxy on that one machine and then reverse-proxy the incoming http requests to locally running services which were not exposed to the outside network. 
 
 ### Installing npm (node package manager)
-<pre>
-  curl http://npmjs.org/install.sh | sh
-</pre>
+
+```
+curl http://npmjs.org/install.sh | sh
+```
 
 ### Installing node-http-proxy
-<pre>
-  npm install http-proxy
-</pre>
+
+```
+npm install http-proxy
+```
 
 ## Using node-http-proxy
 
@@ -47,251 +49,262 @@ In each of these scenarios node-http-proxy can handle any of these types of requ
 1. HTTP Requests (http://)
 2. HTTPS Requests (https://)
 3. WebSocket Requests (ws://)
+4. Secure WebSocket Requests (wss://)
 
 See the [examples][3] for more working sample code.
 
 ### Setup a basic stand-alone proxy server
-<pre>
-  var http = require('http'),
-      httpProxy = require('http-proxy');
-  //
-  // Create your proxy server
-  //
-  httpProxy.createServer(9000, 'localhost').listen(8000);
 
-  //
-  // Create your target server
-  //
-  http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
-    res.end();
-  }).listen(9000);
-</pre>
+``` js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+//
+// Create your proxy server
+//
+httpProxy.createServer(9000, 'localhost').listen(8000);
+
+//
+// Create your target server
+//
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9000);
+```
 
 ### Setup a stand-alone proxy server with custom server logic
-<pre>
-  var http = require('http'),
-      httpProxy = require('http-proxy');
-      
-  //
-  // Create a proxy server with custom application logic
-  //
-  httpProxy.createServer(function (req, res, proxy) {
-    //
-    // Put your custom server logic here
-    //
-    proxy.proxyRequest(req, res, {
-      host: 'localhost',
-      port: 9000
-    });
-  }).listen(8000);
 
-  http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
-    res.end();
-  }).listen(9000);
-</pre>
+``` js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+    
+//
+// Create a proxy server with custom application logic
+//
+httpProxy.createServer(function (req, res, proxy) {
+  //
+  // Put your custom server logic here
+  //
+  proxy.proxyRequest(req, res, {
+    host: 'localhost',
+    port: 9000
+  });
+}).listen(8000);
+
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9000);
+```
 
 ### Setup a stand-alone proxy server with latency (e.g. IO, etc)
-<pre>
-  var http = require('http'),
-      httpProxy = require('http-proxy');
+
+``` js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+
+//
+// Create a proxy server with custom application logic
+//
+httpProxy.createServer(function (req, res, proxy) {
+  //
+  // Buffer the request so that `data` and `end` events
+  // are not lost during async operation(s).
+  //
+  var buffer = proxy.buffer(req);
   
   //
-  // Create a proxy server with custom application logic
+  // Wait for two seconds then respond: this simulates
+  // performing async actions before proxying a request
   //
-  httpProxy.createServer(function (req, res, proxy) {
-    //
-    // Buffer the request so that `data` and `end` events
-    // are not lost during async operation(s).
-    //
-    var buffer = proxy.buffer(req);
-    
-    //
-    // Wait for two seconds then respond: this simulates
-    // performing async actions before proxying a request
-    //
-    setTimeout(function () {
-      proxy.proxyRequest(req, res, {
-        host: 'localhost',
-        port: 9000, 
-        buffer: buffer
-      });      
-    }, 2000);
-  }).listen(8000);
-
-  http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
-    res.end();
-  }).listen(9000);
-</pre>
-
-### Proxy requests within another http server
-<pre>
-  var http = require('http'),
-      httpProxy = require('http-proxy');
-      
-  //
-  // Create a new instance of HttProxy to use in your server
-  //
-  var proxy = new httpProxy.HttpProxy();
-
-  //
-  // Create a regular http server and proxy its handler
-  //
-  http.createServer(function (req, res) {
-    //
-    // Put your custom server logic here, then proxy
-    //
+  setTimeout(function () {
     proxy.proxyRequest(req, res, {
       host: 'localhost',
-      port: 9000
-    });
-  }).listen(8001);
+      port: 9000, 
+      buffer: buffer
+    });      
+  }, 2000);
+}).listen(8000);
 
-  http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
-    res.end();
-  }).listen(9000); 
-</pre>
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9000);
+```
+
+### Proxy requests within another http server
+
+``` js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+    
+//
+// Create a new instance of HttProxy to use in your server
+//
+var proxy = new httpProxy.HttpProxy();
+
+//
+// Create a regular http server and proxy its handler
+//
+http.createServer(function (req, res) {
+  //
+  // Put your custom server logic here, then proxy
+  //
+  proxy.proxyRequest(req, res, {
+    host: 'localhost',
+    port: 9000
+  });
+}).listen(8001);
+
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied: ' + req.url +'\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9000); 
+```
 
 ### Proxy requests using a ProxyTable
 A Proxy Table is a simple lookup table that maps incoming requests to proxy target locations. Take a look at an example of the options you need to pass to httpProxy.createServer:
-<pre>
-  var options = {
-    router: {
-      'foo.com/baz': '127.0.0.1:8001',
-      'foo.com/buz': '127.0.0.1:8002',
-      'bar.com/buz': '127.0.0.1:8003'
-    }
-  };
-</pre> 
+
+``` js
+var options = {
+  router: {
+    'foo.com/baz': '127.0.0.1:8001',
+    'foo.com/buz': '127.0.0.1:8002',
+    'bar.com/buz': '127.0.0.1:8003'
+  }
+};
+```
 
 The above route table will take incoming requests to 'foo.com/baz' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'foo.com/buz' and forward them to '127.0.0.1:8002'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
-<pre>
-  var proxyServer = httpProxy.createServer(options);
-  proxyServer.listen(80);
-</pre>
+
+``` js
+var proxyServer = httpProxy.createServer(options);
+proxyServer.listen(80);
+```
 
 ### Proxy requests using a 'Hostname Only' ProxyTable
 As mentioned in the previous section, all routes passes to the ProxyTable are by default converted to regular expressions that are evaluated at proxy-time. This is good for complex URL rewriting of proxy requests, but less efficient when one simply wants to do pure hostname routing based on the HTTP 'Host' header. If you are only concerned with hostname routing, you change the lookup used by the internal ProxyTable:
 
-<pre>
-  var options = {
-    hostnameOnly, true,
-    router: {
-      'foo.com': '127.0.0.1:8001',
-      'bar.com': '127.0.0.1:8002'
-    }
+``` js
+var options = {
+  hostnameOnly: true,
+  router: {
+    'foo.com': '127.0.0.1:8001',
+    'bar.com': '127.0.0.1:8002'
   }
-</pre>
+}
+```
 
 Notice here that I have not included paths on the individual domains because this is not possible when using only the HTTP 'Host' header. Care to learn more? See [RFC2616: HTTP/1.1, Section 14.23, "Host"][4].
 
 ### Proxy requests with an additional forward proxy
 Sometimes in addition to a reverse proxy, you may want your front-facing server to forward traffic to another location. For example, if you wanted to load test your staging environment. This is possible when using node-http-proxy using similar JSON-based configuration to a proxy table: 
-<pre>
-  var proxyServerWithForwarding = httpProxy.createServer(9000, 'localhost', {
-    forward: {
-      port: 9000,
-      host: 'staging.com'
-    }
-  });
-  proxyServerWithForwarding.listen(80);
-</pre> 
+
+``` js
+var proxyServerWithForwarding = httpProxy.createServer(9000, 'localhost', {
+  forward: {
+    port: 9000,
+    host: 'staging.com'
+  }
+});
+proxyServerWithForwarding.listen(80);
+```
 
 The forwarding option can be used in conjunction with the proxy table options by simply including both the 'forward' and 'router' properties in the options passed to 'createServer'.
 
 ### Using node-http-proxy from the command line
 When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
-<pre>
-  usage: node-http-proxy [options] 
 
-  All options should be set with the syntax --option=value
+``` js
+usage: node-http-proxy [options] 
 
-  options:
-    --port   PORT       Port that the proxy server should run on
-    --target HOST:PORT  Location of the server the proxy will target
-    --config OUTFILE    Location of the configuration file for the proxy server
-    --silent            Silence the log output from the proxy server
-    -h, --help          You're staring at it
-</pre>
+All options should be set with the syntax --option=value
+
+options:
+  --port   PORT       Port that the proxy server should run on
+  --target HOST:PORT  Location of the server the proxy will target
+  --config OUTFILE    Location of the configuration file for the proxy server
+  --silent            Silence the log output from the proxy server
+  -h, --help          You're staring at it
+```
 
 ### Proxying over HTTPS
 You have all the full flexibility of node-http-proxy offers in HTTPS as well as HTTP. The two basic scenarios are: with a stand-alone proxy server or in conjunction with another HTTPS server.
-<pre>
-  var fs = require('fs'),
-      https = require('https'),
-      httpProxy = require('http-proxy');
-      
-  var options = {
-    https: {
-      key: fs.readFileSync('path/to/your/key.pem', 'utf8'),
-      cert: fs.readFileSync('path/to/your/cert.pem', 'utf8')
-    }
-  };
-  
-  //
-  // Create a standalone HTTPS proxy server
-  //
-  httpProxy.createServer(8000, 'localhost', options).listen(8001);
-  
-  //
-  // Create an instance of HttpProxy to use with another HTTPS server
-  //
-  var proxy = new httpProxy.HttpProxy({ https: true });
-  https.createServer(options.https, function (req, res) {
-    proxy.proxyRequest(req, res, {
-      host: 'localhost', 
-      port: 8000
-    })
-  }).listen(8002);
-  
-  //
-  // Create the target HTTPS server for both cases
-  //
-  https.createServer(options.https, function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('hello https\n');
-  	res.end();
-  }).listen(8000);
-</pre> 
+
+``` js
+var fs = require('fs'),
+    https = require('https'),
+    httpProxy = require('http-proxy');
+    
+var options = {
+  https: {
+    key: fs.readFileSync('path/to/your/key.pem', 'utf8'),
+    cert: fs.readFileSync('path/to/your/cert.pem', 'utf8')
+  }
+};
+
+//
+// Create a standalone HTTPS proxy server
+//
+httpProxy.createServer(8000, 'localhost', options).listen(8001);
+
+//
+// Create an instance of HttpProxy to use with another HTTPS server
+//
+var proxy = new httpProxy.HttpProxy({ https: true });
+https.createServer(options.https, function (req, res) {
+  proxy.proxyRequest(req, res, {
+    host: 'localhost', 
+    port: 8000
+  })
+}).listen(8002);
+
+//
+// Create the target HTTPS server for both cases
+//
+https.createServer(options.https, function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('hello https\n');
+  res.end();
+}).listen(8000);
+```
 
 ### Proxying WebSockets
 Websockets are handled automatically when using the `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
-<pre>
-  var http = require('http'),
-      httpProxy = require('http-proxy');
-      
+
+``` js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+    
+//
+// Create an instance of node-http-proxy
+//
+var proxy = new httpProxy.HttpProxy();
+
+var server = http.createServer(function (req, res) {
   //
-  // Create an instance of node-http-proxy
+  // Proxy normal HTTP requests
   //
-  var proxy = new httpProxy.HttpProxy();
-  
-  var server = http.createServer(function (req, res) {
-    //
-    // Proxy normal HTTP requests
-    //
-    proxy.proxyRequest(req, res, {
-      host: 'localhost',
-      port: 8000
-    })
+  proxy.proxyRequest(req, res, {
+    host: 'localhost',
+    port: 8000
+  })
+});
+
+server.on('upgrade', function(req, socket, head) {
+  //
+  // Proxy websocket requests too
+  //
+  proxy.proxyWebSocketRequest(req, socket, head, {
+    host: 'localhost',
+    port: 8000
   });
-  
-  server.on('upgrade', function(req, socket, head) {
-    //
-    // Proxy websocket requests too
-    //
-    proxy.proxyWebSocketRequest(req, socket, head, {
-      host: 'localhost',
-      port: 8000
-    });
-  });
-</pre>
+});
+```
 
 <br/>
 ### Why doesn't node-http-proxy have more advanced features like x, y, or z?
@@ -299,10 +312,11 @@ Websockets are handled automatically when using the `httpProxy.createServer()`, 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue][6]. node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
 ## Run Tests
-<pre>
-  vows test/*-test.js --spec
-  vows test/*-test.js --spec --https
-</pre>
+
+```
+vows test/*-test.js --spec
+vows test/*-test.js --spec --https
+```
 
 <br/>
 ### License

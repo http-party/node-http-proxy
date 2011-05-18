@@ -1,1 +1,3 @@
 test/config.json
+node_modules/
+npm-debug.log

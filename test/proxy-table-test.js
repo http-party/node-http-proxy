@@ -14,7 +14,7 @@ var fs = require('fs'),
     helpers = require('./helpers'),
     argv = require('optimist').argv,
     TestRunner = helpers.TestRunner;
-  
+
 var protocol = argv.https ? 'https' : 'http',
     runner = new TestRunner(protocol),
     routeFile = path.join(__dirname, 'config.json');
@@ -78,13 +78,13 @@ vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
                 data = fs.readFileSync(routeFile),
                 config = JSON.parse(data);
 
-            config.router['dynamic.com'] = "127.0.0.1:8103"
+            config.router['dynamic.com'] = "127.0.0.1:8103";
             fs.writeFileSync(routeFile, JSON.stringify(config));
-            
+
             this.server.on('routes', function () {
               var options = {
-                method: 'GET', 
-                uri: 'http://localhost:8100',
+                method: 'GET',
+                uri: protocol + '://localhost:8100',
                 headers: {
                   host: 'dynamic.com'
                 }
