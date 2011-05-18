@@ -523,14 +523,20 @@ var WebSocket = function(url, proto, opts) {
         httpClient.on('upgrade', (function() {
             var data = undefined;
 
-            return function(req, s, head) {
+            return function(res, s, head) {
                 stream = s;
 
+                //
+                // Emit the `wsupgrade` event to inspect the raw
+                // arguments returned from the websocket request.
+                //
+                self.emit('wsupgrade', httpHeaders, res, s, head);
+                
                 stream.on('data', function(d) {
                     if (d.length <= 0) {
                         return;
                     }
-
+                    
                     if (!data) {
                         data = d;
                     } else {
@@ -614,7 +620,6 @@ var WebSocket = function(url, proto, opts) {
         });
 
         var httpReq = httpClient.request(httpPath, httpHeaders);
-
         httpReq.write(challenge, 'binary');
         httpReq.end();
     })();

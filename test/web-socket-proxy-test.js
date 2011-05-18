@@ -64,7 +64,14 @@ vows.describe('node-http-proxy/websocket').addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket('ws://localhost:8131/socket.io/websocket/', 'borf');
+              var ws = new websocket.WebSocket('ws://localhost:8131/socket.io/websocket/', 'borf', {
+                origin: 'localhost'
+              });
+              
+              ws.on('wsupgrade', function (req, res) {
+                require('eyes').inspect(req);
+                require('eyes').inspect(res.headers);
+              });
 
               ws.on('open', function () {
                 ws.send(utils.encode('from client'));
@@ -91,7 +98,15 @@ vows.describe('node-http-proxy/websocket').addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket('ws://localhost:8133/socket.io/websocket/', 'borf');
+              var ws = new websocket.WebSocket('ws://localhost:8133/socket.io/websocket/', 'borf', {
+                origin: 'localhost'
+              });
+              
+              ws.on('wsupgrade', function (req, res) {
+                require('eyes').inspect(req);
+                require('eyes').inspect(res.headers);
+              });
+
 
               ws.on('message', function (msg) {
                 msg = utils.decode(msg);
