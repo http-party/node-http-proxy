@@ -52,11 +52,12 @@ vows.describe('node-http-proxy/websocket').addBatch({
           var that = this;
 
           runner.startTargetServer(8130, 'hello websocket', function (err, target) {
-            var socket = io.listen(target);
+            var socket = io.listen(target),
+                headers = {};
 
             socket.on('connection', function (client) {
               client.on('message', function (msg) {
-                that.callback(null, msg);
+                that.callback(null, msg, headers);
               });
             });
 
@@ -65,12 +66,12 @@ vows.describe('node-http-proxy/websocket').addBatch({
               // Setup the web socket against our proxy
               //
               var ws = new websocket.WebSocket('ws://localhost:8131/socket.io/websocket/', 'borf', {
-                origin: 'localhost'
+                origin: 'http://localhost'
               });
               
               ws.on('wsupgrade', function (req, res) {
-                require('eyes').inspect(req);
-                require('eyes').inspect(res.headers);
+                headers.request = req;
+                headers.response = res.headers;
               });
 
               ws.on('open', function () {
@@ -79,8 +80,9 @@ vows.describe('node-http-proxy/websocket').addBatch({
             });
           });
         },
-        "the target server should receive the message": function (err, msg) {
+        "the target server should receive the message": function (err, msg, headers) {
           assert.equal(msg, 'from client');
+          require('eyes').inspect(headers);
         }
       },
       "when an outbound message is sent from the target server": {
@@ -88,7 +90,8 @@ vows.describe('node-http-proxy/websocket').addBatch({
           var that = this;
 
           runner.startTargetServer(8132, 'hello websocket', function (err, target) {
-            var socket = io.listen(target);
+            var socket = io.listen(target),
+                headers = {};
 
             socket.on('connection', function (client) {
               socket.broadcast('from server');
@@ -99,26 +102,26 @@ vows.describe('node-http-proxy/websocket').addBatch({
               // Setup the web socket against our proxy
               //
               var ws = new websocket.WebSocket('ws://localhost:8133/socket.io/websocket/', 'borf', {
-                origin: 'localhost'
+                origin: 'http://localhost'
               });
               
               ws.on('wsupgrade', function (req, res) {
-                require('eyes').inspect(req);
-                require('eyes').inspect(res.headers);
+                headers.request = req;
+                headers.response = res.headers;
               });
-
 
               ws.on('message', function (msg) {
                 msg = utils.decode(msg);
                 if (!/\d+/.test(msg)) {
-                  that.callback(null, msg);
+                  that.callback(null, msg, headers);
                 }
               });
             });
           });
         },
-        "the client should receive the message": function (err, msg) {
+        "the client should receive the message": function (err, msg, headers) {
           assert.equal(msg, 'from server');
+          require('eyes').inspect(headers);
         }
       }
     }
