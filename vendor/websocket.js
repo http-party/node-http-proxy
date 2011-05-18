@@ -494,7 +494,6 @@ var WebSocket = function(url, proto, opts) {
         //      string as its first argument to connect to a UNIX socket.
         var protocol, agent, port, u = urllib.parse(url);
         if (u.protocol === 'ws:' || u.protocol === 'wss:') {
-          require('eyes').inspect(u);
             protocol = u.protocol === 'ws:' ? http : https;
             port = u.protocol === 'ws:' ? 80 : 443;
             agent = u.protocol === 'ws:' ? protocol.getAgent(u.hostname, u.port || port) : protocol.getAgent({
@@ -614,17 +613,14 @@ var WebSocket = function(url, proto, opts) {
             errorListener(e);
         });
 
-        
-        var x = {
+        var httpReq = protocol.request({
           host: u.hostname,
           method: 'GET',
           agent: agent,
           port: u.port,
           path: httpPath, 
           headers: httpHeaders
-        };
-        require('eyes').inspect(x);
-        var httpReq = protocol.request(x);
+        });
         
         httpReq.write(challenge, 'binary');
         httpReq.end();

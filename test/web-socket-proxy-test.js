@@ -47,7 +47,6 @@ var protocol = argv.https ? 'https' : 'http',
     wsprotocol = argv.https ? 'wss' : 'ws',
     runner = new helpers.TestRunner(protocol);
 
-require('eyes').inspect(protocol);
 vows.describe('node-http-proxy/websocket').addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
@@ -69,8 +68,8 @@ vows.describe('node-http-proxy/websocket').addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket(wsprotocol + '://localhost:8131/socket.io/websocket/', 'borf', {
-                origin: 'https://localhost'
+              var ws = new websocket.WebSocket(wsprotocol + '://home.devjitsu.com:8131/socket.io/websocket/', 'borf', {
+                origin: protocol + '://home.devjitsu.com'
               });
               
               ws.on('wsupgrade', function (req, res) {
@@ -86,7 +85,9 @@ vows.describe('node-http-proxy/websocket').addBatch({
         },
         "the target server should receive the message": function (err, msg, headers) {
           assert.equal(msg, 'from client');
-          require('eyes').inspect(headers);
+        },
+        "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       },
       "when an outbound message is sent from the target server": {
@@ -105,8 +106,8 @@ vows.describe('node-http-proxy/websocket').addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket(wsprotocol + '://localhost:8133/socket.io/websocket/', 'borf', {
-                origin: 'https://localhost'
+              var ws = new websocket.WebSocket(wsprotocol + '://home.devjitsu.com:8133/socket.io/websocket/', 'borf', {
+                origin: protocol + '://home.devjitsu.com'
               });
               
               ws.on('wsupgrade', function (req, res) {
@@ -125,7 +126,9 @@ vows.describe('node-http-proxy/websocket').addBatch({
         },
         "the client should receive the message": function (err, msg, headers) {
           assert.equal(msg, 'from server');
-          require('eyes').inspect(headers);
+        },
+        "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       }
     }
