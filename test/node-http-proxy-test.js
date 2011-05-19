@@ -46,7 +46,8 @@ var badForwardOptions = {
 };
 
 var protocol = argv.https ? 'https' : 'http',
-    runner = new helpers.TestRunner(protocol);
+    target = argv.target ? argv.target : 'http',
+    runner = new helpers.TestRunner(protocol, target);
 
 vows.describe('node-http-proxy/' + protocol).addBatch({
   "When using server created by httpProxy.createServer()": {
