@@ -224,6 +224,7 @@ You have all the full flexibility of node-http-proxy offers in HTTPS as well as 
 This is probably the most common use-case for proxying in conjunction with HTTPS. You have some front-facing HTTPS server, but all of your internal traffic is HTTP. In this way, you can reduce the number of servers to which your CA and other important security files are deployed and reduce the computational overhead from HTTPS traffic. 
 
 Using HTTPS in `node-http-proxy` is relatively straight-forward:
+
 ``` js
 var fs = require('fs'),
     http = require('http'),
