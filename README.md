@@ -216,27 +216,17 @@ proxyServerWithForwarding.listen(80);
 
 The forwarding option can be used in conjunction with the proxy table options by simply including both the 'forward' and 'router' properties in the options passed to 'createServer'.
 
-### Using node-http-proxy from the command line
-When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
 
-``` js
-usage: node-http-proxy [options] 
-
-All options should be set with the syntax --option=value
-
-options:
-  --port   PORT       Port that the proxy server should run on
-  --target HOST:PORT  Location of the server the proxy will target
-  --config OUTFILE    Location of the configuration file for the proxy server
-  --silent            Silence the log output from the proxy server
-  -h, --help          You're staring at it
-```
-
-### Proxying over HTTPS
+## Using HTTPS
 You have all the full flexibility of node-http-proxy offers in HTTPS as well as HTTP. The two basic scenarios are: with a stand-alone proxy server or in conjunction with another HTTPS server.
 
+### Proxying to HTTP from HTTPS
+This is probably the most common use-case for proxying in conjunction with HTTPS. You have some front-facing HTTPS server, but all of your internal traffic is HTTP. In this way, you can reduce the number of servers to which your CA and other important security files are deployed and reduce the computational overhead from HTTPS traffic. 
+
+Using HTTPS in `node-http-proxy` is relatively straight-forward:
 ``` js
 var fs = require('fs'),
+    http = require('http'),
     https = require('https'),
     httpProxy = require('http-proxy');
     
@@ -255,7 +245,56 @@ httpProxy.createServer(8000, 'localhost', options).listen(8001);
 //
 // Create an instance of HttpProxy to use with another HTTPS server
 //
-var proxy = new httpProxy.HttpProxy({ https: true });
+var proxy = new httpProxy.HttpProxy();
+https.createServer(options.https, function (req, res) {
+  proxy.proxyRequest(req, res, {
+    host: 'localhost', 
+    port: 8000
+  })
+}).listen(8002);
+
+//
+// Create the target HTTPS server for both cases
+//
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('hello https\n');
+  res.end();
+}).listen(8000);
+```
+
+### Proxying to HTTPS from HTTPS
+Proxying from HTTPS to HTTPS is essentially the same as proxying from HTTPS to HTTP, but you must include `target` option in when calling `httpProxy.createServer` or instantiating a new instance of `HttpProxy`.
+
+``` js
+var fs = require('fs'),
+    https = require('https'),
+    httpProxy = require('http-proxy');
+    
+var options = {
+  https: {
+    key: fs.readFileSync('path/to/your/key.pem', 'utf8'),
+    cert: fs.readFileSync('path/to/your/cert.pem', 'utf8')
+  },
+  target: {
+    https: true // This could also be an Object with key and cert properties
+  }
+};
+
+//
+// Create a standalone HTTPS proxy server
+//
+httpProxy.createServer(8000, 'localhost', options).listen(8001);
+
+//
+// Create an instance of HttpProxy to use with another HTTPS server
+//
+var proxy = new httpProxy.HttpProxy({ 
+  target: {
+    https: true
+  }
+});
+
 https.createServer(options.https, function (req, res) {
   proxy.proxyRequest(req, res, {
     host: 'localhost', 
@@ -273,7 +312,7 @@ https.createServer(options.https, function (req, res) {
 }).listen(8000);
 ```
 
-### Proxying WebSockets
+## Proxying WebSockets
 Websockets are handled automatically when using the `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
 
 ``` js
@@ -306,16 +345,40 @@ server.on('upgrade', function(req, socket, head) {
 });
 ```
 
+## Using node-http-proxy from the command line
+When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
+
+``` js
+usage: node-http-proxy [options] 
+
+All options should be set with the syntax --option=value
+
+options:
+  --port   PORT       Port that the proxy server should run on
+  --target HOST:PORT  Location of the server the proxy will target
+  --config OUTFILE    Location of the configuration file for the proxy server
+  --silent            Silence the log output from the proxy server
+  -h, --help          You're staring at it
+```
+
 <br/>
-### Why doesn't node-http-proxy have more advanced features like x, y, or z?
+## Why doesn't node-http-proxy have more advanced features like x, y, or z?
 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue][6]. node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
 ## Run Tests
+The test suite is designed to fully cover the combinatoric possibilities of HTTP and HTTPS proxying:
+
+1. HTTP --> HTTP
+2. HTTPS --> HTTP
+3. HTTPS --> HTTPS
+4. HTTP --> HTTPS
 
 ```
 vows test/*-test.js --spec
 vows test/*-test.js --spec --https
+vows test/*-test.js --spec --https --target=https
+vows test/*-test.js --spec --target=https
 ```
 
 <br/>
