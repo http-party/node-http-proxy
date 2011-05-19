@@ -1,0 +1,90 @@
+<!DOCTYPE html>  <html> <head>   <title>balancing-proxy.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="balancing-proxy.html">                 balancing-proxy.html               </a>                                           <a class="source" href="node-http-proxy.html">                 node-http-proxy.html               </a>                                           <a class="source" href="proxy-table.html">                 proxy-table.html               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               balancing-proxy.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">  balancing-proxy.js: Transparent Load-Balancing Optimized HTTP Proxy </span>
+
+<span class="cm">  Copyright (c) 2011 Charlie Robbins </span>
+
+<span class="cm">  Permission is hereby granted, free of charge, to any person obtaining</span>
+<span class="cm">  a copy of this software and associated documentation files (the</span>
+<span class="cm">  &quot;Software&quot;), to deal in the Software without restriction, including</span>
+<span class="cm">  without limitation the rights to use, copy, modify, merge, publish,</span>
+<span class="cm">  distribute, sublicense, and/or sell copies of the Software, and to</span>
+<span class="cm">  permit persons to whom the Software is furnished to do so, subject to</span>
+<span class="cm">  the following conditions:</span>
+
+<span class="cm">  The above copyright notice and this permission notice shall be</span>
+<span class="cm">  included in all copies or substantial portions of the Software.</span>
+
+<span class="cm">  THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span>
+<span class="cm">  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span>
+<span class="cm">  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span>
+<span class="cm">  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE</span>
+<span class="cm">  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION</span>
+<span class="cm">  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
+<span class="cm">  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
+
+<span class="cm">*/</span>
+
+<span class="kd">var</span> <span class="nx">net</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;net&#39;</span><span class="p">),</span>
+    <span class="nx">HTTPParser</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">binding</span><span class="p">(</span><span class="s1">&#39;http_parser&#39;</span><span class="p">).</span><span class="nx">HTTPParser</span><span class="p">,</span>
+    <span class="nx">streams</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;morestreams&#39;</span><span class="p">);</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">createServer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span> 
+      <span class="nx">callback</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">(),</span>
+      <span class="nx">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">port</span><span class="p">,</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">server</span><span class="p">;</span>
+      
+  <span class="nx">server</span> <span class="o">=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">streams</span><span class="p">.</span><span class="nx">BufferedStream</span><span class="p">(),</span>
+        <span class="nx">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HTTPParser</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">);</span>
+    
+    <span class="nx">parser</span><span class="p">.</span><span class="nx">onHeaderField</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">slice</span> <span class="o">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">start</span> <span class="o">+</span> <span class="nx">len</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">parser</span><span class="p">.</span><span class="nx">value</span> <span class="o">!=</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;eyes&#39;</span><span class="p">).</span><span class="nx">inspect</span><span class="p">(</span><span class="nx">parser</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="nx">parser</span><span class="p">.</span><span class="nx">field</span><span class="p">);</span>
+        <span class="nx">parser</span><span class="p">.</span><span class="nx">field</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">parser</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">parser</span><span class="p">.</span><span class="nx">field</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">parser</span><span class="p">.</span><span class="nx">field</span> <span class="o">+=</span> <span class="nx">slice</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">parser</span><span class="p">.</span><span class="nx">field</span> <span class="o">=</span> <span class="nx">slice</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="nx">parser</span><span class="p">.</span><span class="nx">onHeaderValue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">slice</span> <span class="o">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">start</span> <span class="o">+</span> <span class="nx">len</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">parser</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">parser</span><span class="p">.</span><span class="nx">value</span> <span class="o">+=</span> <span class="nx">slice</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">parser</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">slice</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+    
+    <span class="nx">parser</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">;</span>
+    
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">ondata</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">parser</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">end</span> <span class="o">-</span> <span class="nx">start</span><span class="p">);</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ret</span><span class="p">);</span>
+    <span class="p">};</span>
+    
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">onend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">parser</span><span class="p">.</span><span class="nx">finish</span><span class="p">();</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="k">instanceof</span> <span class="nb">Error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="nx">ret</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">writable</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+    
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">);</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+  <span class="p">});</span>
+  
+  <span class="k">return</span> <span class="nx">server</span><span class="p">;</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
