@@ -33,13 +33,21 @@ var loadHttps = exports.loadHttps = function () {
   };
 };
 
-var TestRunner = exports.TestRunner = function (protocol) {
-  this.options     = {};
-  this.protocol    = protocol;
-  this.testServers = [];
+var TestRunner = exports.TestRunner = function (protocol, target) {
+  this.options        = {};
+  this.options.target = {};
+  this.protocol       = protocol;
+  this.target         = target;
+  this.testServers    = [];
 
   if (protocol === 'https') {
     this.options.https = loadHttps();
+  }
+  
+  if (target === 'https') {
+    this.options.target = {
+      https: loadHttps()
+    };
   }
 };
 
@@ -213,8 +221,8 @@ TestRunner.prototype.startTargetServer = function (port, output, callback) {
     res.end();
   };
 
-  targetServer = this.options.https
-    ? https.createServer(this.options.https, handler)
+  targetServer = this.options.target.https
+    ? https.createServer(this.options.target.https, handler)
     : http.createServer(handler);
 
   targetServer.listen(port, function () {
