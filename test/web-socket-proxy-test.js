@@ -47,7 +47,7 @@ var protocol = argv.https ? 'https' : 'http',
     wsprotocol = argv.https ? 'wss' : 'ws',
     runner = new helpers.TestRunner(protocol);
 
-vows.describe('node-http-proxy/websocket').addBatch({
+vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
       "when an inbound message is sent from a WebSocket client": {
