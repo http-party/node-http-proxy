@@ -87,6 +87,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           assert.equal(msg, 'from client');
         },
         "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.isString(headers.response['sec-websocket-location']);
+          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
           assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       },
@@ -128,6 +130,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           assert.equal(msg, 'from server');
         },
         "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.isString(headers.response['sec-websocket-location']);
+          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
           assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       }
