@@ -68,8 +68,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket(wsprotocol + '://home.devjitsu.com:8131/socket.io/websocket/', 'borf', {
-                origin: protocol + '://home.devjitsu.com'
+              var ws = new websocket.WebSocket(wsprotocol + '://localhost:8131/socket.io/websocket/', 'borf', {
+                origin: protocol + '://localhost'
               });
               
               ws.on('wsupgrade', function (req, res) {
@@ -108,8 +108,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
               //
               // Setup the web socket against our proxy
               //
-              var ws = new websocket.WebSocket(wsprotocol + '://home.devjitsu.com:8133/socket.io/websocket/', 'borf', {
-                origin: protocol + '://home.devjitsu.com'
+              var ws = new websocket.WebSocket(wsprotocol + '://localhost:8133/socket.io/websocket/', 'borf', {
+                origin: protocol + '://localhost'
               });
               
               ws.on('wsupgrade', function (req, res) {
