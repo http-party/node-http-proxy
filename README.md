@@ -1,4 +1,4 @@
-# node-http-proxy - v0.5.7
+# node-http-proxy - v0.5.9
 
 <img src="http://i.imgur.com/8fTt9.png" />
 
