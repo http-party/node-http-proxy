@@ -1,5 +1,5 @@
 /*
-  web-socket-proxy.js: Example of proxying over HTTP and WebSockets.
+  standalone-websocket-proxy.js: Example of proxying websockets over HTTP with a standalone HTTP server.
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
@@ -47,6 +47,7 @@ var server = http.createServer(function (req, res) {
   res.writeHead(200);
   res.end();
 });
+
 server.listen(8080);
 
 //
@@ -64,10 +65,28 @@ socket.on('connection', function (client) {
 });
 
 //
-// Create a proxy server with node-http-proxy
+// Setup our server to proxy standard HTTP requests
 //
-var proxy = httpProxy.createServer(8080, 'localhost');
-proxy.listen(8081);
+var proxy = new httpProxy.HttpProxy();
+var proxyServer = http.createServer(function (req, res) {
+  proxy.proxyRequest(req, res, {
+    host: 'localhost', 
+    port: 8080
+  })
+});
+
+//
+// Listen to the `upgrade` event and proxy the 
+// WebSocket requests as well.
+//
+proxyServer.on('upgrade', function (req, socket, head) {
+  proxy.proxyWebSocketRequest(req, socket, head, {
+    port: 8080,
+    host: 'localhost'
+  });
+});
+
+proxyServer.listen(8081);
 
 //
 // Setup the web socket against our proxy

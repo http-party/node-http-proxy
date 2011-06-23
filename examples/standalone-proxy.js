@@ -1,5 +1,5 @@
 /*
-  standalone-proxy.js: Example of proxying over HTTP inside of a standalone HTTP server.
+  standalone-proxy.js: Example of proxying over HTTP with a standalone HTTP server.
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
