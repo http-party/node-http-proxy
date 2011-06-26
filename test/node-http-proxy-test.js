@@ -24,11 +24,11 @@
 
 */
  
-var vows = require('vows'),
+var assert = require('assert'),
     util = require('util'),
-    request = require('request'),
-    assert = require('assert'),
     argv = require('optimist').argv,
+    request = require('request'),
+    vows = require('vows'),
     helpers = require('./helpers');
 
 var forwardOptions = {

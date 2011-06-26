@@ -5,14 +5,14 @@
  *
  */
 
-var fs = require('fs'),
-    vows = require('vows'),
-    util = require('util'),
+var assert = require('assert'),
+    fs = require('fs'),
     path = require('path'),
-    request = require('request'),
-    assert = require('assert'),
-    helpers = require('./helpers'),
+    util = require('util'),
     argv = require('optimist').argv,
+    request = require('request'),
+    vows = require('vows'),
+    helpers = require('./helpers'),
     TestRunner = helpers.TestRunner;
 
 var protocol = argv.https ? 'https' : 'http',
