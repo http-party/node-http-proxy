@@ -121,6 +121,10 @@ TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, creat
   return test;
 };
 
+//
+// WebSocketTest
+//
+
 TestRunner.prototype.webSocketTest = function (options) {
   var self = this;
   
@@ -135,6 +139,42 @@ TestRunner.prototype.webSocketTest = function (options) {
       options.ports.proxy, 
       options.ports.target, 
       options.host, 
+      function (err, proxy) {
+        if (options.onServer) { options.onServer(proxy) }
+        
+        //
+        // Setup the web socket against our proxy
+        //
+        var uri = options.wsprotocol + '://' + options.host + ':' + options.ports.proxy;
+        var ws = new websocket.WebSocket(uri + '/socket.io/websocket/', 'borf', {
+          origin: options.protocol + '://' + options.host
+        });
+        
+        if (options.onWsupgrade) { ws.on('wsupgrade', options.onWsupgrade) }
+        if (options.onMessage) { ws.on('message', options.onMessage) }
+        if (options.onOpen) { ws.on('open', function () { options.onOpen(ws) }) }
+      }
+    );
+  });
+}
+
+//
+// WebSocketTestWithTable
+//
+
+TestRunner.prototype.webSocketTestWithTable = function (options) {
+  var self = this;
+  
+  this.startTargetServer(options.ports.target, 'hello websocket', function (err, target) {
+    var socket = options.io.listen(target);
+
+    if (options.onListen) {
+      options.onListen(socket);
+    }
+
+  self.startProxyServerWithTable(
+      options.ports.proxy, 
+      {router: options.router}, 
       function (err, proxy) {
         if (options.onServer) { options.onServer(proxy) }
         

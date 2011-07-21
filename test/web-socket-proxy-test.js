@@ -48,6 +48,50 @@ var protocol = argv.https ? 'https' : 'http',
     runner = new helpers.TestRunner(protocol);
 
 vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
+  "when using proxy table":{
+    "with no latency" : {
+      "when an inbound message is sent from a WebSocket client": {
+        topic: function () {
+          var that = this
+              headers = {};
+
+          runner.webSocketTestWithTable({
+            io: io,
+            host: 'localhost',
+            wsprotocol: wsprotocol,
+            protocol: protocol,
+            router: {'localhost':'localhost:8230'}, 
+            ports: {
+              target: 8230,
+              proxy: 8231
+            },
+            onListen: function (socket) {
+              socket.on('connection', function (client) {
+                client.on('message', function (msg) {
+                  that.callback(null, msg, headers);
+                });
+              });
+            },
+            onWsupgrade: function (req, res) {
+              headers.request = req;
+              headers.response = res.headers;
+            },
+            onOpen: function (ws) {
+              ws.send(utils.encode('from client'));
+            }
+          });
+        },
+        "the target server should receive the message": function (err, msg, headers) {
+          assert.equal(msg, 'from client');
+        },
+        "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
+          assert.isString(headers.response['sec-websocket-location']);
+          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
+          assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
+        }
+      }
+    }
+  },
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
       "when an inbound message is sent from a WebSocket client": {
@@ -114,6 +158,7 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           });
         },
         "should raise the `websocket:incoming` event": function (ign, data) {
+          console.log(ign,data,utils.decode(data))
           assert.equal(utils.decode(data.toString().replace('\u0000', '')), 'from client');
         },
       },
