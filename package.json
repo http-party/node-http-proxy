@@ -1,7 +1,7 @@
 {
   "name": "http-proxy",
   "description": "A full-featured http reverse proxy for node.js",
-  "version": "0.5.11",
+  "version": "0.5.12",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [
     { "name": "Mikeal Rogers", "email": "mikeal.rogers@gmail.com" }, 
