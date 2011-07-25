@@ -312,6 +312,16 @@ https.createServer(options.https, function (req, res) {
   res.end();
 }).listen(8000);
 ```
+## Middleware
+
+`node-http-proxy` now supports connect middleware. Add middleware functions to your createServer call:
+
+``` js
+httpProxy.createServer(
+  require('connect-gzip').gzip(),
+  9000, 'localhost'
+).listen(8000);
+```
 
 ## Proxying WebSockets
 Websockets are handled automatically when using the `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
