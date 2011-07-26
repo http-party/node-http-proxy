@@ -1,7 +1,7 @@
 /*
-  basic-proxy.js: Basic example of proxying over HTTP
+  gzip-middleware.js: Basic example of middleware in node-http-proxy
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, Marak Squires, & Dominic Tarr.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -32,8 +32,9 @@ var util = require('util'),
 //
 // Basic Http Proxy Server
 //
+
 httpProxy.createServer(
-  require('connect-gzip').gzip({ matchType: /./ }),
+  require('connect-gzip').gzip({ matchType: /?:./ }),
   9000, 'localhost'
 ).listen(8000);
 
