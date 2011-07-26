@@ -1,5 +1,5 @@
 /*
-  gzip-middleware.js: Basic example of middleware in node-http-proxy
+  urls-middleware.js: Basic example of middleware in node-http-proxy
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, Marak Squires, & Dominic Tarr.
 
@@ -30,7 +30,9 @@ var util = require('util'),
     httpProxy = require('./../lib/node-http-proxy');
 
 //
-// Basic Http Proxy Server
+// url proxying middleware example. 
+//
+// this is not optimised or tested but shows the basic approch to writing a middleware.
 //
 function matcher (url, dest) {
   var r = new RegExp (url)
@@ -54,19 +56,19 @@ exports.urls = function (urls) {
   return function (req, res, next) {
     //
     // in nhp middlewares, `proxy` is the prototype of `next`
+    // (this means nhp middlewares support both connect API (req, res, next)
+    // and nhp API (req, res, proxy)
     //
     var proxy = next;
 
     for (var k in matchers) {
-      var m
+      var m;
       if (m = matchers[k](req.url)) {
-        req.url = m.url
-        return proxy.proxyRequest(req,res, m.dest)
+        req.url = m.url;
+        return proxy.proxyRequest(req,res, m.dest);
       }
     }
-
   }
-
 }
 
 httpProxy.createServer(
