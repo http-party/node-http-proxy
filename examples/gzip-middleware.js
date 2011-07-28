@@ -34,7 +34,7 @@ var util = require('util'),
 //
 
 httpProxy.createServer(
-  require('connect-gzip').gzip({ matchType: /?:./ }),
+  require('connect-gzip').gzip({ matchType: /.?/ }),
   9000, 'localhost'
 ).listen(8000);
 
