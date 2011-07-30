@@ -43,6 +43,7 @@ There are several ways to use node-http-proxy; the library is designed to be fle
 3. In conjunction with a Proxy Routing Table
 4. As a forward-proxy with a reverse proxy 
 5. From the command-line as a long running process
+6. customized with 3rd party middleware.
 
 In each of these scenarios node-http-proxy can handle any of these types of requests:
 
