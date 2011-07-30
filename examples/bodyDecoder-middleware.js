@@ -48,17 +48,7 @@ http.createServer(new Store().handler()).listen(7531, function () {
       //body parser absorbs the data and end events before passing control to the next
       // middleware. if we want to proxy it, we'll need to re-emit these events after 
       //passing control to the middleware.
-      function (req, res, next) {
-        //remove bodyParser's listeners
-        req.removeAllListeners('data')
-        req.removeAllListeners('end')
-        next()
-        process.nextTick(function () {
-          if(req.body)
-            req.emit('data', JSON.stringify(req.body))
-          req.emit('end')
-        })
-      },
+      require('connect-restreamer')(),
       function (req, res, proxy) {
         //if your posting an obect which contains type: "insult"
         //it will get redirected to port 2600.
