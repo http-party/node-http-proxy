@@ -1,5 +1,5 @@
 /*
-  gzip-middleware.js: Basic example of middleware in node-http-proxy
+  gzip-middleware.js: Basic example of `connect-gzip` middleware in node-http-proxy
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, Marak Squires, & Dominic Tarr.
 
@@ -32,7 +32,6 @@ var util = require('util'),
 //
 // Basic Http Proxy Server
 //
-
 httpProxy.createServer(
   require('connect-gzip').gzip({ matchType: /.?/ }),
   9000, 'localhost'
@@ -41,12 +40,11 @@ httpProxy.createServer(
 //
 // Target Http Server
 //
-http.createServer(
-  function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-    res.end();
-  }).listen(9000);
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9000);
 
 util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
