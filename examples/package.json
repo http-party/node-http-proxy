@@ -7,6 +7,6 @@
   , "connect-gzip": "0.1"
   , "connect-jsonp": "0.0.5"
   , "connect-restreamer": "1"
-  , "proxy-by-url": "0.0.0"
+  , "proxy-by-url": ">= 0.0.1"
   }
 }
