@@ -15,7 +15,8 @@
   "keywords": ["reverse", "proxy", "http"],
   "dependencies": {
     "colors": "0.x.x",
-    "optimist": "0.2.x"
+    "optimist": "0.2.x",
+    "pkginfo": "0.2.x"
   },
   "devDependencies": {
     "request": "1.9.x",
