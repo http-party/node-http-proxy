@@ -59,7 +59,10 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
 
   var test = {
     topic: function () {
-      var that = this, options = {
+      var that = this, 
+          options;
+          
+      options = {
         method: 'GET',
         uri: self.protocol + '://localhost:' + proxyPort,
         headers: {
@@ -172,9 +175,9 @@ TestRunner.prototype.webSocketTestWithTable = function (options) {
       options.onListen(socket);
     }
 
-  self.startProxyServerWithTable(
-      options.ports.proxy, 
-      {router: options.router}, 
+    self.startProxyServerWithTable(
+      options.ports.proxy,
+      { router: options.router }, 
       function (err, proxy) {
         if (options.onServer) { options.onServer(proxy) }
         
@@ -213,7 +216,10 @@ TestRunner.prototype.startProxyServer = function (port, targetPort, host, callba
 //
 TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, latency, callback) {
   // Initialize the nodeProxy and start proxying the request
-  var that = this, proxyServer = httpProxy.createServer(function (req, res, proxy) {
+  var that = this, 
+      proxyServer;
+      
+  proxyServer = httpProxy.createServer(function (req, res, proxy) {
     var buffer = proxy.buffer(req);
 
     setTimeout(function () {
@@ -235,7 +241,9 @@ TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, 
 // Creates the reverse proxy server with a ProxyTable
 //
 TestRunner.prototype.startProxyServerWithTable = function (port, options, callback) {
-  var that = this, proxyServer = httpProxy.createServer(merge({}, options, this.options));
+  var that = this, 
+      proxyServer = httpProxy.createServer(merge({}, options, this.options));
+
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
     callback();
@@ -248,10 +256,12 @@ TestRunner.prototype.startProxyServerWithTable = function (port, options, callba
 // Creates a latent reverse proxy server using a ProxyTable
 //
 TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, latency, options, callback) {
+  //
   // Initialize the nodeProxy and start proxying the request
-  var proxyServer,
-      that = this,
-      proxy = new httpProxy.HttpProxy(merge({}, options, that.options));
+  //
+  var that = this,
+      proxy = new httpProxy.HttpProxy(merge({}, options, that.options)),
+      proxyServer;
 
   var handler = function (req, res) {
     var buffer = proxy.buffer(req);
@@ -263,8 +273,8 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
   };
 
   proxyServer = that.options.https
-                ? https.createServer(that.options.https, handler, that.options)
-                : http.createServer(handler, that.options);
+    ? https.createServer(that.options.https, handler, that.options)
+    : http.createServer(handler, that.options);
 
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
@@ -278,7 +288,9 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
 // Creates proxy server forwarding to the specified options
 //
 TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort, host, options, callback) {
-  var that = this, proxyServer = httpProxy.createServer(targetPort, host, merge({}, options, this.options));
+  var that = this, 
+      proxyServer = httpProxy.createServer(targetPort, host, merge({}, options, this.options));
+  
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
     callback(null, proxyServer);
@@ -289,7 +301,11 @@ TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort
 // Creates the 'hellonode' server
 //
 TestRunner.prototype.startTargetServer = function (port, output, callback) {
-  var that = this, targetServer, handler = function (req, res) {
+  var that = this, 
+      targetServer, 
+      handler;
+      
+  handler = function (req, res) {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(output);
     res.end();
