@@ -15,18 +15,6 @@ var fs = require('fs'),
     websocket = require('./../vendor/websocket'),
     httpProxy = require('./../lib/node-http-proxy');
 
-function merge (target) {
-  var objs = Array.prototype.slice.call(arguments, 1);
-  objs.forEach(function(o) {
-    Object.keys(o).forEach(function (attr) {
-      if (! o.__lookupGetter__(attr)) {
-        target[attr] = o[attr];
-      }
-    });
-  });
-  return target;
-}
-
 var loadHttps = exports.loadHttps = function () {
   return {
     key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem'), 'utf8'),
@@ -34,21 +22,17 @@ var loadHttps = exports.loadHttps = function () {
   };
 };
 
-var TestRunner = exports.TestRunner = function (protocol, target) {
-  this.options        = {};
-  this.options.target = {};
-  this.protocol       = protocol;
-  this.target         = target;
-  this.testServers    = [];
+var TestRunner = exports.TestRunner = function (source, target) {
+  this.source      = { protocol: source },
+  this.target      = { protocol: target };
+  this.testServers = [];
 
-  if (protocol === 'https') {
-    this.options.https = loadHttps();
+  if (source === 'https') {
+    this.source.https = loadHttps();
   }
   
   if (target === 'https') {
-    this.options.target = {
-      https: loadHttps()
-    };
+    this.target.https = loadHttps();
   }
 };
 
@@ -64,11 +48,12 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
           
       options = {
         method: 'GET',
-        uri: self.protocol + '://localhost:' + proxyPort,
+        uri: self.source.protocol + '://localhost:' + proxyPort,
         headers: {
           host: host
         }
       };
+      
 
       function startTest () {
         if (port) {
@@ -94,7 +79,7 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
 
 TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, createProxy) {
   var assertion = "should receive " + statusCode + " responseCode",
-      protocol = this.protocol;
+      protocol = this.source.protocol;
 
   var test = {
     topic: function () {
@@ -202,8 +187,7 @@ TestRunner.prototype.webSocketTestWithTable = function (options) {
 //
 TestRunner.prototype.startProxyServer = function (port, targetPort, host, callback) {
   var that = this,
-      options = that.options,
-      proxyServer = httpProxy.createServer(targetPort, host, options);
+      proxyServer = httpProxy.createServer(host, targetPort, this.getOptions());
 
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
@@ -215,21 +199,19 @@ TestRunner.prototype.startProxyServer = function (port, targetPort, host, callba
 // Creates the reverse proxy server with a specified latency
 //
 TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, latency, callback) {
+  //
   // Initialize the nodeProxy and start proxying the request
+  //
   var that = this, 
       proxyServer;
-      
-  proxyServer = httpProxy.createServer(function (req, res, proxy) {
-    var buffer = proxy.buffer(req);
+    
+  proxyServer = httpProxy.createServer(host, targetPort, function (req, res, proxy) {
+    var buffer = httpProxy.buffer(req);
 
     setTimeout(function () {
-      proxy.proxyRequest(req, res, {
-        port: targetPort,
-        host: host,
-        buffer: buffer
-      });
+      proxy.proxyRequest(req, res, buffer);
     }, latency);
-  }, this.options);
+  }, this.getOptions());
 
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
@@ -242,7 +224,7 @@ TestRunner.prototype.startLatentProxyServer = function (port, targetPort, host, 
 //
 TestRunner.prototype.startProxyServerWithTable = function (port, options, callback) {
   var that = this, 
-      proxyServer = httpProxy.createServer(merge({}, options, this.options));
+      proxyServer = httpProxy.createServer(merge({}, options, this.getOptions()));
 
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
@@ -260,7 +242,7 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
   // Initialize the nodeProxy and start proxying the request
   //
   var that = this,
-      proxy = new httpProxy.HttpProxy(merge({}, options, that.options)),
+      proxy = new httpProxy.HttpProxy(merge({}, options, this.getOptions())),
       proxyServer;
 
   var handler = function (req, res) {
@@ -289,7 +271,7 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
 //
 TestRunner.prototype.startProxyServerWithForwarding = function (port, targetPort, host, options, callback) {
   var that = this, 
-      proxyServer = httpProxy.createServer(targetPort, host, merge({}, options, this.options));
+      proxyServer = httpProxy.createServer(targetPort, host, merge({}, options, this.getOptions()));
   
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
@@ -310,9 +292,9 @@ TestRunner.prototype.startTargetServer = function (port, output, callback) {
     res.write(output);
     res.end();
   };
-
-  targetServer = this.options.target.https
-    ? https.createServer(this.options.target.https, handler)
+  
+  targetServer = this.target.https
+    ? https.createServer(this.target.https, handler)
     : http.createServer(handler);
 
   targetServer.listen(port, function () {
@@ -331,3 +313,42 @@ TestRunner.prototype.closeServers = function () {
 
   return this.testServers;
 };
+
+//
+// Creates a new instance of the options to 
+// pass to `httpProxy.createServer()`
+//
+TestRunner.prototype.getOptions = function () {
+  return {
+    https: clone(this.source.https),
+    target: {
+      https: clone(this.target.https)
+    }
+  };
+};
+
+//
+// ### @private function clone (object)
+// #### @object {Object} Object to clone
+// Shallow clones the specified object.
+//
+function clone (object) {
+  if (!object) { return null }
+  
+  return Object.keys(object).reduce(function (obj, k) {
+    obj[k] = object[k];
+    return obj;
+  }, {});
+}
+
+function merge (target) {
+  var objs = Array.prototype.slice.call(arguments, 1);
+  objs.forEach(function(o) {
+    Object.keys(o).forEach(function (attr) {
+      if (! o.__lookupGetter__(attr)) {
+        target[attr] = o[attr];
+      }
+    });
+  });
+  return target;
+}
