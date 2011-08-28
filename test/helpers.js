@@ -112,7 +112,6 @@ TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, creat
 //
 // WebSocketTest
 //
-
 TestRunner.prototype.webSocketTest = function (options) {
   var self = this;
   

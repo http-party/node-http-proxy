@@ -12,11 +12,10 @@ var assert = require('assert'),
     argv = require('optimist').argv,
     request = require('request'),
     vows = require('vows'),
-    helpers = require('./helpers'),
-    TestRunner = helpers.TestRunner;
+    helpers = require('../helpers');
 
 var protocol = argv.https ? 'https' : 'http',
-    runner = new TestRunner(protocol),
+    runner = new helpers.TestRunner(protocol),
     routeFile = path.join(__dirname, 'config.json');
 
 var fileOptions = {

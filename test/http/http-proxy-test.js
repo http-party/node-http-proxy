@@ -29,7 +29,7 @@ var assert = require('assert'),
     argv = require('optimist').argv,
     request = require('request'),
     vows = require('vows'),
-    helpers = require('./helpers');
+    helpers = require('../helpers');
 
 var forwardOptions = {
   forward: {
