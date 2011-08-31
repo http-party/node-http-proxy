@@ -8,8 +8,8 @@ var proxy = require('../')
 
 var server = proxy.createServer({
   router: {
-      'foo.com': 'localhost:3001'
-    , 'bar.com': 'localhost:3002'
+      'foo.com': 3001
+    , 'bar.com': 3002
   }
 });
 
