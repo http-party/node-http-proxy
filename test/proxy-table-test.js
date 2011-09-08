@@ -45,7 +45,7 @@ var hostnameOptionsWithArray = {
   hostnameOnly: true,
   router: {
     "foo.com": [8091, '127.0.0.1'],
-    "bar.com": [8092, '127.0.0.1']
+    "bar.com": ['/tmp/bar.sock'],
   }
 }
 
@@ -73,7 +73,7 @@ vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
           this.server = runner.startProxyServerWithTable(8096, hostnameOptionsWithArray, this.callback);
         },
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8096, 8097),
-        "an incoming request to bar.com": runner.assertProxied('bar.com', 8096, 8098),
+        "an incoming request to bar.com": runner.assertProxied('bar.com', 8096, '/tmp/bar.sock'),
         "an incoming request to unknown.com": runner.assertResponseCode(8096, 404)
       }
     },
