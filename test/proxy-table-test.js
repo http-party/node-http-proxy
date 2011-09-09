@@ -41,6 +41,14 @@ var hostnameOptions = {
   }
 };
 
+var hostnameOptionsWithArray = {
+  hostnameOnly: true,
+  router: {
+    "foo.com": [8091, '127.0.0.1'],
+    "bar.com": ['/tmp/bar.sock'],
+  }
+}
+
 vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
@@ -59,6 +67,14 @@ vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8094),
         "an incoming request to bar.com": runner.assertProxied('bar.com', 8093, 8095),
         "an incoming request to unknown.com": runner.assertResponseCode(8093, 404)
+      },
+      "and routing by Hostname with arrays": {
+        topic: function () {
+          this.server = runner.startProxyServerWithTable(8096, hostnameOptionsWithArray, this.callback);
+        },
+        "an incoming request to foo.com": runner.assertProxied('foo.com', 8096, 8097),
+        "an incoming request to bar.com": runner.assertProxied('bar.com', 8096, '/tmp/bar.sock'),
+        "an incoming request to unknown.com": runner.assertResponseCode(8096, 404)
       }
     },
     "when passed a routing file": {
