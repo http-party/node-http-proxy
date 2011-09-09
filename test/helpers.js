@@ -148,7 +148,6 @@ TestRunner.prototype.webSocketTest = function (options) {
 //
 // WebSocketTestWithTable
 //
-
 TestRunner.prototype.webSocketTestWithTable = function (options) {
   var self = this;
   
