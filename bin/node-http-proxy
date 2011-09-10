@@ -4,7 +4,7 @@ var path = require('path'),
     fs = require('fs'),
     util  = require('util'),
     argv = require('optimist').argv,
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../lib/node-http-proxy');
 
 var help = [
     "usage: node-http-proxy [options] ",
