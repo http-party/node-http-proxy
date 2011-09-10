@@ -357,6 +357,13 @@ server.on('upgrade', function(req, socket, head) {
 });
 ```
 
+### Configuring your Socket limits
+
+By default, `node-http-proxy` will set a 100 socket limit for all `host:port` proxy targets. If you wish to change this you can two it in two ways: 
+
+1. By passing the `maxSockets` option to `httpProxy.createServer()`
+2. By calling `httpProxy.setMaxSockets(n)`, where `n` is the number of sockets you with to use. 
+
 ## Using node-http-proxy from the command line
 When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
 
