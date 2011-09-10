@@ -1,7 +1,7 @@
 /*
-  concurrent-proxy.js: check levelof concurrency through proxy.
+  gzip-middleware.js: Basic example of `connect-gzip` middleware in node-http-proxy
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, Marak Squires, & Dominic Tarr.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,38 +27,23 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
 // Basic Http Proxy Server
 //
-httpProxy.createServer(9000, 'localhost').listen(8000);
+httpProxy.createServer(
+  require('connect-gzip').gzip({ matchType: /.?/ }),
+  9000, 'localhost'
+).listen(8000);
 
 //
 // Target Http Server
 //
-// to check apparent problems with concurrent connections
-// make a server which only responds when there is a given nubmer on connections
-//
-
-
-var connections = []
-  , go
-
 http.createServer(function (req, res) {
-      
-  connections.push (function (){
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-    res.end();
-  })
-  process.stdout.write(connections.length + ', ')
-  if (connections.length > 110 || go) {
-    go = true
-    while(connections.length)
-      connections.shift()()
-  }
-
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
 }).listen(9000);
 
 util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);

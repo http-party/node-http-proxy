@@ -1,7 +1,7 @@
 /*
-  gzip-middleware.js: Basic example of `connect-gzip` middleware in node-http-proxy
+  custom-proxy-error.js: Example of using the custom `proxyError` event.
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, Marak Squires, & Dominic Tarr.
+  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,24 +27,28 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
-// Basic Http Proxy Server
+// Http Proxy Server with Latency
 //
-httpProxy.createServer(
-  require('connect-gzip').gzip({ matchType: /.?/ }),
-  9000, 'localhost'
-).listen(8000);
+var server = httpProxy.createServer(9000, 'localhost');
 
 //
-// Target Http Server
+// Tell the server to listen on port 8002
 //
-http.createServer(function (req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
-}).listen(9000);
+server.listen(8002);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+//
+// Listen for the `proxyError` event on `server.proxy`. _It will not
+// be raised on the server itself._
+server.proxy.on('proxyError', function (err, req, res) {
+  res.writeHead(500, {
+    'Content-Type': 'text/plain'
+  });
+  
+  res.end('Something went wrong. And we are reporting a custom error message.');
+});
+
+
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with custom error message'.magenta.underline);

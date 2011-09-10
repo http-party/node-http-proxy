@@ -1,5 +1,5 @@
 /*
-  basic-proxy.js: Basic example of proxying over HTTP
+  latent-proxy.js: Example of proxying over HTTP with latency
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
@@ -27,22 +27,21 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
-
-// ascii art from http://github.com/marak/asciimo
-var welcome = '\
-#    # ##### ##### #####        #####  #####   ####  #    # #   # \n\
-#    #   #     #   #    #       #    # #    # #    #  #  #   # #  \n\
-######   #     #   #    # ##### #    # #    # #    #   ##     #   \n\
-#    #   #     #   #####        #####  #####  #    #   ##     #   \n\
-#    #   #     #   #            #      #   #  #    #  #  #    #   \n\
-#    #   #     #   #            #      #    #  ####  #    #   #   \n';
-util.puts(welcome.rainbow.bold);
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
-// Basic Http Proxy Server
+// Http Proxy Server with Latency
 //
-httpProxy.createServer(9000, 'localhost').listen(8000);
+httpProxy.createServer(function (req, res, proxy) {
+  var buffer = httpProxy.buffer(req);
+  setTimeout(function() {
+    proxy.proxyRequest(req, res, {
+      port: 9000,
+      host: 'localhost',
+      buffer: buffer
+    });
+  }, 200);
+}).listen(8002);
 
 //
 // Target Http Server
@@ -53,5 +52,5 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9000);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with latency'.magenta.underline);
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);

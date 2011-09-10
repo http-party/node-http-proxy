@@ -1,5 +1,5 @@
 /*
-  url-middleware.js: Example of a simple url routing middleware for node-http-proxy
+  proxy-https-to-https.js: Basic example of proxying over HTTPS to a target HTTPS server
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
@@ -24,35 +24,33 @@
 
 */
 
-var util = require('util'),
-    colors = require('colors'),
+var https = require('https'),
     http = require('http'),
-    httpProxy = require('http-proxy');
+    util = require('util'),
+    colors = require('colors'),
+    httpProxy = require('../../lib/node-http-proxy'),
+    helpers = require('./../test/helpers');
+    
+var opts = helpers.loadHttps();
 
 //
-// Now we set up our proxy.
+// Crete the target HTTPS server 
 //
-httpProxy.createServer(
-  //
-  // This is where our middlewares go, with any options desired - in this case,
-  // the list of routes/URLs and their destinations.
-  //
-    require('proxy-by-url')({
-    '/hello': { port: 9000, host: 'localhost' },
-    '/charlie': { port: 80, host: 'charlieistheman.com' },
-    '/google': { port: 80, host: 'google.com' } 
-  })
-).listen(8000);
-
-//
-// Target Http Server (to listen for requests on 'localhost')
-//
-http.createServer(function (req, res) {
+https.createServer(opts, function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
-}).listen(9000);
+  res.write('hello https\n');
+	res.end();
+}).listen(8000);
 
-// And finally, some colored startup output.
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+//
+// Create the proxy server listening on port 443.
+//
+httpProxy.createServer(8000, 'localhost', {
+  https: opts,
+  target: {
+    https: true
+  }
+}).listen(8080);
+
+util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8080'.yellow);
+util.puts('https server '.blue + 'started '.green.bold + 'on port '.blue + '8000 '.yellow);

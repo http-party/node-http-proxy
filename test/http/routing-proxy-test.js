@@ -12,11 +12,11 @@ var assert = require('assert'),
     argv = require('optimist').argv,
     request = require('request'),
     vows = require('vows'),
-    helpers = require('./helpers'),
-    TestRunner = helpers.TestRunner;
+    helpers = require('../helpers');
 
-var protocol = argv.https ? 'https' : 'http',
-    runner = new TestRunner(protocol),
+var options = helpers.parseProtocol(),
+    testName = [options.source.protocols.http, options.target.protocols.http].join('-to-'),
+    runner = new helpers.TestRunner(options),
     routeFile = path.join(__dirname, 'config.json');
 
 var fileOptions = {
@@ -41,7 +41,7 @@ var hostnameOptions = {
   }
 };
 
-vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
+vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
       "and routing by RegExp": {
@@ -82,16 +82,14 @@ vows.describe('node-http-proxy/proxy-table/' + protocol).addBatch({
             fs.writeFileSync(routeFile, JSON.stringify(config));
 
             this.server.on('routes', function () {
-              var options = {
-                method: 'GET',
-                uri: protocol + '://localhost:8100',
-                headers: {
-                  host: 'dynamic.com'
-                }
-              };
-
               runner.startTargetServer(8103, 'hello dynamic.com', function () {
-                request(options, that.callback);
+                request({
+                  method: 'GET',
+                  uri: options.source.protocols.http + '://localhost:8100',
+                  headers: {
+                    host: 'dynamic.com'
+                  }
+                }, that.callback);
               });
             });
           },

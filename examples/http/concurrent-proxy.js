@@ -1,5 +1,5 @@
 /*
-  custom-proxy-error.js: Example of using the custom `proxyError` event.
+  concurrent-proxy.js: check levelof concurrency through proxy.
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
@@ -27,33 +27,40 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
-// Http Proxy Server with Latency
+// Basic Http Proxy Server
 //
-var server = httpProxy.createServer(function (req, res, proxy) {
-  proxy.proxyRequest(req, res, {
-    port: 9000,
-    host: 'localhost'
-  });
-})
+httpProxy.createServer(9000, 'localhost').listen(8000);
 
 //
-// Tell the server to listen on port 8002
+// Target Http Server
 //
-server.listen(8002);
+// to check apparent problems with concurrent connections
+// make a server which only responds when there is a given nubmer on connections
+//
 
-//
-// Listen for the `proxyError` event on `server.proxy`. _It will not
-// be raised on the server itself._
-server.proxy.on('proxyError', function (err, req, res) {
-  res.writeHead(500, {
-    'Content-Type': 'text/plain'
+
+var connections = [], 
+    go;
+
+http.createServer(function (req, res) {
+  connections.push(function () {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
+    res.end();
   });
   
-  res.end('Something went wrong. And we are reporting a custom error message.');
-});
+  process.stdout.write(connections.length + ', ');
+  
+  if (connections.length > 110 || go) {
+    go = true;
+    while (connections.length) {
+      connections.shift()();
+    }
+  }
+}).listen(9000);
 
-
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with custom error message'.magenta.underline);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);

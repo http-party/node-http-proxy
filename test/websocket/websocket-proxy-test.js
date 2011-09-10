@@ -30,8 +30,8 @@ var util = require('util'),
     colors = require('colors'),
     request = require('request'),
     vows = require('vows'),
-    websocket = require('./../vendor/websocket'),
-    helpers = require('./helpers');
+    websocket = require('../../vendor/websocket'),
+    helpers = require('../helpers');
 
 try {
   var utils = require('socket.io/lib/socket.io/utils'),
@@ -43,55 +43,11 @@ catch (ex) {
   process.exit(1);
 }
 
-var protocol = argv.https ? 'https' : 'http',
-    wsprotocol = argv.https ? 'wss' : 'ws',
-    runner = new helpers.TestRunner(protocol);
+var options = helpers.parseProtocol(),
+    testName = [options.source.protocols.ws, options.target.protocols.ws].join('-to-'),
+    runner = new helpers.TestRunner(options);
 
-vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
-  "when using proxy table":{
-    "with no latency" : {
-      "when an inbound message is sent from a WebSocket client": {
-        topic: function () {
-          var that = this
-              headers = {};
-
-          runner.webSocketTestWithTable({
-            io: io,
-            host: 'localhost',
-            wsprotocol: wsprotocol,
-            protocol: protocol,
-            router: {'localhost':'localhost:8230'}, 
-            ports: {
-              target: 8230,
-              proxy: 8231
-            },
-            onListen: function (socket) {
-              socket.on('connection', function (client) {
-                client.on('message', function (msg) {
-                  that.callback(null, msg, headers);
-                });
-              });
-            },
-            onWsupgrade: function (req, res) {
-              headers.request = req;
-              headers.response = res.headers;
-            },
-            onOpen: function (ws) {
-              ws.send(utils.encode('from client'));
-            }
-          });
-        },
-        "the target server should receive the message": function (err, msg, headers) {
-          assert.equal(msg, 'from client');
-        },
-        "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
-          assert.isString(headers.response['sec-websocket-location']);
-          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
-          assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
-        }
-      }
-    }
-  },
+vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
       "when an inbound message is sent from a WebSocket client": {
@@ -102,8 +58,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           runner.webSocketTest({
             io: io,
             host: 'localhost',
-            wsprotocol: wsprotocol,
-            protocol: protocol,
+            wsprotocol: options.source.protocols.ws,
+            protocol: options.source.protocols.http,
             ports: {
               target: 8130,
               proxy: 8131
@@ -129,7 +85,7 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
         },
         "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
           assert.isString(headers.response['sec-websocket-location']);
-          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
+          assert.isTrue(headers.response['sec-websocket-location'].indexOf(options.source.protocols.ws) !== -1);
           assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       },
@@ -141,8 +97,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           runner.webSocketTest({
             io: io,
             host: 'localhost',
-            wsprotocol: wsprotocol,
-            protocol: protocol,
+            wsprotocol: options.source.protocols.ws,
+            protocol: options.source.protocols.http,
             ports: {
               target: 8132,
               proxy: 8133
@@ -170,8 +126,8 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           runner.webSocketTest({
             io: io,
             host: 'localhost',
-            wsprotocol: wsprotocol,
-            protocol: protocol,
+            wsprotocol: options.source.protocols.ws,
+            protocol: options.source.protocols.http,
             ports: {
               target: 8134,
               proxy: 8135
@@ -198,7 +154,7 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
         },
         "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
           assert.isString(headers.response['sec-websocket-location']);
-          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
+          assert.isTrue(headers.response['sec-websocket-location'].indexOf(options.source.protocols.ws) !== -1);
           assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       }

@@ -1,5 +1,4 @@
 
-module.exports = Store
 //
 // just to make these example a little bit interesting, 
 // make a little key value store with an http interface
@@ -20,12 +19,10 @@ module.exports = Store
 //
 // TODO: cached map-reduce views and auto-magic sharding.
 //
+var Store = module.exports = function Store () {
+  this.store = {};
+};
 
-
-
-function Store () {
-  this.store = {}
-}
 Store.prototype = {
   get: function (key) {
     return this.store[key]
