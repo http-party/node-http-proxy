@@ -114,7 +114,7 @@ httpProxy.createServer(function (req, res, proxy) {
   // Buffer the request so that `data` and `end` events
   // are not lost during async operation(s).
   //
-  var buffer = proxy.buffer(req);
+  var buffer = httpProxy.buffer(req);
   
   //
   // Wait for two seconds then respond: this simulates
