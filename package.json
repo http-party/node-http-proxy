@@ -1,12 +1,13 @@
 {
   "name": "http-proxy",
   "description": "A full-featured http reverse proxy for node.js",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [
     { "name": "Mikeal Rogers", "email": "mikeal.rogers@gmail.com" }, 
     { "name": "Marak Squires", "email": "marak.squires@gmail.com" },
-    { "name": "Fedor Indutny", "email": "fedor.indutny@gmail.com" }
+    { "name": "Fedor Indutny", "email": "fedor.indutny@gmail.com" },
+    { "name": "Dominic Tarr", "email": "dominic@nodejitsu.com" }
   ],
   "repository": {
     "type": "git",
