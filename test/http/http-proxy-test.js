@@ -26,7 +26,6 @@
  
 var assert = require('assert'),
     util = require('util'),
-    argv = require('optimist').argv,
     request = require('request'),
     vows = require('vows'),
     helpers = require('../helpers');
@@ -45,11 +44,11 @@ var badForwardOptions = {
   }
 };
 
-var protocol = argv.https ? 'https' : 'http',
-    target = argv.target ? argv.target : 'http',
-    runner = new helpers.TestRunner(protocol, target);
+var options = helpers.parseProtocol(),
+    testName = [options.source.protocols.http, options.target.protocols.http].join('-to-'),
+    runner = new helpers.TestRunner(options);
 
-vows.describe('node-http-proxy/' + protocol).addBatch({
+vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
       "and a valid target server": runner.assertProxied('localhost', 8080, 8081, function (callback) {

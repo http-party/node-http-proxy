@@ -30,7 +30,7 @@ var util = require('util'),
     colors = require('colors'),
     request = require('request'),
     vows = require('vows'),
-    websocket = require('../vendor/websocket'),
+    websocket = require('../../vendor/websocket'),
     helpers = require('../helpers');
 
 try {
@@ -43,11 +43,11 @@ catch (ex) {
   process.exit(1);
 }
 
-var protocol = argv.https ? 'https' : 'http',
-    wsprotocol = argv.https ? 'wss' : 'ws',
-    runner = new helpers.TestRunner(protocol);
+var options = helpers.parseProtocol(),
+    testName = [options.source.protocols.ws, options.target.protocols.ws].join('-to-'),
+    runner = new helpers.TestRunner(options);
 
-vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
+vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
   "When using server created by httpProxy.createServer()": {
     "using proxy table with no latency": {
       "when an inbound message is sent from a WebSocket client": {
@@ -58,9 +58,9 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
           runner.webSocketTestWithTable({
             io: io,
             host: 'localhost',
-            wsprotocol: wsprotocol,
-            protocol: protocol,
-            router: {'localhost':'localhost:8230'}, 
+            wsprotocol: options.source.protocols.ws,
+            protocol: options.source.protocols.http,
+            router: { 'localhost' : 'localhost:8230' }, 
             ports: {
               target: 8230,
               proxy: 8231
@@ -86,7 +86,7 @@ vows.describe('node-http-proxy/websocket/' + wsprotocol).addBatch({
         },
         "the origin and sec-websocket-origin headers should match": function (err, msg, headers) {
           assert.isString(headers.response['sec-websocket-location']);
-          assert.isTrue(headers.response['sec-websocket-location'].indexOf(wsprotocol) !== -1);
+          assert.isTrue(headers.response['sec-websocket-location'].indexOf(options.source.protocols.ws) !== -1);
           assert.equal(headers.request.Origin, headers.response['sec-websocket-origin']);
         }
       }

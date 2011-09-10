@@ -5,15 +5,16 @@
  *
  */
 
-var fs = require('fs'),
+var assert = require('assert'),
+    fs = require('fs'),
     http = require('http'),
     https = require('https'),
     path = require('path'),
-    vows = require('vows'),
-    assert = require('assert'),
+    argv = require('optimist').argv,
     request = require('request'),
-    websocket = require('./../vendor/websocket'),
-    httpProxy = require('./../lib/node-http-proxy');
+    vows = require('vows'),
+    websocket = require('../vendor/websocket'),
+    httpProxy = require('../lib/node-http-proxy');
 
 var loadHttps = exports.loadHttps = function () {
   return {
@@ -22,16 +23,34 @@ var loadHttps = exports.loadHttps = function () {
   };
 };
 
-var TestRunner = exports.TestRunner = function (source, target) {
-  this.source      = { protocol: source },
-  this.target      = { protocol: target };
+var parseProtocol = exports.parseProtocol = function () {  
+  function setupProtocol (secure) {
+    return {
+      secure: secure,
+      protocols: {
+        http: secure ? 'https' : 'http',
+        ws: secure ? 'wss' : 'ws'
+      }
+    }
+  }
+  
+  return {
+    source: setupProtocol(argv.source === 'secure'),
+    target: setupProtocol(argv.target === 'secure')
+  };
+}
+
+var TestRunner = exports.TestRunner = function (options) {
+  options          = options || {};
+  this.source      = options.source || {};
+  this.target      = options.target || {};
   this.testServers = [];
 
-  if (source === 'https') {
+  if (this.source.secure) {
     this.source.https = loadHttps();
   }
   
-  if (target === 'https') {
+  if (this.target.secure) {
     this.target.https = loadHttps();
   }
 };
@@ -48,7 +67,7 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
           
       options = {
         method: 'GET',
-        uri: self.source.protocol + '://localhost:' + proxyPort,
+        uri: self.source.protocols.http + '://localhost:' + proxyPort,
         headers: {
           host: host
         }
@@ -79,7 +98,7 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
 
 TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, createProxy) {
   var assertion = "should receive " + statusCode + " responseCode",
-      protocol = this.source.protocol;
+      protocol = this.source.protocols.http;
 
   var test = {
     topic: function () {
@@ -240,11 +259,11 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
   // Initialize the nodeProxy and start proxying the request
   //
   var that = this,
-      proxy = new httpProxy.HttpProxy(merge({}, options, this.getOptions())),
+      proxy = new httpProxy.RoutingProxy(merge({}, options, this.getOptions())),
       proxyServer;
 
   var handler = function (req, res) {
-    var buffer = proxy.buffer(req);
+    var buffer = httpProxy.buffer(req);
     setTimeout(function () {
       proxy.proxyRequest(req, res, {
         buffer: buffer
@@ -252,9 +271,9 @@ TestRunner.prototype.startProxyServerWithTableAndLatency = function (port, laten
     }, latency);
   };
 
-  proxyServer = that.options.https
-    ? https.createServer(that.options.https, handler, that.options)
-    : http.createServer(handler, that.options);
+  proxyServer = this.source.https
+    ? https.createServer(this.source.https, handler)
+    : http.createServer(handler);
 
   proxyServer.listen(port, function () {
     that.testServers.push(proxyServer);
