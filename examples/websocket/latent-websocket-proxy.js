@@ -28,7 +28,7 @@ var sys = require('sys'),
     http = require('http'),
     colors = require('colors'),
     websocket = require('./../vendor/websocket'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 try {
   var utils = require('socket.io/lib/socket.io/utils'),
@@ -80,7 +80,7 @@ var proxyServer = http.createServer(function (req, res) {
 // WebSocket requests as well.
 //
 proxyServer.on('upgrade', function (req, socket, head) {
-  var buffer = proxy.buffer(socket);
+  var buffer = httpProxy.buffer(socket);
   
   setTimeout(function () {
     proxy.proxyWebSocketRequest(req, socket, head, {

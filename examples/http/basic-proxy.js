@@ -27,16 +27,17 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
-// ascii art from http://github.com/marak/asciimo
-var welcome = '\
-#    # ##### ##### #####        #####  #####   ####  #    # #   # \n\
-#    #   #     #   #    #       #    # #    # #    #  #  #   # #  \n\
-######   #     #   #    # ##### #    # #    # #    #   ##     #   \n\
-#    #   #     #   #####        #####  #####  #    #   ##     #   \n\
-#    #   #     #   #            #      #   #  #    #  #  #    #   \n\
-#    #   #     #   #            #      #    #  ####  #    #   #   \n';
+var welcome = [
+  '#    # ##### ##### #####        #####  #####   ####  #    # #   #',
+  '#    #   #     #   #    #       #    # #    # #    #  #  #   # # ',  
+  '######   #     #   #    # ##### #    # #    # #    #   ##     #  ',   
+  '#    #   #     #   #####        #####  #####  #    #   ##     #  ',   
+  '#    #   #     #   #            #      #   #  #    #  #  #    #  ',   
+  '#    #   #     #   #            #      #    #  ####  #    #   #  '
+].join('\n');
+
 util.puts(welcome.rainbow.bold);
 
 //

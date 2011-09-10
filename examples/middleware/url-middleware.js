@@ -37,7 +37,7 @@ httpProxy.createServer(
   // This is where our middlewares go, with any options desired - in this case,
   // the list of routes/URLs and their destinations.
   //
-    require('proxy-by-url')({
+  require('proxy-by-url')({
     '/hello': { port: 9000, host: 'localhost' },
     '/charlie': { port: 80, host: 'charlieistheman.com' },
     '/google': { port: 80, host: 'google.com' } 

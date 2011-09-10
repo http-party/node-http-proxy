@@ -27,14 +27,14 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
 // Http Server with proxyRequest Handler and Latency
 //
 var proxy = new httpProxy.HttpProxy();
 http.createServer(function (req, res) {
-  var buffer = proxy.buffer(req);
+  var buffer = httpProxy.buffer(req);
   setTimeout(function() {
     proxy.proxyRequest(req, res, {
       port: 9000,

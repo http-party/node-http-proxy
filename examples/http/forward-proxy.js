@@ -27,7 +27,7 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
 // Setup proxy server with forwarding

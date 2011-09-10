@@ -27,7 +27,7 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('./../lib/node-http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
 // Basic Http Proxy Server
@@ -42,23 +42,24 @@ httpProxy.createServer(9000, 'localhost').listen(8000);
 //
 
 
-var connections = []
-  , go
+var connections = [], 
+    go;
 
 http.createServer(function (req, res) {
-      
-  connections.push (function (){
+  connections.push(function () {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
     res.end();
-  })
-  process.stdout.write(connections.length + ', ')
+  });
+  
+  process.stdout.write(connections.length + ', ');
+  
   if (connections.length > 110 || go) {
-    go = true
-    while(connections.length)
-      connections.shift()()
+    go = true;
+    while (connections.length) {
+      connections.shift()();
+    }
   }
-
 }).listen(9000);
 
 util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);

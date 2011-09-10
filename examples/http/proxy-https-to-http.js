@@ -28,7 +28,7 @@ var https = require('https'),
     http = require('http'),
     util = require('util'),
     colors = require('colors'),
-    httpProxy = require('./../lib/node-http-proxy'),
+    httpProxy = require('../../lib/node-http-proxy'),
     helpers = require('./../test/helpers');
     
 var opts = helpers.loadHttps();
