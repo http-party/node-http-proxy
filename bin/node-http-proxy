@@ -64,7 +64,7 @@ if (typeof target === 'string') location = target.split(':');
 //
 var server;
 if (location) {
-  var targetPort = location.length === 1 ? 80 : location[1];
+  var targetPort = location.length === 1 ? 80 : parseInt(location[1]);
   server = httpProxy.createServer(targetPort, location[0], config);
 }
 else if (config.router) {
