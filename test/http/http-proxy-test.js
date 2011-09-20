@@ -74,8 +74,11 @@ vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
         "and a valid target server": runner.assertProxied('localhost', 8120, 8121, function (callback) {
           runner.startProxyServerWithForwarding(8120, 8121, 'localhost', forwardOptions, callback);
         }),
-        "and without a valid forward server": runner.assertProxied('localhost', 8122, 8123, function (callback) {
-          runner.startProxyServerWithForwarding(8122, 8123, 'localhost', badForwardOptions, callback);
+        "and also a valid target server": runner.assertHeaders(8122, "x-forwarded-for", function (callback) {
+          runner.startProxyServerWithForwarding(8122, 8123, 'localhost', forwardOptions, callback);
+        }),
+        "and without a valid forward server": runner.assertProxied('localhost', 8124, 8125, function (callback) {
+          runner.startProxyServerWithForwarding(8124, 8125, 'localhost', badForwardOptions, callback);
         })
       }
     }
