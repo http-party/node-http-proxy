@@ -128,6 +128,40 @@ TestRunner.prototype.assertResponseCode = function (proxyPort, statusCode, creat
   return test;
 };
 
+// A test helper to check and see if the http headers were set properly.
+TestRunner.prototype.assertHeaders = function (proxyPort, headerName, createProxy) {
+  var assertion = "should receive http header \"" + headerName + "\"",
+      protocol = this.source.protocols.http;
+
+  var test = {
+    topic: function () {
+      var that = this, options = {
+        method: 'GET',
+        uri: protocol + '://localhost:' + proxyPort,
+        headers: {
+          host: 'unknown.com'
+        }
+      };
+
+      if (createProxy) {
+        return createProxy(function () {
+          request(options, that.callback);
+        });
+      }
+
+      request(options, this.callback);
+    }
+  };
+
+  test[assertion] = function (err, res, body) {
+    assert.isNull(err);
+    assert.isNotNull(res.headers[headerName]);
+  };
+
+  return test;
+};
+
+
 //
 // WebSocketTest
 //
