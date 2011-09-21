@@ -32,7 +32,7 @@ var util = require('util'),
 //
 // Http Server with proxyRequest Handler and Latency
 //
-var proxy = new httpProxy.HttpProxy();
+var proxy = new httpProxy.RoutingProxy();
 http.createServer(function (req, res) {
   var buffer = httpProxy.buffer(req);
   setTimeout(function() {

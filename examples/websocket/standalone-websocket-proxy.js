@@ -27,7 +27,7 @@
 var sys = require('sys'),
     http = require('http'),
     colors = require('colors'),
-    websocket = require('./../vendor/websocket'),
+    websocket = require('../../vendor/websocket'),
     httpProxy = require('../../lib/node-http-proxy');
 
 try {
