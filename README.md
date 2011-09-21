@@ -145,7 +145,7 @@ var http = require('http'),
 //
 // Create a new instance of HttProxy to use in your server
 //
-var proxy = new httpProxy.HttpProxy();
+var proxy = new httpProxy.RoutingProxy();
 
 //
 // Create a regular http server and proxy its handler
@@ -247,12 +247,14 @@ httpProxy.createServer(8000, 'localhost', options).listen(8001);
 //
 // Create an instance of HttpProxy to use with another HTTPS server
 //
-var proxy = new httpProxy.HttpProxy();
-https.createServer(options.https, function (req, res) {
-  proxy.proxyRequest(req, res, {
+var proxy = new httpProxy.HttpProxy({
+  target: {
     host: 'localhost', 
     port: 8000
-  })
+  }
+});
+https.createServer(options.https, function (req, res) {
+  proxy.proxyRequest(req, res)
 }).listen(8002);
 
 //
@@ -266,7 +268,7 @@ http.createServer(function (req, res) {
 ```
 
 ### Proxying to HTTPS from HTTPS
-Proxying from HTTPS to HTTPS is essentially the same as proxying from HTTPS to HTTP, but you must include `target` option in when calling `httpProxy.createServer` or instantiating a new instance of `HttpProxy`.
+Proxying from HTTPS to HTTPS is essentially the same as proxying from HTTPS to HTTP, but you must include the `target` option in when calling `httpProxy.createServer` or instantiating a new instance of `HttpProxy`.
 
 ``` js
 var fs = require('fs'),
@@ -293,15 +295,14 @@ httpProxy.createServer(8000, 'localhost', options).listen(8001);
 //
 var proxy = new httpProxy.HttpProxy({ 
   target: {
+    host: 'localhost', 
+    port: 8000,
     https: true
   }
 });
 
 https.createServer(options.https, function (req, res) {
-  proxy.proxyRequest(req, res, {
-    host: 'localhost', 
-    port: 8000
-  })
+  proxy.proxyRequest(req, res);
 }).listen(8002);
 
 //
@@ -325,7 +326,7 @@ httpProxy.createServer(
 ```
 
 ## Proxying WebSockets
-Websockets are handled automatically when using the `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
+Websockets are handled automatically when using `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
 
 ``` js
 var http = require('http'),
@@ -334,26 +335,24 @@ var http = require('http'),
 //
 // Create an instance of node-http-proxy
 //
-var proxy = new httpProxy.HttpProxy();
+var proxy = new httpProxy.HttpProxy(
+    target: {
+      host: 'localhost',
+      port: 8000
+    });
 
 var server = http.createServer(function (req, res) {
   //
   // Proxy normal HTTP requests
   //
-  proxy.proxyRequest(req, res, {
-    host: 'localhost',
-    port: 8000
-  })
+  proxy.proxyRequest(req, res);
 });
 
 server.on('upgrade', function(req, socket, head) {
   //
   // Proxy websocket requests too
   //
-  proxy.proxyWebSocketRequest(req, socket, head, {
-    host: 'localhost',
-    port: 8000
-  });
+  proxy.proxyWebSocketRequest(req, socket, head);
 });
 ```
 
