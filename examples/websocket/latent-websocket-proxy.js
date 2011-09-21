@@ -27,7 +27,7 @@
 var sys = require('sys'),
     http = require('http'),
     colors = require('colors'),
-    websocket = require('./../vendor/websocket'),
+    websocket = require('../../vendor/websocket'),
     httpProxy = require('../../lib/node-http-proxy');
 
 try {
@@ -67,12 +67,14 @@ socket.on('connection', function (client) {
 //
 // Setup our server to proxy standard HTTP requests
 //
-var proxy = new httpProxy.HttpProxy();
-var proxyServer = http.createServer(function (req, res) {
-  proxy.proxyRequest(req, res, {
+var proxy = new httpProxy.HttpProxy({
+  target: {
     host: 'localhost', 
     port: 8080
-  })
+  }
+});
+var proxyServer = http.createServer(function (req, res) {
+  proxy.proxyRequest(req, res);
 });
 
 //
@@ -83,11 +85,7 @@ proxyServer.on('upgrade', function (req, socket, head) {
   var buffer = httpProxy.buffer(socket);
   
   setTimeout(function () {
-    proxy.proxyWebSocketRequest(req, socket, head, {
-      port: 8080,
-      host: 'localhost',
-      buffer: buffer
-    });
+    proxy.proxyWebSocketRequest(req, socket, head, buffer);
   }, 1000);
 });
 
