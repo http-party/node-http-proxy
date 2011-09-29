@@ -27,7 +27,7 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('http-proxy');
+    httpProxy = require('../../lib/node-http-proxy');
 
 //
 // Now we set up our proxy.
