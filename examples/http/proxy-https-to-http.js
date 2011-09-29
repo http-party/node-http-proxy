@@ -29,7 +29,7 @@ var https = require('https'),
     util = require('util'),
     colors = require('colors'),
     httpProxy = require('../../lib/node-http-proxy'),
-    helpers = require('./../test/helpers');
+    helpers = require('../../test/helpers');
     
 var opts = helpers.loadHttps();
 

@@ -1,4 +1,4 @@
-var Store = require('./lib/store')
+var Store = require('../helpers/store')
   , http = require('http')
 
 //
@@ -24,7 +24,7 @@ var Store = require('./lib/store')
 
 http.createServer(new Store().handler()).listen(7531)
 
-require('http-proxy').createServer(
+require('../../lib/node-http-proxy').createServer(
   require('connect-jsonp')(true),
   'localhost', 7531
 ).listen(1337)
