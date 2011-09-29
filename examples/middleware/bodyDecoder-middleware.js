@@ -1,5 +1,5 @@
 
-var Store = require('./lib/store')
+var Store = require('../helpers/store')
   , http = require('http')
 
 http.createServer(new Store().handler()).listen(7531, function () {
@@ -42,7 +42,7 @@ http.createServer(new Store().handler()).listen(7531, function () {
     //don't worry about incoming contont type
     //bodyParser.parse[''] = JSON.parse
 
-    require('http-proxy').createServer(
+    require('../../lib/node-http-proxy').createServer(
       //refactor the body parser and re-streamer into a separate package
       bodyParser(),
       //body parser absorbs the data and end events before passing control to the next
