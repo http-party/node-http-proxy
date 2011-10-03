@@ -114,7 +114,6 @@ vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
           });
         },
         "should raise the `websocket:incoming` event": function (ign, data) {
-          console.log(ign,data,utils.decode(data))
           assert.equal(utils.decode(data.toString().replace('\u0000', '')), 'from client');
         },
       },
