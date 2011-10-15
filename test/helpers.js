@@ -55,10 +55,12 @@ var TestRunner = exports.TestRunner = function (options) {
   }
 };
 
-TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProxy) {
+TestRunner.prototype.assertProxied = function (host, proxyPort, port, requestPath, targetPath, createProxy) {
+  if (!targetPath) targetPath = "";
+  
   var self = this,
-      assertion = "should receive 'hello " + host + "'",
-      output = 'hello ' + host;
+      output = "hello " + host + targetPath,
+      assertion = "should receive '" + output + "'";
 
   var test = {
     topic: function () {
@@ -73,6 +75,7 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
         }
       };
       
+      if (requestPath) options.uri += requestPath;
 
       function startTest () {
         if (port) {
@@ -80,7 +83,6 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, createProx
             request(options, that.callback);
           });
         }
-
         request(options, this.callback);
       }
 

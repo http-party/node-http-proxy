@@ -51,7 +51,7 @@ var options = helpers.parseProtocol(),
 vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
   "When using server created by httpProxy.createServer()": {
     "with no latency" : {
-      "and a valid target server": runner.assertProxied('localhost', 8080, 8081, function (callback) {
+      "and a valid target server": runner.assertProxied('localhost', 8080, 8081, false, false, function (callback) {
         runner.startProxyServer(8080, 8081, 'localhost', callback);
       }),
       "and without a valid target server": runner.assertResponseCode(8082, 500, function (callback) {
@@ -59,7 +59,7 @@ vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
       })
     },
     "with latency": {
-      "and a valid target server": runner.assertProxied('localhost', 8083, 8084, function (callback) {
+      "and a valid target server": runner.assertProxied('localhost', 8083, 8084, false, false, function (callback) {
         runner.startLatentProxyServer(8083, 8084, 'localhost', 1000, callback);
       }),
       "and without a valid target server": runner.assertResponseCode(8085, 500, function (callback) {
@@ -71,13 +71,13 @@ vows.describe('node-http-proxy/http-proxy/' + testName).addBatch({
         runner.startTargetServer(8300, 'forward proxy', this.callback);
       },
       "with no latency" : {
-        "and a valid target server": runner.assertProxied('localhost', 8120, 8121, function (callback) {
+        "and a valid target server": runner.assertProxied('localhost', 8120, 8121, false, false, function (callback) {
           runner.startProxyServerWithForwarding(8120, 8121, 'localhost', forwardOptions, callback);
         }),
         "and also a valid target server": runner.assertHeaders(8122, "x-forwarded-for", function (callback) {
           runner.startProxyServerWithForwarding(8122, 8123, 'localhost', forwardOptions, callback);
         }),
-        "and without a valid forward server": runner.assertProxied('localhost', 8124, 8125, function (callback) {
+        "and without a valid forward server": runner.assertProxied('localhost', 8124, 8125, false, false, function (callback) {
           runner.startProxyServerWithForwarding(8124, 8125, 'localhost', badForwardOptions, callback);
         })
       }
