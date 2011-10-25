@@ -24,7 +24,7 @@
 
 */
 
-var sys = require('sys'),
+var util = require('util'),
     http = require('http'),
     colors = require('colors'),
     websocket = require('../../vendor/websocket'),
@@ -55,10 +55,10 @@ server.listen(8080);
 //
 var socket = io.listen(server);
 socket.on('connection', function (client) {
-  sys.debug('Got websocket connection');
+  util.debug('Got websocket connection');
 
   client.on('message', function (msg) {
-    sys.debug('Got message from client: ' + msg);
+    util.debug('Got message from client: ' + msg);
   });
 
   socket.broadcast('from server');
@@ -101,5 +101,5 @@ ws.on('open', function () {
 });
 
 ws.on('message', function (msg) {
-  sys.debug('Got message: ' + utils.decode(msg));
+  util.debug('Got message: ' + utils.decode(msg));
 });
