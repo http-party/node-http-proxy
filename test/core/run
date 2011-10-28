@@ -35,6 +35,7 @@
 //
 
 var path = require('path'),
+    spawn = require('child_process').spawn,
     httpProxy = require('../../'),
     common = require('./common');
 
@@ -50,7 +51,11 @@ var proxy = httpProxy.createServer(common.PORT, 'localhost');
 proxy.listen(common.PROXY_PORT);
 
 proxy.on('listening', function () {
-  require(path.join(process.cwd(), process.argv[2]));
+  console.log('Proxy server listening on ' + common.PROXY_PORT);
+  var testProcess = spawn(process.argv[0], [ process.argv[2] ]);
+  testProcess.stdout.pipe(process.stdout);
+  testProcess.stderr.pipe(process.stderr);
+  testProcess.on('exit', process.exit);
 });
 
 // vim:filetype=javascript
