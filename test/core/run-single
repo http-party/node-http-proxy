@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /*
-  run.js: test runner for core tests
+  run-single.js: test runner for core tests
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Marak Squires, Fedor Indutny
+  Copyright (c) 2011 Nodejitsu
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
