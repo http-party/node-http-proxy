@@ -75,8 +75,8 @@ async.forEachSeries(tests, runTest, function () {
   }
 
   console.log('\nSummary:');
-  console.log(('  ' + failed.length + '\tfailed tests').red);
   console.log(('  ' + ok.length + '\tpassed tests').green);
+  console.log(('  ' + failed.length + '\tfailed tests').red);
 });
 
 // vim:filetype=javascript
