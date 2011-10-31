@@ -38,13 +38,13 @@ function runTest(test, callback) {
 
   var killTimeout = setTimeout(function () {
     child.kill();
-    console.log(test.yellow + ' timed out'.red);
+    console.log(path.basename(test).yellow + ' timed out'.red);
   }, testTimeout);
 
   child.on('exit', function (exitCode) {
     clearTimeout(killTimeout);
 
-    console.log(test.yellow + ' exited with ' +
+    console.log(path.basename(test).yellow + ' exited with ' +
                 ((exitCode) ? exitCode.toString().red : exitCode.toString().green));
     results[test] = { exitCode: exitCode };
     callback();
