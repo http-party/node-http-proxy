@@ -25,7 +25,8 @@
 
 */
 
-var path = require('path'),
+var fs = require('fs'),
+    path = require('path'),
     spawn = require('child_process').spawn,
     async = require('async'),
     colors = require('colors');
@@ -56,6 +57,17 @@ function runTest(test, callback) {
 };
 
 var tests = process.argv.slice(2);
+
+if (!tests.length) {
+  var pathPrefix = path.join(__dirname, 'simple');
+  tests = fs.readdirSync(pathPrefix).map(function (test) {
+    return path.join(pathPrefix, test);
+  });
+  //
+  // We only run simple tests by default.
+  //
+}
+
 async.forEachSeries(tests, runTest, function () {
   var failed = [], ok = [];
   for (var test in results) {
