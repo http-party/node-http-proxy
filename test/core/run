@@ -42,7 +42,7 @@ function runTest(test, callback) {
 
   var killTimeout = setTimeout(function () {
     child.kill();
-    console.log(path.basename(test).yellow + ' timed out'.red);
+    console.log('  ' + path.basename(test).yellow + ' timed out'.red);
   }, testTimeout);
 
   child.on('exit', function (exitCode) {
