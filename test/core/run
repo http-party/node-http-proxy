@@ -45,8 +45,8 @@ function runTest(test, callback) {
   child.on('exit', function (exitCode) {
     clearTimeout(killTimeout);
 
-    console.log(path.basename(test).yellow + ' exited with ' +
-                ((exitCode) ? exitCode.toString().red : exitCode.toString().green));
+    console.log(' ' + ((exitCode) ? '✘'.red : '✔'.green) + ' ' +
+                path.basename(test) + (exitCode && ' (exit code: ' + exitCode + ')'));
     results[test] = { exitCode: exitCode };
     callback();
     //
