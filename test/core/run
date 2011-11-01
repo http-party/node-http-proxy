@@ -45,8 +45,9 @@ function runTest(test, callback) {
   child.on('exit', function (exitCode) {
     clearTimeout(killTimeout);
 
-    console.log(' ' + ((exitCode) ? '✘'.red : '✔'.green) + ' ' +
-                path.basename(test) + (exitCode && ' (exit code: ' + exitCode + ')'));
+    console.log('  ' + ((exitCode) ? '✘'.red : '✔'.green) + ' ' +
+                path.basename(test) +
+                (exitCode ? (' (exit code: ' + exitCode + ')') : ''));
     results[test] = { exitCode: exitCode };
     callback();
     //
@@ -68,13 +69,14 @@ if (!tests.length) {
   //
 }
 
+console.log('Running tests:'.bold);
 async.forEachSeries(tests, runTest, function () {
   var failed = [], ok = [];
   for (var test in results) {
     (results[test].exitCode != 0 ? failed : ok).push(test);
   }
 
-  console.log('\nSummary:');
+  console.log('\nSummary:'.bold);
   console.log(('  ' + ok.length + '\tpassed tests').green);
   console.log(('  ' + failed.length + '\tfailed tests').red);
 });
