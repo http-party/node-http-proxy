@@ -1,6 +1,6 @@
 {
   "name": "http-proxy",
-  "version": "0.7.7",
+  "version": "0.7.6",
   "description": "A full-featured http reverse proxy for node.js",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "contributors": [
@@ -31,5 +31,5 @@
     "test-http": "vows --spec && vows --spec --target=secure",
     "test-https": "vows --spec --source=secure && vows --spec --source=secure --target=secure" 
   },
-  "engines": { "node": ">=0.4.x <0.7.0" }
+  "engines": { "node": "0.4.x || 0.5.x" }
 }
