@@ -32,14 +32,19 @@ var defaultOptions = {
     "bar.com": "127.0.0.1:8092",
     "baz.com/taco": "127.0.0.1:8098",
     "pizza.com/taco/muffins": "127.0.0.1:8099",
+    "biz.com/taco/hot": "127.0.0.1:8086/pizza/cold",
+    "biz.com/taco": "127.0.0.1:8087/pizza",
+    "biz.com": "127.0.0.1:8088/taco"
   }
 };
 
 var hostnameOptions = {
   hostnameOnly: true,
   router: {
-    "foo.com": "127.0.0.1:8091",
-    "bar.com": "127.0.0.1:8092"
+    "foo.com": "127.0.0.1:8011",
+    "bar.com": "127.0.0.1:8012",
+    "biz.com": "127.0.0.1:8013/extra",
+    "buz.com": "127.0.0.1:8014/mega/extra",
   }
 };
 
@@ -54,14 +59,19 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
         "an incoming request to bar.com": runner.assertProxied('bar.com', 8090, 8092),
         "an incoming request to baz.com/taco": runner.assertProxied('baz.com', 8090, 8098, "/taco", "/"),
         "an incoming request to pizza.com/taco/muffins": runner.assertProxied('pizza.com', 8090, 8099, "/taco/muffins", "/taco"),
+        "an incoming request to biz.com/taco/hot": runner.assertProxied('biz.com', 8090, 8086, "/taco/hot", "/pizza/cold"),
+        "an incoming request to biz.com/taco": runner.assertProxied('biz.com', 8090, 8087, "/taco", "/pizza"),
+        "an incoming request to biz.com": runner.assertProxied('biz.com', 8090, 8088, "/", "/taco"),
         "an incoming request to unknown.com": runner.assertResponseCode(8090, 404)
       },
       "and routing by Hostname": {
         topic: function () {
           this.server = runner.startProxyServerWithTable(8093, hostnameOptions, this.callback);
         },
-        "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8094),
-        "an incoming request to bar.com": runner.assertProxied('bar.com', 8093, 8095),
+        "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8011),
+        "an incoming request to bar.com": runner.assertProxied('bar.com', 8093, 8012),
+        "an incoming request to biz.com": runner.assertProxied('biz.com', 8093, 8013, '/', '/extra'),
+        "an incoming request to buz.com": runner.assertProxied('buz.com', 8093, 8014, '/', '/mega/extra'),
         "an incoming request to unknown.com": runner.assertResponseCode(8093, 404)
       }
     },
