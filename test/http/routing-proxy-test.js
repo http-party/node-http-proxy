@@ -56,12 +56,12 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
           this.server = runner.startProxyServerWithTable(8090, defaultOptions, this.callback);
         },
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8090, 8091),
-        "an incoming request to bar.com": runner.assertProxied('bar.com', 8090, 8092),
+        "an incoming request to bar.com": runner.assertProxied('bar.com', 8090, 8092, "/taco", "/taco"),
         "an incoming request to baz.com/taco": runner.assertProxied('baz.com', 8090, 8098, "/taco", "/"),
         "an incoming request to pizza.com/taco/muffins": runner.assertProxied('pizza.com', 8090, 8099, "/taco/muffins", "/taco"),
         "an incoming request to biz.com/taco/hot": runner.assertProxied('biz.com', 8090, 8086, "/taco/hot", "/pizza/cold"),
         "an incoming request to biz.com/taco": runner.assertProxied('biz.com', 8090, 8087, "/taco", "/pizza"),
-        "an incoming request to biz.com": runner.assertProxied('biz.com', 8090, 8088, "/", "/taco"),
+        "an incoming request to biz.com": runner.assertProxied('biz.com', 8090, 8088, "/hot", "/taco/hot"),
         "an incoming request to unknown.com": runner.assertResponseCode(8090, 404)
       },
       "and routing by Hostname": {
@@ -69,7 +69,7 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
           this.server = runner.startProxyServerWithTable(8093, hostnameOptions, this.callback);
         },
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8011),
-        "an incoming request to bar.com": runner.assertProxied('bar.com', 8093, 8012),
+        "an incoming request to bar.com/taco": runner.assertProxied('bar.com', 8093, 8012, "/taco", "/taco"),
         "an incoming request to biz.com": runner.assertProxied('biz.com', 8093, 8013, '/', '/extra'),
         "an incoming request to buz.com": runner.assertProxied('buz.com', 8093, 8014, '/', '/mega/extra'),
         "an incoming request to unknown.com": runner.assertResponseCode(8093, 404)
