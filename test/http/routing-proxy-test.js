@@ -58,7 +58,7 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8090, 8091),
         "an incoming request to bar.com": runner.assertProxied('bar.com', 8090, 8092, "/taco", "/taco"),
         "an incoming request to baz.com/taco": runner.assertProxied('baz.com', 8090, 8098, "/taco", "/"),
-        "an incoming request to pizza.com/taco/muffins": runner.assertProxied('pizza.com', 8090, 8099, "/taco/muffins", "/taco"),
+        "an incoming request to pizza.com/taco/muffins": runner.assertProxied('pizza.com', 8090, 8099, "/taco/muffins", "/"),
         "an incoming request to biz.com/taco/hot": runner.assertProxied('biz.com', 8090, 8086, "/taco/hot", "/pizza/cold"),
         "an incoming request to biz.com/taco": runner.assertProxied('biz.com', 8090, 8087, "/taco", "/pizza"),
         "an incoming request to biz.com": runner.assertProxied('biz.com', 8090, 8088, "/hot", "/taco/hot"),
