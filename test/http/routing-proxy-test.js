@@ -70,7 +70,7 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
         },
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8011),
         "an incoming request to bar.com/taco": runner.assertProxied('bar.com', 8093, 8012, "/taco", "/taco"),
-        "an incoming request to biz.com": runner.assertProxied('biz.com', 8093, 8013, '/', '/extra'),
+        "an incoming request to biz.com": runner.assertProxied('biz.com', 8093, 8013, '/foo', '/extra/foo'),
         "an incoming request to buz.com": runner.assertProxied('buz.com', 8093, 8014, '/', '/mega/extra'),
         "an incoming request to unknown.com": runner.assertResponseCode(8093, 404)
       }
