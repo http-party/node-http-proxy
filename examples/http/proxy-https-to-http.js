@@ -1,5 +1,5 @@
 /*
-  proxy-https-to-http.js: Basic example of proxying over HTTPS to a target HTTP server
+  Proxy-https-to-http.js: Basic example of proxying over HTTPS to a target HTTP server
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
@@ -34,7 +34,7 @@ var https = require('https'),
 var opts = helpers.loadHttps();
 
 //
-// Crete the target HTTPS server 
+// Create the target HTTPS server
 //
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -43,7 +43,7 @@ http.createServer(function (req, res) {
 }).listen(8000);
 
 //
-// Create the proxy server listening on port 443.
+// Create the proxy server listening on port 443
 //
 httpProxy.createServer(8000, 'localhost', {
   https: opts
