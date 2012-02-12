@@ -43,6 +43,17 @@ var hostnameOptions = {
   }
 };
 
+var staticOptions = {
+  hostnameOnly: true,
+  router: {
+    "static.com": "127.0.0.1:8121",
+    "removed.com": "127.0.0.1:8122"
+  }
+};
+
+var dynamicHost = "dynamic1.com";
+var dynamicTarget = "127.0.0.1:8123";
+
 vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
   "When using server created by httpProxy.createServer()": {
     "when passed a routing table": {
@@ -63,6 +74,16 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8093, 8094),
         "an incoming request to bar.com": runner.assertProxied('bar.com', 8093, 8095),
         "an incoming request to unknown.com": runner.assertResponseCode(8093, 404)
+      },
+      "and adding a route by Hostname": {
+        topic: function () {
+          this.server = runner.startProxyServerWithTable(8120, staticOptions, this.callback);
+          this.server.proxy.removeHost('removed.com');
+          this.server.proxy.addHost(dynamicHost, dynamicTarget);
+        },
+        "an incoming request to static.com": runner.assertProxied('static.com', 8120, 8121),
+        "an incoming request to removed.com": !runner.assertProxied('removed.com', 8120, 8122),
+        "an incoming request to dynamic1.com": runner.assertProxied('dynamic1.com', 8120, 8123)
       }
     },
     "when passed a routing file": {
