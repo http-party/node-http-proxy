@@ -55,7 +55,7 @@ if (config.https) {
           config.https.ca = []
         }
         config.https.ca.push(fs.readFileSync(key[i], 'utf8'));
-      });
+      }
     } else {
       config.https[key] = fs.readFileSync(config.https[key], 'utf8');
     }
