@@ -50,7 +50,7 @@ if (config.https) {
   Object.keys(config.https).forEach(function (key) {
     // If CA certs are specified, load those too.
     if (key === "ca") {
-      for (var i=0; i < key.length, i++) {
+      for (var i=0; i < key.length; i++) {
         if (config.https.ca === undefined) {
           config.https.ca = []
         }
