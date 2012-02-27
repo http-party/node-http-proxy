@@ -45,11 +45,21 @@ if (argv.config) {
 }
 
 //
-// If `config.https` is set, then load those files into the config options.
+// If `config.https` is set, then load the required file contents into the config options.
 //
 if (config.https) {
   Object.keys(config.https).forEach(function (key) {
-    config.https[key] = fs.readFileSync(config.https[key], 'utf8');
+    // If CA certs are specified, load those too.
+    if (key === "ca") {
+      for (var i=0; i < config.https.ca.length; i++) {
+        if (config.https.ca === undefined) {
+          config.https.ca = [];
+        }
+        config.https.ca[i] = fs.readFileSync(config.https[key][i], 'utf8');
+      }
+    } else {
+      config.https[key] = fs.readFileSync(config.https[key], 'utf8');
+    }
   });
 }
 
