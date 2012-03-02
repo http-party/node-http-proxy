@@ -366,8 +366,8 @@ By default, `node-http-proxy` will set a 100 socket limit for all `host:port` pr
 ## POST requests and buffering
 
 express.bodyParser will interfere with proxying of POST requests (and other methods that have a request 
-body). They'll never sending anything to the upstream server, and the original client will just hang. 
-See https://github.com/nodejitsu/node-http-proxy/issues/180 for options.
+body). With bodyParser active, proxied requests will never send anything to the upstream server, and 
+the original client will just hang. See https://github.com/nodejitsu/node-http-proxy/issues/180 for options.
 
 ## Using node-http-proxy from the command line
 When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
