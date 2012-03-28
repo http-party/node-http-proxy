@@ -217,6 +217,32 @@ proxyServerWithForwarding.listen(80);
 
 The forwarding option can be used in conjunction with the proxy table options by simply including both the 'forward' and 'router' properties in the options passed to 'createServer'.
 
+### Listening for proxy events
+Sometimes you want to listen to an event on a proxy. For example, you may want to listen to the 'end' event, which represents when the proxy has finished proxying a request.
+
+``` js
+var httpProxy = require('http-proxy');
+
+var server = httpProxy.createServer(function (req, res, proxy) {
+
+    var buffer = httpProxy.buffer(req);
+
+    proxy.proxyRequest(req, res, {
+      host: '127.0.0.1',
+      port: 9000,
+      buffer: buffer
+    });
+
+});
+
+server.proxy.on('end', function() {
+  console.log("The request was proxied.");
+});
+
+server.listen(8000);
+```
+
+It's important to remember not to listen for events on the proxy object in the function passed to `httpProxy.createServer`. Doing so would add a new listener on every request, which would end up being a disaster.
 
 ## Using HTTPS
 You have all the full flexibility of node-http-proxy offers in HTTPS as well as HTTP. The two basic scenarios are: with a stand-alone proxy server or in conjunction with another HTTPS server.
