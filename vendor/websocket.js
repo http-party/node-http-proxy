@@ -496,7 +496,7 @@ var WebSocket = function(url, proto, opts) {
         if (u.protocol === 'ws:' || u.protocol === 'wss:') {
             protocol = u.protocol === 'ws:' ? http : https;
             port = u.protocol === 'ws:' ? 80 : 443;
-            agent = u.protocol === 'ws:' ? protocol.getAgent(u.hostname, u.port || port) : protocol.getAgent({
+            agent = u.protocol === new protocol.Agent({
               host: u.hostname,
               port: u.port || port
             });
@@ -514,105 +514,6 @@ var WebSocket = function(url, proto, opts) {
             throw new Error('Invalid URL scheme \'' + urlScheme + '\' specified.');
         }
         
-        if (!agent._events || agent._events['upgrade'].length === 0) {
-            agent.on('upgrade', (function() {
-                var data = undefined;
-
-                return function(res, s, head) {
-                    stream = s;
-
-                    //
-                    // Emit the `wsupgrade` event to inspect the raw
-                    // arguments returned from the websocket request.
-                    //
-                    self.emit('wsupgrade', httpHeaders, res, s, head);
-                
-                    stream.on('data', function(d) {
-                        if (d.length <= 0) {
-                            return;
-                        }
-                    
-                        if (!data) {
-                            data = d;
-                        } else {
-                            var data2 = new buffer.Buffer(data.length + d.length);
-
-                            data.copy(data2, 0, 0, data.length);
-                            d.copy(data2, data.length, 0, d.length);
-
-                            data = data2;
-                        }
-
-                        if (data.length >= 16) {
-                            var expected = computeSecretKeySignature(key1, key2, challenge);
-                            var actual = data.slice(0, 16).toString('binary');
-
-                            // Handshaking fails; we're donezo
-                            if (actual != expected) {
-                                debug(
-                                    'expected=\'' + str2hex(expected) + '\'; ' +
-                                    'actual=\'' + str2hex(actual) + '\''
-                                );
-
-                                process.nextTick(function() {
-                                    // N.B. Emit 'wserror' here, as 'error' is a reserved word in the
-                                    //      EventEmitter world, and gets thrown.
-                                    self.emit(
-                                        'wserror',
-                                        new Error('Invalid handshake from server:' +
-                                            'expected \'' + str2hex(expected) + '\', ' +
-                                            'actual \'' + str2hex(actual) + '\''
-                                        )
-                                    );
-
-                                    if (self.onerror) {
-                                        self.onerror();
-                                    }
-
-                                    finishClose();
-                                });
-                            }
-
-                            //
-                            // Un-register our data handler and add the one to be used
-                            // for the normal, non-handshaking case. If we have extra
-                            // data left over, manually fire off the handler on
-                            // whatever remains.
-                            //
-                            stream.removeAllListeners('data');
-                            stream.on('data', dataListener);
-
-                            readyState = OPEN;
-
-                            process.nextTick(function() {
-                                self.emit('open');
-
-                                if (self.onopen) {
-                                    self.onopen();
-                                }
-                            });
-
-                            // Consume any leftover data
-                            if (data.length > 16) {
-                                stream.emit('data', data.slice(16, data.length));
-                            }
-                        }
-                    });
-                    stream.on('fd', fdListener);
-                    stream.on('error', errorListener);
-                    stream.on('close', function() {
-                        errorListener(new Error('Stream closed unexpectedly.'));
-                    });
-
-                    stream.emit('data', head);
-                };
-            })());
-        }
-        
-        agent.on('error', function (e) {
-            errorListener(e);
-        });
-
         var httpReq = protocol.request({
           host: u.hostname,
           method: 'GET',
@@ -621,6 +522,103 @@ var WebSocket = function(url, proto, opts) {
           path: httpPath, 
           headers: httpHeaders
         });
+        
+        httpReq.on('error', function (e) {
+            errorListener(e);
+        });
+        
+        httpReq.on('upgrade', (function() {
+            var data = undefined;
+
+            return function(res, s, head) {
+                stream = s;
+
+                //
+                // Emit the `wsupgrade` event to inspect the raw
+                // arguments returned from the websocket request.
+                //
+                self.emit('wsupgrade', httpHeaders, res, s, head);
+            
+                stream.on('data', function(d) {
+                    if (d.length <= 0) {
+                        return;
+                    }
+                
+                    if (!data) {
+                        data = d;
+                    } else {
+                        var data2 = new buffer.Buffer(data.length + d.length);
+
+                        data.copy(data2, 0, 0, data.length);
+                        d.copy(data2, data.length, 0, d.length);
+
+                        data = data2;
+                    }
+
+                    if (data.length >= 16) {
+                        var expected = computeSecretKeySignature(key1, key2, challenge);
+                        var actual = data.slice(0, 16).toString('binary');
+
+                        // Handshaking fails; we're donezo
+                        if (actual != expected) {
+                            debug(
+                                'expected=\'' + str2hex(expected) + '\'; ' +
+                                'actual=\'' + str2hex(actual) + '\''
+                            );
+
+                            process.nextTick(function() {
+                                // N.B. Emit 'wserror' here, as 'error' is a reserved word in the
+                                //      EventEmitter world, and gets thrown.
+                                self.emit(
+                                    'wserror',
+                                    new Error('Invalid handshake from server:' +
+                                        'expected \'' + str2hex(expected) + '\', ' +
+                                        'actual \'' + str2hex(actual) + '\''
+                                    )
+                                );
+
+                                if (self.onerror) {
+                                    self.onerror();
+                                }
+
+                                finishClose();
+                            });
+                        }
+
+                        //
+                        // Un-register our data handler and add the one to be used
+                        // for the normal, non-handshaking case. If we have extra
+                        // data left over, manually fire off the handler on
+                        // whatever remains.
+                        //
+                        stream.removeAllListeners('data');
+                        stream.on('data', dataListener);
+
+                        readyState = OPEN;
+
+                        process.nextTick(function() {
+                            self.emit('open');
+
+                            if (self.onopen) {
+                                self.onopen();
+                            }
+                        });
+
+                        // Consume any leftover data
+                        if (data.length > 16) {
+                            stream.emit('data', data.slice(16, data.length));
+                        }
+                    }
+                });
+                stream.on('fd', fdListener);
+                stream.on('error', errorListener);
+                stream.on('close', function() {
+                    errorListener(new Error('Stream closed unexpectedly.'));
+                });
+
+                stream.emit('data', head);
+            };
+        })());
         
         httpReq.write(challenge, 'binary');
         httpReq.end();

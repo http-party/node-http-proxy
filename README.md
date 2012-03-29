@@ -363,6 +363,12 @@ By default, `node-http-proxy` will set a 100 socket limit for all `host:port` pr
 1. By passing the `maxSockets` option to `httpProxy.createServer()`
 2. By calling `httpProxy.setMaxSockets(n)`, where `n` is the number of sockets you with to use. 
 
+## POST requests and buffering
+
+express.bodyParser will interfere with proxying of POST requests (and other methods that have a request 
+body). With bodyParser active, proxied requests will never send anything to the upstream server, and 
+the original client will just hang. See https://github.com/nodejitsu/node-http-proxy/issues/180 for options.
+
 ## Using node-http-proxy from the command line
 When you install this package with npm, a node-http-proxy binary will become available to you. Using this binary is easy with some simple options:
 
@@ -426,9 +432,9 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [0]: http://nodejitsu.com
-[1]: https://github.com/nodejitsu/node-http-proxy/blob/master/examples/web-socket-proxy.js
-[2]: https://github.com/nodejitsu/node-http-proxy/blob/master/examples/basic-proxy-https.js
-[3]: https://github.com/nodejitsu/node-http-proxy/tree/v0.5.0/examples
+[1]: https://github.com/nodejitsu/node-http-proxy/blob/master/examples/websocket/websocket-proxy.js
+[2]: https://github.com/nodejitsu/node-http-proxy/blob/master/examples/http/proxy-https-to-http.js
+[3]: https://github.com/nodejitsu/node-http-proxy/tree/master/examples
 [4]: http://www.ietf.org/rfc/rfc2616.txt
 [5]: http://socket.io
 [6]: http://github.com/nodejitsu/node-http-proxy/issues
