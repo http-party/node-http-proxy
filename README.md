@@ -354,6 +354,8 @@ server.on('upgrade', function(req, socket, head) {
   //
   proxy.proxyWebSocketRequest(req, socket, head);
 });
+
+server.listen(8080);
 ```
 
 ### Configuring your Socket limits
