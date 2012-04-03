@@ -335,11 +335,11 @@ var http = require('http'),
 //
 // Create an instance of node-http-proxy
 //
-var proxy = new httpProxy.HttpProxy(
+var proxy = new httpProxy.HttpProxy({
     target: {
       host: 'localhost',
       port: 8000
-    });
+    }});
 
 var server = http.createServer(function (req, res) {
   //
@@ -354,6 +354,8 @@ server.on('upgrade', function(req, socket, head) {
   //
   proxy.proxyWebSocketRequest(req, socket, head);
 });
+
+server.listen(8080);
 ```
 
 ### Configuring your Socket limits
