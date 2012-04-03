@@ -336,10 +336,11 @@ var http = require('http'),
 // Create an instance of node-http-proxy
 //
 var proxy = new httpProxy.HttpProxy({
-    target: {
-      host: 'localhost',
-      port: 8000
-    }});
+  target: {
+    host: 'localhost',
+    port: 8000
+  }
+});
 
 var server = http.createServer(function (req, res) {
   //
