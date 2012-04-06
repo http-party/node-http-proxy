@@ -27,7 +27,7 @@ exports.fixturesDir = path.join(exports.testDir, 'fixtures');
 exports.libDir = path.join(exports.testDir, '../lib');
 exports.tmpDir = path.join(exports.testDir, 'tmp');
 exports.PORT = 12346;
-exports.PROXY_PORT = 1234567;
+exports.PROXY_PORT = 1234563;
 
 if (process.platform == 'win32') {
   exports.PIPE = '\\\\.\\pipe\\libuv-test';
