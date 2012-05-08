@@ -93,6 +93,12 @@ TestRunner.prototype.assertProxied = function (host, proxyPort, port, requestPat
   test[assertion] = function (err, res, body) {
     assert.isNull(err);
     assert.equal(body, output);
+
+    // If a target path was specified, make sure
+    // that the requested url was the same.
+    if (targetPath) {
+      assert.equal(res.headers['x-request-url'], targetPath);
+    }
   };
 
   return test;
@@ -341,7 +347,10 @@ TestRunner.prototype.startTargetServer = function (port, output, callback) {
       handler;
       
   handler = function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'X-Request-URL': req.url
+    });
     res.write(output);
     res.end();
   };
