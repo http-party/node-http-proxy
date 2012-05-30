@@ -32,6 +32,9 @@ var defaultOptions = {
     "bar.com": "127.0.0.1:8092",
     "baz.com/taco": "127.0.0.1:8098",
     "pizza.com/taco/muffins": "127.0.0.1:8099",
+    "blah.com/me": "127.0.0.1:8088/remapped",
+    "bleh.com/remap/this": "127.0.0.1:8087/remap/remapped",
+    "test.com/double/tap": "127.0.0.1:8086/remap",
   }
 };
 
@@ -53,7 +56,10 @@ vows.describe('node-http-proxy/routing-proxy/' + testName).addBatch({
         "an incoming request to foo.com": runner.assertProxied('foo.com', 8090, 8091),
         "an incoming request to bar.com": runner.assertProxied('bar.com', 8090, 8092),
         "an incoming request to baz.com/taco": runner.assertProxied('baz.com', 8090, 8098, "/taco", "/"),
-        "an incoming request to pizza.com/taco/muffins": runner.assertProxied('pizza.com', 8090, 8099, "/taco/muffins", "/taco"),
+        "an incoming request to pizza.com/taco/muffins": runner.assertProxied('pizza.com', 8090, 8099, "/taco/muffins", "/"),
+        "an incoming request to blah.com/me/fun": runner.assertProxied('blah.com', 8090, 8088, "/me/fun", "/remapped/fun"),
+        "an incoming request to bleh.com/remap/this": runner.assertProxied('bleh.com', 8090, 8087, "/remap/this", "/remap/remapped"),
+        "an incoming request to test.com/double/tap/double/tap": runner.assertProxied('test.com', 8090, 8086, "/double/tap/double/tap", "/remap/double/tap"),
         "an incoming request to unknown.com": runner.assertResponseCode(8090, 404)
       },
       "and routing by Hostname": {
