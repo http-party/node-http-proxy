@@ -6,7 +6,6 @@
 - Avoid 'Transfer-Encoding' on HTTP/1.0 clients            (koichik).
 - Support for Node.js 0.6.x                                (mmalecki)
 
-
 ## Version 0.7.3 - 10/4/2011
 - Fix setting x-forwarded headers                          (jesusabdullah)
 - Updated examples                                         (AvianFlu)
