@@ -39,7 +39,7 @@ try {
 }
 catch (ex) {
   console.error('Socket.io is required for this example:');
-  console.error('npm ' + 'install'.green + ' socket.io@0.6.18'.magenta);
+  console.error('npm ' + 'install'.green + ' socket.io@0.6.17'.magenta);
   process.exit(1);
 }
 
