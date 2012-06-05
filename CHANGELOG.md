@@ -1,6 +1,11 @@
 ## ChangeLog for: node-http-proxy
 
-## Version 0.8.0 - 5/22/2012
+## Version 0.8.1 - 6/5/2012
+- Fix re-emitting of events in RoutingProxy                (coderarity)
+- New load balancer and middleware examples                (marak)
+- Docs updated including changelog                         (lot of gently people)
+
+## Version 0.8.0 - 12/23/2011
 - Improve support and tests for url segment routing        (maxogden)
 - Fix aborting connections when request close              (c4milo)
 - Avoid 'Transfer-Encoding' on HTTP/1.0 clients            (koichik).
