@@ -74,7 +74,7 @@ var body = '';
 var nlistening = 0;
 function startReq() {
   nlistening++;
-  if (nlistening < 2) return;
+  if (nlistening < 2) { return; }
 
   var client = http.get({
     port: common.PROXY_PORT,

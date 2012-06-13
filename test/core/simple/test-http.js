@@ -46,7 +46,7 @@ var server = http.Server(function(req, res) {
     assert.equal('bar', req.headers.foo);
   }
 
-  if (responses_sent == 1) {
+  if (responses_sent === 1) {
     assert.equal('POST', req.method);
     assert.equal('/world', url.parse(req.url).pathname);
     this.close();

@@ -65,7 +65,7 @@ function testHttp() {
   httpServer.listen(common.PORT, function(er) {
     console.error('listening on ' + common.PORT);
 
-    if (er) throw er;
+    if (er) { throw er; }
 
     http.get({ method: 'GET',
       path: '/' + (counter++),

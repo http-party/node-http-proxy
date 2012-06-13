@@ -29,18 +29,19 @@ exports.tmpDir = path.join(exports.testDir, 'tmp');
 exports.PORT = 12346;
 exports.PROXY_PORT = 1234567;
 
-if (process.platform == 'win32') {
+if (process.platform === 'win32') {
   exports.PIPE = '\\\\.\\pipe\\libuv-test';
 } else {
   exports.PIPE = exports.tmpDir + '/test.sock';
 }
 
 var util = require('util');
-for (var i in util) exports[i] = util[i];
+for (var i in util) { exports[i] = util[i]; }
 //for (var i in exports) global[i] = exports[i];
 
 function protoCtrChain(o) {
   var result = [];
+  // __proto__ is deprecated, we need to change this.
   for (; o; o = o.__proto__) { result.push(o.constructor); }
   return result.join();
 }
@@ -54,7 +55,7 @@ exports.indirectInstanceOf = function(obj, cls) {
 
 
 exports.ddCommand = function(filename, kilobytes) {
-  if (process.platform == 'win32') {
+  if (process.platform === 'win32') {
     return '"' + process.argv[0] + '" "' + path.resolve(exports.fixturesDir,
       'create-file.js') + '" "' + filename + '" ' + (kilobytes * 1024);
   } else {
@@ -66,7 +67,7 @@ exports.ddCommand = function(filename, kilobytes) {
 exports.spawnPwd = function(options) {
   var spawn = require('child_process').spawn;
 
-  if (process.platform == 'win32') {
+  if (process.platform === 'win32') {
     return spawn('cmd.exe', ['/c', 'cd'], options);
   } else {
     return spawn('pwd', [], options);
@@ -78,7 +79,7 @@ exports.spawnPwd = function(options) {
 exports.globalCheck = true;
 
 process.on('exit', function() {
-  if (!exports.globalCheck) return;
+  if (!exports.globalCheck) { return; }
   var knownGlobals = [setTimeout,
                       setInterval,
                       clearTimeout,
@@ -89,22 +90,22 @@ process.on('exit', function() {
                       global];
 
   if (global.errno) {
-    knownGlobals.push(errno);
+    knownGlobals.push(global.errno);
   }
 
   if (global.gc) {
-    knownGlobals.push(gc);
+    knownGlobals.push(global.gc);
   }
 
   if (global.DTRACE_HTTP_SERVER_RESPONSE) {
-    knownGlobals.push(DTRACE_HTTP_SERVER_RESPONSE);
-    knownGlobals.push(DTRACE_HTTP_SERVER_REQUEST);
-    knownGlobals.push(DTRACE_HTTP_CLIENT_RESPONSE);
-    knownGlobals.push(DTRACE_HTTP_CLIENT_REQUEST);
-    knownGlobals.push(DTRACE_NET_STREAM_END);
-    knownGlobals.push(DTRACE_NET_SERVER_CONNECTION);
-    knownGlobals.push(DTRACE_NET_SOCKET_READ);
-    knownGlobals.push(DTRACE_NET_SOCKET_WRITE);
+    knownGlobals.push(global.DTRACE_HTTP_SERVER_RESPONSE);
+    knownGlobals.push(global.DTRACE_HTTP_SERVER_REQUEST);
+    knownGlobals.push(global.DTRACE_HTTP_CLIENT_RESPONSE);
+    knownGlobals.push(global.DTRACE_HTTP_CLIENT_REQUEST);
+    knownGlobals.push(global.DTRACE_NET_STREAM_END);
+    knownGlobals.push(global.DTRACE_NET_SERVER_CONNECTION);
+    knownGlobals.push(global.DTRACE_NET_SOCKET_READ);
+    knownGlobals.push(global.DTRACE_NET_SOCKET_WRITE);
   }
 
   if (global.ArrayBuffer) {
