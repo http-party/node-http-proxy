@@ -34,7 +34,7 @@ var defaultOptions = {
     "pizza.com/taco/muffins": "127.0.0.1:8099",
     "blah.com/me": "127.0.0.1:8088/remapped",
     "bleh.com/remap/this": "127.0.0.1:8087/remap/remapped",
-    "test.com/double/tap": "127.0.0.1:8086/remap",
+    "test.com/double/tap": "127.0.0.1:8086/remap"
   }
 };
 

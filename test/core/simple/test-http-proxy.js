@@ -52,7 +52,7 @@ var proxy = http.createServer(function(req, res) {
 
     common.debug('proxy res headers: ' + JSON.stringify(proxy_res.headers));
 
-    assert.equal('world', proxy_res.headers['hello']);
+    assert.equal('world', proxy_res.headers.hello);
     assert.equal('text/plain', proxy_res.headers['content-type']);
     assert.deepEqual(cookies, proxy_res.headers['set-cookie']);
 
@@ -83,7 +83,7 @@ function startReq() {
     common.debug('got res');
     assert.equal(200, res.statusCode);
 
-    assert.equal('world', res.headers['hello']);
+    assert.equal('world', res.headers.hello);
     assert.equal('text/plain', res.headers['content-type']);
     assert.deepEqual(cookies, res.headers['set-cookie']);
 
