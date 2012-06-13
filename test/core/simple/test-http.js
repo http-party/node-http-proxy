@@ -34,16 +34,16 @@ var body0 = '';
 var body1 = '';
 
 var server = http.Server(function(req, res) {
-  if (responses_sent === 0) {
+  if (responses_sent == 0) {
     assert.equal('GET', req.method);
     assert.equal('/hello', url.parse(req.url).pathname);
 
     console.dir(req.headers);
     assert.equal(true, 'accept' in req.headers);
-    assert.equal('*/*', req.headers.accept);
+    assert.equal('*/*', req.headers['accept']);
 
     assert.equal(true, 'foo' in req.headers);
-    assert.equal('bar', req.headers.foo);
+    assert.equal('bar', req.headers['foo']);
   }
 
   if (responses_sent === 1) {

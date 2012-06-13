@@ -45,7 +45,7 @@ server.listen(common.PORT, function() {
     port: common.PROXY_PORT
   }, function(x) {
     x.setEncoding('utf8');
-    x.on('data', function(c) { data += c; });
+    x.on('data', function(c) {data += c});
     x.on('error', function(e) {
       throw e;
     });
@@ -57,7 +57,7 @@ server.listen(common.PORT, function() {
       server.close();
     });
   });
-  get.on('error', function(e) { throw e; });
+  get.on('error', function(e) {throw e});
   get.end();
 
 });

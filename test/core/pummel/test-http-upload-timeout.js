@@ -37,7 +37,7 @@ server.on('request', function(req, res) {
     connections--;
     res.writeHead(200);
     res.end('done\n');
-    if (connections === 0) {
+    if (connections == 0) {
       server.close();
     }
   });
