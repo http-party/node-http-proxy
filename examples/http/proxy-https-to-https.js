@@ -34,7 +34,7 @@ var https = require('https'),
 var opts = helpers.loadHttps();
 
 //
-// Create the target HTTPS server 
+// Create the target HTTPS server
 //
 https.createServer(opts, function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });

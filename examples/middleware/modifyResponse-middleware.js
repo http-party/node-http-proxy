@@ -38,7 +38,7 @@ httpProxy.createServer(
 
     res.write = function (data) {
       _write.call(res, data.toString().replace("Ruby", "nodejitsu"));
-    }
+    };
     next();
   },
   9000, 'localhost'

@@ -2,9 +2,9 @@ var util = require('util'),
     colors = require('colors'),
     http = require('http'),
     httpProxy = require('../../lib/node-http-proxy'),
-    Store = require('../helpers/store') 
+    Store = require('../helpers/store');
 
-http.createServer(new Store().handler()).listen(7531)
+http.createServer(new Store().handler()).listen(7531),
 
 // Now we set up our proxy.
 httpProxy.createServer(

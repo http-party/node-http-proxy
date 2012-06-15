@@ -40,7 +40,7 @@ httpProxy.createServer(
   require('proxy-by-url')({
     '/hello': { port: 9000, host: 'localhost' },
     '/charlie': { port: 80, host: 'charlieistheman.com' },
-    '/google': { port: 80, host: 'google.com' } 
+    '/google': { port: 80, host: 'google.com' }
   })
 ).listen(8000);
 
