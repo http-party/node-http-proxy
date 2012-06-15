@@ -40,8 +40,8 @@ server.once('connection', function(c) {
 });
 
 server.listen(common.PORT, function() {
-  var callee = arguments.callee;
-  var request = http.get({
+  var callee = arguments.callee,
+      request = http.get({
     port: common.PROXY_PORT,
     path: '/',
     headers: {
