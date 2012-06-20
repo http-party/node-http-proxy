@@ -79,10 +79,10 @@ else {
 //
 // Start the server
 //
-if (!host) {
-  server.listen(port);
-} else {
+if (host) {
   server.listen(port, host);
+} else {
+  server.listen(port);
 }
 
 //
