@@ -293,6 +293,67 @@ http.createServer(function (req, res) {
 }).listen(8000);
 ```
 
+### Using two certificates
+
+Suppose that your reverse proxy will handle HTTPS traffic for two different domains `fobar.com` and `barbaz.com`.
+If you need to use two different certificates you can take advantage of [Server Name Indication](http://en.wikipedia.org/wiki/Server_Name_Indication).
+
+``` js
+var https = require('https'),
+    path = require("path"),
+    fs = require("fs"),
+    crypto = require("crypto");
+
+//
+// generic function to load the credentials context from disk
+//
+function getCredentialsContext(cer){
+  return crypto.createCredentials({
+        key:  fs.readFileSync(path.join(__dirname, 'certs', cer + '.key')),
+        cert: fs.readFileSync(path.join(__dirname, 'certs', cer + '.crt'))
+      }).context;
+}
+
+//
+// A certificate per domain hash
+//
+var certs = {
+  "fobar.com":  getCredentialsContext("foobar"),
+  "barbaz.com": getCredentialsContext("barbaz")
+};
+
+//
+// Proxy options
+//
+var options = {
+  https: {
+    SNICallback: function(hostname){
+      return certs[hostname];
+    }
+  },
+  hostnameOnly: true,
+  router: {
+    'fobar.com':  '127.0.0.1:8001',
+    'barbaz.com': '127.0.0.1:8002'
+  }
+};
+
+//
+// Create a standalone HTTPS proxy server
+//
+httpProxy.createServer(options).listen(8001);
+
+//
+// Create the target HTTPS server
+//
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('hello https\n');
+  res.end();
+}).listen(8000);
+
+```
+
 ### Proxying to HTTPS from HTTPS
 Proxying from HTTPS to HTTPS is essentially the same as proxying from HTTPS to HTTP, but you must include the `target` option in when calling `httpProxy.createServer` or instantiating a new instance of `HttpProxy`.
 
