@@ -42,7 +42,7 @@ httpProxy.createServer(9000, 'localhost').listen(8000);
 //
 
 
-var connections = [], 
+var connections = [],
     go;
 
 http.createServer(function (req, res) {

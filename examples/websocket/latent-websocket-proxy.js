@@ -69,7 +69,7 @@ socket.on('connection', function (client) {
 //
 var proxy = new httpProxy.HttpProxy({
   target: {
-    host: 'localhost', 
+    host: 'localhost',
     port: 8080
   }
 });
@@ -78,7 +78,7 @@ var proxyServer = http.createServer(function (req, res) {
 });
 
 //
-// Listen to the `upgrade` event and proxy the 
+// Listen to the `upgrade` event and proxy the
 // WebSocket requests as well.
 //
 proxyServer.on('upgrade', function (req, socket, head) {

@@ -62,7 +62,7 @@ server.listen(common.PORT, function() {
     var req = http.get(options, function(res) {
       console.log('Client response code ' + res.statusCode);
 
-      if (++responses == N) {
+      if (++responses === N) {
         console.log('All clients connected, destroying.');
         requests.forEach(function(outReq) {
           console.log('abort');

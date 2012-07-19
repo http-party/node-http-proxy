@@ -38,7 +38,7 @@ var server = http.createServer(function(req, res) {
   res.write('Hello World');
   res.end();
 
-  if (++nrequests_completed == nrequests_expected) server.close();
+  if (++nrequests_completed === nrequests_expected) { server.close(); }
 });
 server.listen(common.PORT);
 

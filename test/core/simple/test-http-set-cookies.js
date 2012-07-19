@@ -26,7 +26,7 @@ var http = require('http');
 var nresponses = 0;
 
 var server = http.createServer(function(req, res) {
-  if (req.url == '/one') {
+  if (req.url === '/one') {
     res.writeHead(200, [['set-cookie', 'A'],
                         ['content-type', 'text/plain']]);
     res.end('one\n');
@@ -54,7 +54,7 @@ server.on('listening', function() {
     });
 
     res.on('end', function() {
-      if (++nresponses == 2) {
+      if (++nresponses === 2) {
         server.close();
       }
     });
@@ -71,7 +71,7 @@ server.on('listening', function() {
     });
 
     res.on('end', function() {
-      if (++nresponses == 2) {
+      if (++nresponses === 2) {
         server.close();
       }
     });

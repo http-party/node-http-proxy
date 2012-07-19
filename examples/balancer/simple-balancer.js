@@ -1,7 +1,7 @@
 var httpProxy = require('../../lib/node-http-proxy');
 //
 // A simple round-robin load balancing strategy.
-// 
+//
 // First, list the servers you want to use in your rotation.
 //
 var addresses = [
