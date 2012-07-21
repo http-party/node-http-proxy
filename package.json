@@ -25,7 +25,9 @@
     "request": "1.9.x",
     "vows": "0.5.x",
     "async": "0.1.x",
-    "socket.io": "0.6.17"
+    "socket.io": "0.9.6",
+    "socket.io-client": "0.9.6",
+    "ws": "0.4.21"
   },
   "main": "./lib/node-http-proxy",
   "bin": {
