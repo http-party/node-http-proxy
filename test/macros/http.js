@@ -30,6 +30,7 @@ exports.assertRequest = function (options) {
       request(options.request, this.callback);
     },
     "should succeed": function (err, res, body) {
+      assert.isNull(err);
       if (options.assert.body) {
         assert.equal(body, options.assert.body);
       }
@@ -55,11 +56,12 @@ exports.assertRequest = function (options) {
 exports.assertProxied = function (options) {
   options = options || {};
   
-  var ports  = options.ports   || helpers.nextPortPair,
-      output = options.output  || 'hello world from ' + ports.target,
-      req    = options.request || {};
+  var ports    = options.ports   || helpers.nextPortPair,
+      output   = options.output  || 'hello world from ' + ports.target,
+      protocol = helpers.protocols.proxy,
+      req      = options.request || {};
       
-  req.uri = req.uri || 'http://127.0.0.1:' + ports.proxy;
+  req.uri = req.uri || protocol + '://127.0.0.1:' + ports.proxy;
     
   return {
     topic: function () {
@@ -79,6 +81,7 @@ exports.assertProxied = function (options) {
           proxy: {
             forward: options.forward,
             target: {
+              https: helpers.protocols.target === 'https',
               host: '127.0.0.1',
               port: ports.target
             }
@@ -107,10 +110,12 @@ exports.assertProxied = function (options) {
 exports.assertInvalidProxy = function (options) {
   options = options || {};
   
-  var ports = options.ports   || helpers.nextPortPair,
-      req   = options.request || {};
+  var ports    = options.ports   || helpers.nextPortPair,
+      req      = options.request || {},
+      protocol = helpers.protocols.proxy;
       
-  req.uri = req.uri || 'http://127.0.0.1:' + ports.proxy;
+      
+  req.uri = req.uri || protocol + '://127.0.0.1:' + ports.proxy;
   
   return {
     topic: function () {
@@ -196,9 +201,10 @@ exports.assertProxiedToRoutes = function (options, nested) {
   //
   var locations = helpers.http.parseRoutes(options),
       port = helpers.nextPort,
+      protocol = helpers.protocols.proxy,
       context,
       proxy;
-      
+  
   if (options.filename) {
     //
     // If we've been passed a filename write the routes to it
@@ -215,7 +221,14 @@ exports.assertProxiedToRoutes = function (options, nested) {
       hostnameOnly: options.hostnameOnly,
       router: options.routes
     };
-  }  
+  }
+  
+  //
+  // Set the https options if necessary
+  //
+  if (helpers.protocols.target === 'https') {
+    proxy.target = { https: true };
+  }
   
   //
   // Create the test context which creates all target
@@ -271,7 +284,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
     "a request to unknown.com": exports.assertRequest({
       assert: { statusCode: 404 },
       request: {
-        uri: 'http://127.0.0.1:' + port,
+        uri: protocol + '://127.0.0.1:' + port,
         headers: {
           host: 'unknown.com'
         }
@@ -285,7 +298,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
   locations.forEach(function (location) {
     context[location.source.href] = exports.assertRequest({
       request: {
-        uri: 'http://127.0.0.1:' + port + location.source.path,
+        uri: protocol + '://127.0.0.1:' + port + location.source.path,
         headers: {
           host: location.source.hostname
         }

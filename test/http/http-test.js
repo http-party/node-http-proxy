@@ -31,11 +31,11 @@ var assert = require('assert'),
     request = require('request'),
     vows = require('vows'),
     macros = require('../macros'),
-    helpers = require('../helpers/index');
+    helpers = require('../helpers');
 
 var routeFile = path.join(__dirname, 'config.json');
 
-vows.describe('node-http-proxy/http').addBatch({
+vows.describe(helpers.describe()).addBatch({
   "With a valid target server": {
     "and no latency": {
       "and no headers": macros.http.assertProxied(),

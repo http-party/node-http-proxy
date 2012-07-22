@@ -8,9 +8,11 @@
  
 var assert = require('assert'),
     http = require('http'),
+    https = require('https'),
     url = require('url'),
     async = require('async'),
     helpers = require('./index'),
+    protocols = helpers.protocols,
     httpProxy = require('../../lib/node-http-proxy');
 
 //
@@ -48,7 +50,11 @@ exports.createServerPair = function (options, callback) {
 // Creates a target server that the tests will proxy to.
 //
 exports.createServer = function (options, callback) {
-  http.createServer(function (req, res) {
+  //
+  // Request handler to use in either `http` 
+  // or `https` server.
+  //
+  function requestHandler(req, res) {
     if (options.headers) {
       Object.keys(options.headers).forEach(function (key) {
         assert.equal(req.headers[key], options.headers[key]);
@@ -58,7 +64,13 @@ exports.createServer = function (options, callback) {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(options.output || 'hello proxy');
     res.end();
-  }).listen(options.port, function () {
+  }
+  
+  var server = protocols.target === 'https'
+    ? https.createServer(helpers.https, requestHandler)
+    : http.createServer(requestHandler);
+    
+  server.listen(options.port, function () {
     callback(null, this);
   });
 };
@@ -76,6 +88,10 @@ exports.createServer = function (options, callback) {
 //
 exports.createProxyServer = function (options, callback) {
   if (!options.latency) {
+    if (protocols.proxy === 'https') {
+      options.proxy.https = helpers.https;
+    }
+    
     return httpProxy
       .createServer(options.proxy)
       .listen(options.port, function () {
@@ -87,9 +103,13 @@ exports.createProxyServer = function (options, callback) {
     ? new httpProxy.RoutingProxy(options.proxy)
     : new httpProxy.HttpProxy(options.proxy);
   
-  http.createServer(function (req, res) {
+  //
+  // Request handler to use in either `http` 
+  // or `https` server.
+  //
+  function requestHandler(req, res) {
     var buffer = httpProxy.buffer(req);
-    
+
     setTimeout(function () {
       //
       // Setup options dynamically for `RoutingProxy.prototype.proxyRequest`
@@ -98,7 +118,13 @@ exports.createProxyServer = function (options, callback) {
       buffer = options.routing ? { buffer: buffer } : buffer
       proxy.proxyRequest(req, res, buffer);
     }, options.latency);
-  }).listen(options.port, function () {
+  }
+  
+  var server = protocols.proxy === 'https'
+    ? https.createServer(helpers.https, requestHandler)
+    : http.createServer(requestHandler);
+    
+  server.listen(options.port, function () {
     callback(null, this);
   });
 };

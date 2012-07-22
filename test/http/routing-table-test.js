@@ -16,7 +16,7 @@ var assert = require('assert'),
 
 var routeFile = path.join(__dirname, 'config.json');
 
-vows.describe('node-http-proxy/http/routing-table').addBatch({
+vows.describe(helpers.describe('routing-table')).addBatch({
   "With a routing table": {
     "with latency": macros.http.assertProxiedToRoutes({
       latency: 2000,
@@ -53,6 +53,7 @@ vows.describe('node-http-proxy/http/routing-table').addBatch({
       "after the file has been modified": {
         topic: function () {
           var config = JSON.parse(fs.readFileSync(routeFile, 'utf8')),
+              protocol = helpers.protocols.proxy,
               port = helpers.nextPort,
               that = this;
 
@@ -72,7 +73,7 @@ vows.describe('node-http-proxy/http/routing-table').addBatch({
             )
           ], function () {
             request({
-              uri: 'http://127.0.0.1:' + that.port,
+              uri: protocol + '://127.0.0.1:' + that.port,
               headers: {
                 host: 'dynamic.com'
               }
