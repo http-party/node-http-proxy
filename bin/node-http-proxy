@@ -13,6 +13,7 @@ var help = [
     "",
     "options:",
     "  --port   PORT       Port that the proxy server should run on",
+    "  --host   HOST       Host that the proxy server should run on",
     "  --target HOST:PORT  Location of the server the proxy will target",
     "  --config OUTFILE    Location of the configuration file for the proxy server",
     "  --silent            Silence the log output from the proxy server",
@@ -25,6 +26,7 @@ if (argv.h || argv.help || Object.keys(argv).length === 2) {
 
 var location, config = {},
     port = argv.port || 80, 
+    host = argv.host || undefined, 
     target = argv.target;
 
 //
@@ -77,7 +79,11 @@ else {
 //
 // Start the server
 //
-server.listen(port);
+if (host) {
+  server.listen(port, host);
+} else {
+  server.listen(port);
+}
 
 //
 // Notify that the server is started
