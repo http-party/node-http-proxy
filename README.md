@@ -224,15 +224,13 @@ Sometimes you want to listen to an event on a proxy. For example, you may want t
 var httpProxy = require('http-proxy');
 
 var server = httpProxy.createServer(function (req, res, proxy) {
+  var buffer = httpProxy.buffer(req);
 
-    var buffer = httpProxy.buffer(req);
-
-    proxy.proxyRequest(req, res, {
-      host: '127.0.0.1',
-      port: 9000,
-      buffer: buffer
-    });
-
+  proxy.proxyRequest(req, res, {
+    host: '127.0.0.1',
+    port: 9000,
+    buffer: buffer
+  });
 });
 
 server.proxy.on('end', function() {
@@ -307,11 +305,11 @@ var https = require('https'),
 //
 // generic function to load the credentials context from disk
 //
-function getCredentialsContext(cer){
+function getCredentialsContext (cer) {
   return crypto.createCredentials({
-        key:  fs.readFileSync(path.join(__dirname, 'certs', cer + '.key')),
-        cert: fs.readFileSync(path.join(__dirname, 'certs', cer + '.crt'))
-      }).context;
+    key:  fs.readFileSync(path.join(__dirname, 'certs', cer + '.key')),
+    cert: fs.readFileSync(path.join(__dirname, 'certs', cer + '.crt'))
+  }).context;
 }
 
 //
