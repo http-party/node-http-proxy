@@ -5,3 +5,19 @@
  * MIT LICENCE
  *
  */
+
+var vows = require('vows'),
+    macros = require('../macros'),
+    helpers = require('../helpers/index');
+
+vows.describe('node-http-proxy/ws/WebSocket').addBatch({
+  "With a valid target server": {
+    "and no latency": macros.ws.assertProxied({
+      raw: true
+    }),
+    // "and latency": macros.ws.assertProxied({
+    //   raw: true,
+    //   latency: 2000
+    // })
+  }
+}).export(module);

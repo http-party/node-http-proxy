@@ -72,7 +72,7 @@ vows.describe('node-http-proxy/http/routing-table').addBatch({
             )
           ], function () {
             request({
-              uri: 'http://localhost:' + that.port,
+              uri: 'http://127.0.0.1:' + that.port,
               headers: {
                 host: 'dynamic.com'
               }

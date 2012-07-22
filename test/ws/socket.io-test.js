@@ -10,10 +10,10 @@ var vows = require('vows'),
     macros = require('../macros'),
     helpers = require('../helpers/index');
 
-vows.describe('node-http-proxy/ws').addBatch({
+vows.describe('node-http-proxy/ws/socket.io').addBatch({
   "With a valid target server": {
     "and no latency": macros.ws.assertProxied(),
-    // "and latency": macros.websocket.assertProxied({
+    // "and latency": macros.ws.assertProxied({
     //   latency: 2000
     // })
   }

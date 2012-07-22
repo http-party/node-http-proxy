@@ -59,7 +59,7 @@ exports.assertProxied = function (options) {
       output = options.output  || 'hello world from ' + ports.target,
       req    = options.request || {};
       
-  req.uri = req.uri || 'http://localhost:' + ports.proxy;
+  req.uri = req.uri || 'http://127.0.0.1:' + ports.proxy;
     
   return {
     topic: function () {
@@ -79,7 +79,7 @@ exports.assertProxied = function (options) {
           proxy: {
             forward: options.forward,
             target: {
-              host: 'localhost',
+              host: '127.0.0.1',
               port: ports.target
             }
           }
@@ -110,7 +110,7 @@ exports.assertInvalidProxy = function (options) {
   var ports = options.ports   || helpers.nextPortPair,
       req   = options.request || {};
       
-  req.uri = req.uri || 'http://localhost:' + ports.proxy;
+  req.uri = req.uri || 'http://127.0.0.1:' + ports.proxy;
   
   return {
     topic: function () {
@@ -123,7 +123,7 @@ exports.assertInvalidProxy = function (options) {
         port: ports.proxy,
         proxy: {
           target: {
-            host: 'localhost',
+            host: '127.0.0.1',
             port: ports.target
           }
         }
@@ -158,13 +158,13 @@ exports.assertForwardProxied = function (options) {
     "and a valid forward target": exports.assertProxied({
       forward: {
         port: forwardPort,
-        host: 'localhost'
+        host: '127.0.0.1'
       }
     }),
     "and an invalid forward target": exports.assertProxied({
       forward: {
         port: 9898,
-        host: 'localhost'
+        host: '127.0.0.1'
       }
     })
   };
@@ -271,7 +271,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
     "a request to unknown.com": exports.assertRequest({
       assert: { statusCode: 404 },
       request: {
-        uri: 'http://localhost:' + port,
+        uri: 'http://127.0.0.1:' + port,
         headers: {
           host: 'unknown.com'
         }
@@ -285,7 +285,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
   locations.forEach(function (location) {
     context[location.source.href] = exports.assertRequest({
       request: {
-        uri: 'http://localhost:' + port + location.source.path,
+        uri: 'http://127.0.0.1:' + port + location.source.path,
         headers: {
           host: location.source.hostname
         }

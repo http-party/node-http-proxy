@@ -103,14 +103,29 @@ exports.createProxyServer = function (options, callback) {
   });
 };
 
+//
+// ### function assignPortsToRoutes (routes)
+// #### @routes {Object} Routing table to assign ports to
+// 
+// Assigns dynamic ports to the `routes` for runtime testing. 
+//
 exports.assignPortsToRoutes = function (routes) {
   Object.keys(routes).forEach(function (source) {
     routes[source] = routes[source].replace('{PORT}', helpers.nextPort);
   });
   
   return routes;
-}
+};
 
+//
+// ### function parseRoutes (options)
+// #### @options {Object} Options to use when parsing routes
+// ####    @protocol {string} Protocol to use in the routes
+// ####    @routes   {Object} Routes to parse.
+// 
+// Returns an Array of fully-parsed URLs for the source and
+// target of `options.routes`. 
+//
 exports.parseRoutes = function (options) {
   var protocol = options.protocol || 'http',
       routes = options.routes;

@@ -9,11 +9,14 @@
 var assert = require('assert'),
     async = require('async'),
     io = require('socket.io'),
+    ws = require('ws'),
     http = require('./http');
 
 //
 // ### function createServerPair (options, callback)
 // #### @options {Object} Options to create target and proxy server.
+// ####    @target {Object} Options for the target server.
+// ####    @proxy  {Object} Options for the proxy server.
 // #### @callback {function} Continuation to respond to when complete.
 //
 // Creates http target and proxy servers 
@@ -24,7 +27,7 @@ exports.createServerPair = function (options, callback) {
     // 1. Create the target server
     //
     function createTarget(next) {
-      exports.createServer(options.target, next);
+      exports.createServer(options.target, next);      
     },
     //
     // 2. Create the proxy server
@@ -35,7 +38,30 @@ exports.createServerPair = function (options, callback) {
   ], callback);
 };
 
+//
+// ### function createServer (options, callback) 
+// #### @options {Object} Options for creating the socket.io or ws server.
+// ####    @raw   {boolean} Enables ws.Websocket server.
+//
+// Creates a socket.io or ws server using the specified `options`.
+//
 exports.createServer = function (options, callback) {
+  return options.raw
+    ? exports.createWsServer(options, callback)
+    : exports.createSocketIoServer(options, callback);
+};
+
+//
+// ### function createSocketIoServer (options, callback) 
+// #### @options {Object} Options for creating the socket.io server
+// ####    @port   {number} Port to listen on
+// ####    @input  {string} Input to expect from the only socket
+// ####    @output {string} Output to send the only socket
+//
+// Creates a socket.io server on the specified `options.port` which 
+// will expect `options.input` and then send `options.output`.
+//
+exports.createSocketIoServer = function (options, callback) {
   var server = io.listen(options.port, callback);
   
   server.sockets.on('connection', function (socket) {
@@ -46,3 +72,23 @@ exports.createServer = function (options, callback) {
   });
 };
 
+//
+// ### function createWsServer (options, callback) 
+// #### @options {Object} Options for creating the ws.Server instance
+// ####    @port   {number} Port to listen on
+// ####    @input  {string} Input to expect from the only socket
+// ####    @output {string} Output to send the only socket
+//
+// Creates a ws.Server instance on the specified `options.port` which 
+// will expect `options.input` and then send `options.output`.
+//
+exports.createWsServer = function (options, callback) {
+  var server = new ws.Server({ port: options.port }, callback);
+  
+  server.on('connection', function (socket) {
+    socket.on('message', function (data) {
+      assert.equal(data, options.input);
+      socket.send(options.output);
+    });
+  });
+};
