@@ -7,9 +7,12 @@
  */
  
 var assert = require('assert'),
+    https = require('https'),
     async = require('async'),
     io = require('socket.io'),
     ws = require('ws'),
+    helpers = require('./index'),
+    protocols = helpers.protocols,
     http = require('./http');
 
 //
@@ -62,7 +65,9 @@ exports.createServer = function (options, callback) {
 // will expect `options.input` and then send `options.output`.
 //
 exports.createSocketIoServer = function (options, callback) {
-  var server = io.listen(options.port, callback);
+  var server = protocols.target === 'https'
+    ? io.listen(options.port, helpers.https, callback)
+    : io.listen(options.port, callback);
   
   server.sockets.on('connection', function (socket) {
     socket.on('incoming', function (data) {
@@ -83,9 +88,22 @@ exports.createSocketIoServer = function (options, callback) {
 // will expect `options.input` and then send `options.output`.
 //
 exports.createWsServer = function (options, callback) {
-  var server = new ws.Server({ port: options.port }, callback);
-  
-  server.on('connection', function (socket) {
+  var server,
+      wss;
+ 
+  if (protocols.target === 'https') {
+    server = https.createServer(helpers.https, function (req, res) {
+      req.writeHead(200);
+      req.end();
+    }).listen(options.port, callback);
+    
+    wss = new ws.Server({ server: server });
+  }
+  else {
+    wss = new ws.Server({ port: options.port }, callback);
+  }
+
+  wss.on('connection', function (socket) {
     socket.on('message', function (data) {
       assert.equal(data, options.input);
       socket.send(options.output);

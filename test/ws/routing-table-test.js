@@ -10,7 +10,7 @@ var vows = require('vows'),
     macros = require('../macros'),
     helpers = require('../helpers/index');
 
-vows.describe('node-http-proxy/ws').addBatch({
+vows.describe(helpers.describe('routing-proxy', 'ws')).addBatch({
   "With a valid target server": {
     "and no latency": {
       "using ws": macros.ws.assertProxied(),

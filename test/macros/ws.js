@@ -69,11 +69,13 @@ exports.assertProxied = function (options) {
   var ports    = options.ports    || helpers.nextPortPair,
       input    = options.input    || 'hello world to ' + ports.target,
       output   = options.output   || 'hello world from ' + ports.target,
-      protocol = options.protocol || 'http';
+      protocol = helpers.protocols.proxy;
       
-  if (options.raw && !options.protocol) {
-    protocol = 'ws';
-  } 
+  if (options.raw) {
+    protocol = helpers.protocols.proxy === 'https'
+      ? 'wss'
+      : 'ws';
+  }
     
   return {
     topic: function () {
@@ -89,6 +91,7 @@ exports.assertProxied = function (options) {
           port: ports.proxy,
           proxy: {
             target: {
+              https: helpers.protocols.target === 'https',
               host: '127.0.0.1',
               port: ports.target
             }
@@ -131,13 +134,15 @@ exports.assertProxiedToRoutes = function (options, nested) {
   // Parse locations from routes for making assertion requests. 
   //
   var locations = helpers.http.parseRoutes(options),
-      protocol = options.protocol || 'http',
+      protocol = helpers.protocols.proxy,
       port = helpers.nextPort,
       context,
       proxy;
-  
-  if (options.raw && !options.protocol) {
-    protocol = 'ws';
+
+  if (options.raw) {
+    protocol = helpers.protocols.proxy === 'https'
+      ? 'wss'
+      : 'ws';
   }
   
   if (options.filename) {
