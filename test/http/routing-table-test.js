@@ -26,7 +26,7 @@ vows.describe(helpers.describe('routing-table')).addBatch({
       }
     }),
     "using RegExp": macros.http.assertProxiedToRoutes({
-      routes: {        
+      routes: {
         "foo.com": "127.0.0.1:{PORT}",
         "bar.com": "127.0.0.1:{PORT}",
         "baz.com/taco": "127.0.0.1:{PORT}",

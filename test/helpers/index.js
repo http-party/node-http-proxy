@@ -28,7 +28,7 @@ Object.defineProperty(exports, 'https', {
 //
 // @protocols {Object}
 // Returns an object representing the desired protocols
-// for the `proxy` and `target` server. 
+// for the `proxy` and `target` server.
 //
 Object.defineProperty(exports, 'protocols', {
   get: function () {
@@ -37,11 +37,11 @@ Object.defineProperty(exports, 'protocols', {
       target: exports.argv.target || 'http',
       proxy: exports.argv.proxy || 'http'
     };
-  } 
+  }
 });
 
 //
-// @nextPort {number} 
+// @nextPort {number}
 // Returns an auto-incrementing port for tests.
 //
 Object.defineProperty(exports, 'nextPort', {
@@ -53,7 +53,7 @@ Object.defineProperty(exports, 'nextPort', {
 });
 
 //
-// @nextPortPair {Object} 
+// @nextPortPair {Object}
 // Returns an auto-incrementing pair of ports for tests.
 //
 Object.defineProperty(exports, 'nextPortPair', {
@@ -66,22 +66,22 @@ Object.defineProperty(exports, 'nextPortPair', {
 });
 
 //
-// ### function describe(prefix) 
+// ### function describe(prefix)
 // #### @prefix {string} Prefix to use before the description
 //
 // Returns a string representing the protocols that this suite
-// is testing based on CLI arguments. 
+// is testing based on CLI arguments.
 //
 exports.describe = function (prefix, base) {
   prefix = prefix || '';
-  base   = base   || 'http' 
-  
+  base   = base   || 'http';
+
   function protocol(endpoint) {
     return exports.protocols[endpoint] === 'https'
       ? base + 's'
       : base;
   }
-  
+
   return [
     'node-http-proxy',
     prefix,

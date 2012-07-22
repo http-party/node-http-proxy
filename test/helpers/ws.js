@@ -5,7 +5,7 @@
  * MIT LICENCE
  *
  */
- 
+
 var assert = require('assert'),
     https = require('https'),
     async = require('async'),
@@ -22,7 +22,7 @@ var assert = require('assert'),
 // ####    @proxy  {Object} Options for the proxy server.
 // #### @callback {function} Continuation to respond to when complete.
 //
-// Creates http target and proxy servers 
+// Creates http target and proxy servers
 //
 exports.createServerPair = function (options, callback) {
   async.series([
@@ -30,7 +30,7 @@ exports.createServerPair = function (options, callback) {
     // 1. Create the target server
     //
     function createTarget(next) {
-      exports.createServer(options.target, next);      
+      exports.createServer(options.target, next);
     },
     //
     // 2. Create the proxy server
@@ -42,7 +42,7 @@ exports.createServerPair = function (options, callback) {
 };
 
 //
-// ### function createServer (options, callback) 
+// ### function createServer (options, callback)
 // #### @options {Object} Options for creating the socket.io or ws server.
 // ####    @raw   {boolean} Enables ws.Websocket server.
 //
@@ -55,20 +55,20 @@ exports.createServer = function (options, callback) {
 };
 
 //
-// ### function createSocketIoServer (options, callback) 
+// ### function createSocketIoServer (options, callback)
 // #### @options {Object} Options for creating the socket.io server
 // ####    @port   {number} Port to listen on
 // ####    @input  {string} Input to expect from the only socket
 // ####    @output {string} Output to send the only socket
 //
-// Creates a socket.io server on the specified `options.port` which 
+// Creates a socket.io server on the specified `options.port` which
 // will expect `options.input` and then send `options.output`.
 //
 exports.createSocketIoServer = function (options, callback) {
   var server = protocols.target === 'https'
     ? io.listen(options.port, helpers.https, callback)
     : io.listen(options.port, callback);
-  
+
   server.sockets.on('connection', function (socket) {
     socket.on('incoming', function (data) {
       assert.equal(data, options.input);
@@ -78,25 +78,25 @@ exports.createSocketIoServer = function (options, callback) {
 };
 
 //
-// ### function createWsServer (options, callback) 
+// ### function createWsServer (options, callback)
 // #### @options {Object} Options for creating the ws.Server instance
 // ####    @port   {number} Port to listen on
 // ####    @input  {string} Input to expect from the only socket
 // ####    @output {string} Output to send the only socket
 //
-// Creates a ws.Server instance on the specified `options.port` which 
+// Creates a ws.Server instance on the specified `options.port` which
 // will expect `options.input` and then send `options.output`.
 //
 exports.createWsServer = function (options, callback) {
   var server,
       wss;
- 
+
   if (protocols.target === 'https') {
     server = https.createServer(helpers.https, function (req, res) {
       req.writeHead(200);
       req.end();
     }).listen(options.port, callback);
-    
+
     wss = new ws.Server({ server: server });
   }
   else {

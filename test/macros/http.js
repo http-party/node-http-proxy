@@ -5,7 +5,7 @@
  * MIT LICENCE
  *
  */
- 
+
 var assert = require('assert'),
     fs = require('fs'),
     async = require('async'),
@@ -34,7 +34,7 @@ exports.assertRequest = function (options) {
       if (options.assert.body) {
         assert.equal(body, options.assert.body);
       }
-      
+
       if (options.assert.statusCode) {
         assert.equal(res.statusCode, options.assert.statusCode);
       }
@@ -47,7 +47,7 @@ exports.assertRequest = function (options) {
 // #### @options {Object} Options for this test
 // ####    @latency {number} Latency in milliseconds for the proxy server.
 // ####    @ports   {Object} Ports for the request (target, proxy).
-// ####    @output  {string} Output to assert from.  
+// ####    @output  {string} Output to assert from.
 // ####    @forward {Object} Options for forward proxying.
 //
 // Creates a complete end-to-end test for requesting against an
@@ -55,22 +55,22 @@ exports.assertRequest = function (options) {
 //
 exports.assertProxied = function (options) {
   options = options || {};
-  
+
   var ports    = options.ports   || helpers.nextPortPair,
       output   = options.output  || 'hello world from ' + ports.target,
       protocol = helpers.protocols.proxy,
       req      = options.request || {};
-      
+
   req.uri = req.uri || protocol + '://127.0.0.1:' + ports.proxy;
-    
+
   return {
     topic: function () {
       //
       // Create a target server and a proxy server
-      // using the `options` supplied. 
+      // using the `options` supplied.
       //
       helpers.http.createServerPair({
-        target: { 
+        target: {
           output: output,
           port: ports.target,
           headers: req.headers
@@ -109,14 +109,14 @@ exports.assertProxied = function (options) {
 //
 exports.assertInvalidProxy = function (options) {
   options = options || {};
-  
+
   var ports    = options.ports   || helpers.nextPortPair,
       req      = options.request || {},
       protocol = helpers.protocols.proxy;
-      
-      
+
+
   req.uri = req.uri || protocol + '://127.0.0.1:' + ports.proxy;
-  
+
   return {
     topic: function () {
       //
@@ -152,13 +152,13 @@ exports.assertInvalidProxy = function (options) {
 //
 exports.assertForwardProxied = function (options) {
   var forwardPort = helpers.nextPort;
-  
+
   return {
     topic: function () {
       helpers.http.createServer({
         output: 'hello from forward',
         port: forwardPort
-      }, this.callback)
+      }, this.callback);
     },
     "and a valid forward target": exports.assertProxied({
       forward: {
@@ -176,7 +176,7 @@ exports.assertForwardProxied = function (options) {
 };
 
 //
-// ### function assertProxiedtoRoutes (options, nested) 
+// ### function assertProxiedtoRoutes (options, nested)
 // #### @options {Object} Options for this ProxyTable-based test
 // ####    @routes       {Object|string} Routes to use for the proxy.
 // ####    @hostnameOnly {boolean} Enables hostnameOnly routing.
@@ -186,25 +186,25 @@ exports.assertForwardProxied = function (options) {
 // http proxy using `options.routes`:
 //
 // 1. Creates target servers for all routes in `options.routes.`
-// 2. Creates a proxy server. 
+// 2. Creates a proxy server.
 // 3. Ensure requests to the proxy server for all route targets
-//    returns the unique expected output. 
+//    returns the unique expected output.
 //
 exports.assertProxiedToRoutes = function (options, nested) {
   //
   // Assign dynamic ports to the routes to use.
   //
   options.routes = helpers.http.assignPortsToRoutes(options.routes);
-  
+
   //
-  // Parse locations from routes for making assertion requests. 
+  // Parse locations from routes for making assertion requests.
   //
   var locations = helpers.http.parseRoutes(options),
       port = helpers.nextPort,
       protocol = helpers.protocols.proxy,
       context,
       proxy;
-  
+
   if (options.filename) {
     //
     // If we've been passed a filename write the routes to it
@@ -217,19 +217,19 @@ exports.assertProxiedToRoutes = function (options, nested) {
     //
     // Otherwise just use the routes themselves.
     //
-    proxy = { 
+    proxy = {
       hostnameOnly: options.hostnameOnly,
       router: options.routes
     };
   }
-  
+
   //
   // Set the https options if necessary
   //
   if (helpers.protocols.target === 'https') {
     proxy.target = { https: true };
   }
-  
+
   //
   // Create the test context which creates all target
   // servers for all routes and a proxy server.
@@ -237,13 +237,13 @@ exports.assertProxiedToRoutes = function (options, nested) {
   context = {
     topic: function () {
       var that = this;
-      
+
       async.waterfall([
         //
         // 1. Create all the target servers
         //
         async.apply(
-          async.forEach, 
+          async.forEach,
           locations,
           function createRouteTarget(location, next) {
             helpers.http.createServer({
@@ -256,8 +256,8 @@ exports.assertProxiedToRoutes = function (options, nested) {
         // 2. Create the proxy server
         //
         async.apply(
-          helpers.http.createProxyServer, 
-          { 
+          helpers.http.createProxyServer,
+          {
             port: port,
             latency: options.latency,
             routing: true,
@@ -271,14 +271,14 @@ exports.assertProxiedToRoutes = function (options, nested) {
         that.proxyServer = server;
         that.callback();
       });
-      
+
       //
       // 4. Assign the port to the context for later use
       //
       this.port = port;
     },
     //
-    // Add an extra assertion to a route which 
+    // Add an extra assertion to a route which
     // should respond with 404
     //
     "a request to unknown.com": exports.assertRequest({
@@ -291,7 +291,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
       }
     })
   };
-  
+
   //
   // Add test assertions for each of the route locations.
   //
@@ -307,8 +307,8 @@ exports.assertProxiedToRoutes = function (options, nested) {
         body: 'hello from ' + location.source.href
       }
     });
-  });  
-  
+  });
+
   //
   // If there are any nested vows to add to the context
   // add them before returning the full context.
@@ -318,6 +318,6 @@ exports.assertProxiedToRoutes = function (options, nested) {
       context[key] = nested[key];
     });
   }
-  
+
   return context;
 };

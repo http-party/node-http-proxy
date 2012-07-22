@@ -5,7 +5,7 @@
  * MIT LICENCE
  *
  */
- 
+
 var assert = require('assert'),
     http = require('http'),
     https = require('https'),
@@ -20,7 +20,7 @@ var assert = require('assert'),
 // #### @options {Object} Options to create target and proxy server.
 // #### @callback {function} Continuation to respond to when complete.
 //
-// Creates http target and proxy servers 
+// Creates http target and proxy servers
 //
 exports.createServerPair = function (options, callback) {
   async.series([
@@ -51,7 +51,7 @@ exports.createServerPair = function (options, callback) {
 //
 exports.createServer = function (options, callback) {
   //
-  // Request handler to use in either `http` 
+  // Request handler to use in either `http`
   // or `https` server.
   //
   function requestHandler(req, res) {
@@ -60,16 +60,16 @@ exports.createServer = function (options, callback) {
         assert.equal(req.headers[key], options.headers[key]);
       });
     }
-    
+
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(options.output || 'hello proxy');
     res.end();
   }
-  
+
   var server = protocols.target === 'https'
     ? https.createServer(helpers.https, requestHandler)
     : http.createServer(requestHandler);
-    
+
   server.listen(options.port, function () {
     callback(null, this);
   });
@@ -91,7 +91,7 @@ exports.createProxyServer = function (options, callback) {
     if (protocols.proxy === 'https') {
       options.proxy.https = helpers.https;
     }
-    
+
     return httpProxy
       .createServer(options.proxy)
       .listen(options.port, function () {
@@ -99,12 +99,15 @@ exports.createProxyServer = function (options, callback) {
       });
   }
 
-  var proxy = options.routing 
+  var server,
+      proxy;
+
+  proxy = options.routing
     ? new httpProxy.RoutingProxy(options.proxy)
     : new httpProxy.HttpProxy(options.proxy);
-  
+
   //
-  // Request handler to use in either `http` 
+  // Request handler to use in either `http`
   // or `https` server.
   //
   function requestHandler(req, res) {
@@ -115,15 +118,15 @@ exports.createProxyServer = function (options, callback) {
       // Setup options dynamically for `RoutingProxy.prototype.proxyRequest`
       // or `HttpProxy.prototype.proxyRequest`.
       //
-      buffer = options.routing ? { buffer: buffer } : buffer
+      buffer = options.routing ? { buffer: buffer } : buffer;
       proxy.proxyRequest(req, res, buffer);
     }, options.latency);
   }
-  
-  var server = protocols.proxy === 'https'
+
+  server = protocols.proxy === 'https'
     ? https.createServer(helpers.https, requestHandler)
     : http.createServer(requestHandler);
-    
+
   server.listen(options.port, function () {
     callback(null, this);
   });
@@ -132,14 +135,14 @@ exports.createProxyServer = function (options, callback) {
 //
 // ### function assignPortsToRoutes (routes)
 // #### @routes {Object} Routing table to assign ports to
-// 
-// Assigns dynamic ports to the `routes` for runtime testing. 
+//
+// Assigns dynamic ports to the `routes` for runtime testing.
 //
 exports.assignPortsToRoutes = function (routes) {
   Object.keys(routes).forEach(function (source) {
     routes[source] = routes[source].replace('{PORT}', helpers.nextPort);
   });
-  
+
   return routes;
 };
 
@@ -148,14 +151,14 @@ exports.assignPortsToRoutes = function (routes) {
 // #### @options {Object} Options to use when parsing routes
 // ####    @protocol {string} Protocol to use in the routes
 // ####    @routes   {Object} Routes to parse.
-// 
+//
 // Returns an Array of fully-parsed URLs for the source and
-// target of `options.routes`. 
+// target of `options.routes`.
 //
 exports.parseRoutes = function (options) {
   var protocol = options.protocol || 'http',
       routes = options.routes;
-  
+
   return Object.keys(routes).map(function (source) {
     return {
       source: url.parse(protocol + '://' + source),

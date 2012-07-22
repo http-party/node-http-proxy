@@ -5,8 +5,10 @@
  * MIT LICENCE
  *
  */
- 
+
 var assert = require('assert'),
+    fs = require('fs'),
+    async = require('async'),
     io = require('socket.io-client'),
     WebSocket = require('ws'),
     helpers = require('../helpers/index');
@@ -16,11 +18,11 @@ var assert = require('assert'),
 // #### @options {Object} Options for creating this assertion.
 // ####    @raw    {boolean} Enables raw `ws.WebSocket`.
 // ####    @uri    {string}  URI of the proxy server.
-// ####    @input  {string}  Input to assert sent to the target ws server.  
+// ####    @input  {string}  Input to assert sent to the target ws server.
 // ####    @output {string}  Output to assert from the taget ws server.
 //
 // Creates a `socket.io` or raw `WebSocket` connection and asserts that
-// `options.input` is sent to and `options.output` is received from the 
+// `options.input` is sent to and `options.output` is received from the
 // connection.
 //
 exports.assertSendReceive = function (options) {
@@ -34,9 +36,9 @@ exports.assertSendReceive = function (options) {
       "should send input and receive output": function (_, data) {
         assert.equal(data, options.output);
       }
-    }
+    };
   }
-  
+
   return {
     topic: function () {
       var socket = new WebSocket(options.uri);
@@ -48,15 +50,15 @@ exports.assertSendReceive = function (options) {
     "should send input and recieve output": function (_, data, flags) {
       assert.equal(data, options.output);
     }
-  }
-}
+  };
+};
 
 //
 // ### function assertProxied (options)
 // #### @options {Object} Options for this test
 // ####    @latency {number}  Latency in milliseconds for the proxy server.
 // ####    @ports   {Object}  Ports for the request (target, proxy).
-// ####    @input   {string}  Input to assert sent to the target ws server.  
+// ####    @input   {string}  Input to assert sent to the target ws server.
 // ####    @output  {string}  Output to assert from the taget ws server.
 // ####    @raw     {boolean} Enables raw `ws.Server` usage.
 //
@@ -65,18 +67,18 @@ exports.assertSendReceive = function (options) {
 //
 exports.assertProxied = function (options) {
   options = options || {};
-  
+
   var ports    = options.ports    || helpers.nextPortPair,
       input    = options.input    || 'hello world to ' + ports.target,
       output   = options.output   || 'hello world from ' + ports.target,
       protocol = helpers.protocols.proxy;
-      
+
   if (options.raw) {
     protocol = helpers.protocols.proxy === 'https'
       ? 'wss'
       : 'ws';
   }
-    
+
   return {
     topic: function () {
       helpers.ws.createServerPair({
@@ -109,7 +111,7 @@ exports.assertProxied = function (options) {
 };
 
 //
-// ### function assertProxiedtoRoutes (options, nested) 
+// ### function assertProxiedtoRoutes (options, nested)
 // #### @options {Object} Options for this ProxyTable-based test
 // ####    @raw          {boolean}       Enables ws.Server usage.
 // ####    @routes       {Object|string} Routes to use for the proxy.
@@ -120,18 +122,18 @@ exports.assertProxied = function (options) {
 // http proxy using `options.routes`:
 //
 // 1. Creates target servers for all routes in `options.routes.`
-// 2. Creates a proxy server. 
+// 2. Creates a proxy server.
 // 3. Ensure Websocket connections to the proxy server for all route targets
-//    can send input and recieve output. 
+//    can send input and recieve output.
 //
 exports.assertProxiedToRoutes = function (options, nested) {
   //
   // Assign dynamic ports to the routes to use.
   //
   options.routes = helpers.http.assignPortsToRoutes(options.routes);
-  
+
   //
-  // Parse locations from routes for making assertion requests. 
+  // Parse locations from routes for making assertion requests.
   //
   var locations = helpers.http.parseRoutes(options),
       protocol = helpers.protocols.proxy,
@@ -144,7 +146,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
       ? 'wss'
       : 'ws';
   }
-  
+
   if (options.filename) {
     //
     // If we've been passed a filename write the routes to it
@@ -157,12 +159,12 @@ exports.assertProxiedToRoutes = function (options, nested) {
     //
     // Otherwise just use the routes themselves.
     //
-    proxy = { 
+    proxy = {
       hostnameOnly: options.hostnameOnly,
       router: options.routes
     };
-  }  
-  
+  }
+
   //
   // Create the test context which creates all target
   // servers for all routes and a proxy server.
@@ -170,13 +172,13 @@ exports.assertProxiedToRoutes = function (options, nested) {
   context = {
     topic: function () {
       var that = this;
-      
+
       async.waterfall([
         //
         // 1. Create all the target servers
         //
         async.apply(
-          async.forEach, 
+          async.forEach,
           locations,
           function createRouteTarget(location, next) {
             helpers.ws.createServer({
@@ -191,8 +193,8 @@ exports.assertProxiedToRoutes = function (options, nested) {
         // 2. Create the proxy server
         //
         async.apply(
-          helpers.http.createProxyServer, 
-          { 
+          helpers.http.createProxyServer,
+          {
             port: port,
             latency: options.latency,
             routing: true,
@@ -206,14 +208,14 @@ exports.assertProxiedToRoutes = function (options, nested) {
         that.proxyServer = server;
         that.callback();
       });
-      
+
       //
       // 4. Assign the port to the context for later use
       //
       this.port = port;
     }
   };
-  
+
   //
   // Add test assertions for each of the route locations.
   //
@@ -224,7 +226,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
       input: 'hello to ' + location.source.href,
       raw: options.raw
     });
-  });  
-  
+  });
+
   return context;
 };
