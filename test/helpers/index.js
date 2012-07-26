@@ -46,7 +46,7 @@ Object.defineProperty(exports, 'protocols', {
 //
 Object.defineProperty(exports, 'nextPort', {
   get: function () {
-    var current = this.port || 8000;
+    var current = this.port || 9050;
     this.port = current + 1;
     return current;
   }

@@ -35,8 +35,8 @@
   },
   "scripts": {
     "test": "npm run-script test-http && npm run-script test-https",
-    "test-http": "vows --spec -i && vows --spec -i --target=https",
-    "test-https": "vows --spec -i --proxy=https && vows --spec -i --proxy=https --target=https",
+    "test-http": "vows --spec && vows --spec --target=https",
+    "test-https": "vows --spec --proxy=https && vows --spec --proxy=https --target=https",
     "test-core": "test/core/run"
   },
   "engines": {
