@@ -6,5 +6,6 @@
  *
  */
 
-exports.http = require('./http');
-exports.ws   = require('./ws');
+exports.examples = require('./examples');
+exports.http     = require('./http');
+exports.ws       = require('./ws');

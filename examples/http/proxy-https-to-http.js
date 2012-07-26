@@ -31,8 +31,6 @@ var https = require('https'),
     httpProxy = require('../../lib/node-http-proxy'),
     helpers = require('../../test/helpers');
     
-var opts = helpers.loadHttps();
-
 //
 // Create the target HTTPS server 
 //
@@ -46,7 +44,7 @@ http.createServer(function (req, res) {
 // Create the proxy server listening on port 443
 //
 httpProxy.createServer(8000, 'localhost', {
-  https: opts
+  https: helpers.https
 }).listen(8080);
 
 util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8080'.yellow);

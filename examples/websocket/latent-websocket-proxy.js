@@ -27,41 +27,31 @@
 var util = require('util'),
     http = require('http'),
     colors = require('colors'),
-    websocket = require('../../vendor/websocket'),
     httpProxy = require('../../lib/node-http-proxy');
 
 try {
-  var utils = require('socket.io/lib/socket.io/utils'),
-      io = require('socket.io');
+  var io = require('socket.io'),
+      client = require('socket.io-client');
 }
 catch (ex) {
   console.error('Socket.io is required for this example:');
-  console.error('npm ' + 'install'.green + ' socket.io@0.6.18'.magenta);
+  console.error('npm ' + 'install'.green);
   process.exit(1);
 }
 
 //
-// Create the target HTTP server
+// Create the target HTTP server and setup
+// socket.io on it.
 //
-var server = http.createServer(function (req, res) {
-  res.writeHead(200);
-  res.end();
-});
-
-server.listen(8080);
-
-//
-// Setup socket.io on the target HTTP server
-//
-var socket = io.listen(server);
-socket.on('connection', function (client) {
+var server = io.listen(8080);
+server.sockets.on('connection', function (client) {
   util.debug('Got websocket connection');
 
   client.on('message', function (msg) {
     util.debug('Got message from client: ' + msg);
   });
 
-  socket.broadcast('from server');
+  client.send('from server');
 });
 
 //
@@ -73,6 +63,7 @@ var proxy = new httpProxy.HttpProxy({
     port: 8080
   }
 });
+
 var proxyServer = http.createServer(function (req, res) {
   proxy.proxyRequest(req, res);
 });
@@ -92,14 +83,10 @@ proxyServer.on('upgrade', function (req, socket, head) {
 proxyServer.listen(8081);
 
 //
-// Setup the web socket against our proxy
+// Setup the socket.io client against our proxy
 //
-var ws = new websocket.WebSocket('ws://localhost:8081/socket.io/websocket/', 'borf');
-
-ws.on('open', function () {
-  ws.send(utils.encode('from client'));
-});
+var ws = client.connect('ws://localhost:8081');
 
 ws.on('message', function (msg) {
-  util.debug('Got message: ' + utils.decode(msg));
+  util.debug('Got message: ' + msg);
 });
