@@ -38,7 +38,7 @@ exports.shouldHaveDeps = function () {
               return next();
             }
 
-            var child = spawn('npm', ['install'], {
+            var child = spawn('npm', ['install', '-f'], {
               cwd: examplesDir
             });
 
