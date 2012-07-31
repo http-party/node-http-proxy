@@ -42,11 +42,41 @@ vows.describe(helpers.describe()).addBatch({
       "and headers": macros.http.assertProxied({
         request: { headers: { host: 'unknown.com' } }
       }),
+      "and request close connection header": macros.http.assertProxied({
+        request: { headers: { connection: "close" } },
+        outputHeaders: { connection: "close" }
+      }),
+      "and request keep alive connection header": macros.http.assertProxied({
+        request: { headers: { connection: "keep-alive" } },
+        outputHeaders: { connection: "keep-alive" }
+      }),
+      "and response close connection header": macros.http.assertProxied({
+        request: { headers: { connection: "" } }, // Must explicitly set to "" because otherwise node will automatically add a "connection: keep-alive" header
+        targetHeaders: { connection: "close" },
+        outputHeaders: { connection: "close" }
+      }),
+      "and response keep-alive connection header": macros.http.assertProxied({
+        request: { headers: { connection: "" } }, // Must explicitly set to "" because otherwise node will automatically add a "connection: keep-alive" header
+        targetHeaders: { connection: "keep-alive" },
+        outputHeaders: { connection: "keep-alive" }
+      }),
+      "and no connection header": macros.http.assertProxied({
+        request: { headers: { connection: "" } }, // Must explicitly set to "" because otherwise node will automatically add a "connection: keep-alive" header
+        outputHeaders: { connection: "keep-alive" }
+      }),
       "and forwarding enabled": macros.http.assertForwardProxied()
     },
-    "and latency": macros.http.assertProxied({
-      latency: 2000
-    })
+    "and latency": {
+      "and no headers": macros.http.assertProxied({
+        latency: 2000
+      }),
+      "and response headers": macros.http.assertProxied({
+        targetHeaders: { "x-testheader": "target" },
+        proxyHeaders: { "X-TestHeader": "proxy" },
+        outputHeaders: { "x-testheader": "target" },
+        latency: 1000
+      })
+    }
   },
   "With a no valid target server": {
     "and no latency": macros.http.assertInvalidProxy(),
