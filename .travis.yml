@@ -2,9 +2,8 @@ language: node_js
 node_js:
   - 0.6
   - 0.8
-branches:
-  only:
-    - master
+  - 0.9
+
 notifications:
   email:
     - travis@nodejitsu.com
