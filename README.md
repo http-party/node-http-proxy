@@ -25,7 +25,7 @@ Let's suppose you were running multiple http application servers, but you only w
 ### Installing npm (node package manager)
 
 ```
-curl http://npmjs.org/install.sh | sh
+curl https://npmjs.org/install.sh | sh
 ```
 
 ### Installing node-http-proxy
