@@ -46,7 +46,8 @@ https.createServer(helpers.https, function (req, res) {
 httpProxy.createServer(8000, 'localhost', {
   https: helpers.https,
   target: {
-    https: true
+    https: true,
+    rejectUnauthorized: false
   }
 }).listen(8080);
 

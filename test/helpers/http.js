@@ -91,6 +91,7 @@ exports.createProxyServer = function (options, callback) {
     if (protocols.proxy === 'https') {
       options.proxy.https = helpers.https;
     }
+    options.proxy.rejectUnauthorized = false;
 
     return httpProxy
       .createServer(options.proxy)

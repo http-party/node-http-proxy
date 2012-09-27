@@ -27,6 +27,7 @@ exports.assertRequest = function (options) {
       //
       // Now make the HTTP request and assert.
       //
+      options.request.rejectUnauthorized = false;
       request(options.request, this.callback);
     },
     "should succeed": function (err, res, body) {
