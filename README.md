@@ -489,19 +489,20 @@ Http Proxy supports the following options
   forward: { // options for forward-proxy
     port: 8000,
     host: 'staging.com'
+  },
   target : { // options for proxy target
-    port: 8000, 
-    host: 'localhost' 
-  }
+    port : 8000, 
+    host : 'localhost',
+  };
   source : { // additional options for websocket proxying 
     host : 'localhost',
     port : 8000,
     https: true
-  }
+  },
   enable : {
     xforward: true // enables X-Forwarded-For
-  }
-  changeOrigin: false // changes the origin of the host header to the target URL
+  },
+  changeOrigin: false, // changes the origin of the host header to the target URL
 }
 ```
 
