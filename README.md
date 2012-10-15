@@ -482,7 +482,7 @@ If you have a suggestion for a feature currently not supported, feel free to ope
 
 ### Http Proxy
 
-Http Proxy supports the following options
+`createServer()` supports the following options
 
 ```javascript
 {
