@@ -82,14 +82,17 @@ process.on('exit', function() {
   if (!exports.globalCheck) return;
   var knownGlobals = [setTimeout,
                       setInterval,
-                      setImmediate,
                       clearTimeout,
                       clearInterval,
-                      clearImmediate,
                       console,
                       Buffer,
                       process,
                       global];
+
+  if (global.setImmediate) {
+    knownGlobals.push(setImmediate);
+    knownGlobals.push(clearImmediate);
+  }
 
   if (global.errno) {
     knownGlobals.push(errno);
@@ -114,7 +117,6 @@ process.on('exit', function() {
     knownGlobals.push(ArrayBuffer);
     knownGlobals.push(Int8Array);
     knownGlobals.push(Uint8Array);
-    knownGlobals.push(Uint8ClampedArray);
     knownGlobals.push(Int16Array);
     knownGlobals.push(Uint16Array);
     knownGlobals.push(Int32Array);
@@ -122,6 +124,10 @@ process.on('exit', function() {
     knownGlobals.push(Float32Array);
     knownGlobals.push(Float64Array);
     knownGlobals.push(DataView);
+
+    if (global.Uint8ClampedArray) {
+      knownGlobals.push(Uint8ClampedArray);
+    }
   }
 
   for (var x in global) {
