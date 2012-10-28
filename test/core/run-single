@@ -39,7 +39,9 @@ var path = require('path'),
     httpProxy = require('../../'),
     common = require('./common');
 
-var test = process.argv[2];
+var test = process.argv[2],
+    done = false,
+    testProcess;
 
 if (!test) {
   return console.error('Need test to run');
@@ -52,11 +54,20 @@ proxy.listen(common.PROXY_PORT);
 
 proxy.on('listening', function () {
   console.log('Proxy server listening on ' + common.PROXY_PORT);
-  var testProcess = spawn(process.argv[0], [ process.argv[2] ]);
+  testProcess = spawn(process.argv[0], [ process.argv[2] ]);
   testProcess.stdout.pipe(process.stdout);
   testProcess.stderr.pipe(process.stderr);
-  testProcess.on('exit', process.exit);
+
+  testProcess.on('exit', function () {
+    done = true;
+    process.exit();
+  });
+});
+
+process.on('exit', function () {
+  if (!done) {
+    textProcess.kill();
+  }
 });
 
 // vim:filetype=javascript
-
