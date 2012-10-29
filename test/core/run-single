@@ -40,7 +40,6 @@ var path = require('path'),
     common = require('./common');
 
 var test = process.argv[2],
-    done = false,
     testProcess;
 
 if (!test) {
@@ -58,16 +57,14 @@ proxy.on('listening', function () {
   testProcess.stdout.pipe(process.stdout);
   testProcess.stderr.pipe(process.stderr);
 
-  testProcess.on('exit', function () {
-    done = true;
-    process.exit();
+  testProcess.on('exit', function (code) {
+    process.exit(code);
   });
 });
 
-process.on('exit', function () {
-  if (!done) {
-    textProcess.kill();
-  }
+process.on('SIGTERM', function () {
+  testProcess.kill();
+  process.exit(1);
 });
 
 // vim:filetype=javascript
