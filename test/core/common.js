@@ -29,7 +29,7 @@ exports.tmpDir = path.join(exports.testDir, 'tmp');
 exports.PORT = 12346;
 exports.PROXY_PORT = 1234567;
 
-if (process.platform == 'win32') {
+if (process.platform === 'win32') {
   exports.PIPE = '\\\\.\\pipe\\libuv-test';
 } else {
   exports.PIPE = exports.tmpDir + '/test.sock';
@@ -54,9 +54,10 @@ exports.indirectInstanceOf = function(obj, cls) {
 
 
 exports.ddCommand = function(filename, kilobytes) {
-  if (process.platform == 'win32') {
-    return '"' + process.argv[0] + '" "' + path.resolve(exports.fixturesDir,
-      'create-file.js') + '" "' + filename + '" ' + (kilobytes * 1024);
+  if (process.platform === 'win32') {
+    var p = path.resolve(exports.fixturesDir, 'create-file.js');
+    return '"' + process.argv[0] + '" "' + p + '" "' +
+           filename + '" ' + (kilobytes * 1024);
   } else {
     return 'dd if=/dev/zero of="' + filename + '" bs=1024 count=' + kilobytes;
   }
@@ -66,7 +67,7 @@ exports.ddCommand = function(filename, kilobytes) {
 exports.spawnPwd = function(options) {
   var spawn = require('child_process').spawn;
 
-  if (process.platform == 'win32') {
+  if (process.platform === 'win32') {
     return spawn('cmd.exe', ['/c', 'cd'], options);
   } else {
     return spawn('pwd', [], options);
@@ -87,6 +88,11 @@ process.on('exit', function() {
                       Buffer,
                       process,
                       global];
+
+  if (global.setImmediate) {
+    knownGlobals.push(setImmediate);
+    knownGlobals.push(clearImmediate);
+  }
 
   if (global.errno) {
     knownGlobals.push(errno);
@@ -118,6 +124,10 @@ process.on('exit', function() {
     knownGlobals.push(Float32Array);
     knownGlobals.push(Float64Array);
     knownGlobals.push(DataView);
+
+    if (global.Uint8ClampedArray) {
+      knownGlobals.push(Uint8ClampedArray);
+    }
   }
 
   for (var x in global) {
@@ -138,8 +148,43 @@ process.on('exit', function() {
 });
 
 
-// This function allows one two run an HTTP test agaist both HTTPS and
-// normal HTTP modules. This ensures they fit the same API.
-exports.httpTest = function httpTest(cb) {
-};
+var mustCallChecks = [];
 
+
+function runCallChecks() {
+  var failed = mustCallChecks.filter(function(context) {
+    return context.actual !== context.expected;
+  });
+
+  failed.forEach(function(context) {
+    console.log('Mismatched %s function calls. Expected %d, actual %d.',
+                context.name,
+                context.expected,
+                context.actual);
+    console.log(context.stack.split('\n').slice(2).join('\n'));
+  });
+
+  if (failed.length) process.exit(1);
+}
+
+
+exports.mustCall = function(fn, expected) {
+  if (typeof expected !== 'number') expected = 1;
+
+  var context = {
+    expected: expected,
+    actual: 0,
+    stack: (new Error).stack,
+    name: fn.name || '<anonymous>'
+  };
+
+  // add the exit listener only once to avoid listener leak warnings
+  if (mustCallChecks.length === 0) process.on('exit', runCallChecks);
+
+  mustCallChecks.push(context);
+
+  return function() {
+    context.actual++;
+    return fn.apply(this, arguments);
+  };
+};

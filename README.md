@@ -478,6 +478,34 @@ options:
 
 If you have a suggestion for a feature currently not supported, feel free to open a [support issue][6]. node-http-proxy is designed to just proxy http requests from one server to another, but we will be soon releasing many other complimentary projects that can be used in conjunction with node-http-proxy.
 
+## Options
+
+### Http Proxy
+
+`createServer()` supports the following options
+
+```javascript
+{
+  forward: { // options for forward-proxy
+    port: 8000,
+    host: 'staging.com'
+  },
+  target : { // options for proxy target
+    port : 8000, 
+    host : 'localhost',
+  };
+  source : { // additional options for websocket proxying 
+    host : 'localhost',
+    port : 8000,
+    https: true
+  },
+  enable : {
+    xforward: true // enables X-Forwarded-For
+  },
+  changeOrigin: false, // changes the origin of the host header to the target URL
+}
+```
+
 ## Run Tests
 The test suite is designed to fully cover the combinatoric possibilities of HTTP and HTTPS proxying:
 
