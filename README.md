@@ -444,6 +444,34 @@ server.on('upgrade', function(req, socket, head) {
 server.listen(8080);
 ```
 
+### with custom server logic
+
+``` js
+var httpProxy = require('http-proxy')
+
+var server = httpProxy.createServer(function (req, res, proxy) {
+  //
+  // Put your custom server logic here
+  //
+  proxy.proxyRequest(req, res, {
+    host: 'localhost',
+    port: 9000
+  });
+})
+
+server.on('upgrade', function(req, socket, head) {
+  //
+  // Put your custom server logic here
+  //
+  proxy.proxyWebSocketRequest(req, socket, head, {
+    host: 'localhost',
+    port: 9000
+  });
+});
+
+server.listen(8080);
+```
+
 ### Configuring your Socket limits
 
 By default, `node-http-proxy` will set a 100 socket limit for all `host:port` proxy targets. You can change this in two ways: 
