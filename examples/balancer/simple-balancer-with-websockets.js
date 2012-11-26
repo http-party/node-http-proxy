@@ -15,11 +15,20 @@ var addresses = [
   }
 ];
 
+//
+// Create a HttpProxy object for each target
+//
+
 var proxies = addresses.map(function (target) {
   return new httpProxy.HttpProxy({
     target: target
   });
 });
+
+//
+// Get the proxy at the front of the array, put it at the end and return it
+// If you want a fancier balancer, put your code here
+//
 
 function nextProxy() {
   var proxy = proxies.shift();
@@ -27,9 +36,17 @@ function nextProxy() {
   return proxy;
 }
 
+// 
+// Get the 'next' proxy and send the http request 
+//
+
 var server = http.createServer(function (req, res) {    
   nextProxy().proxyRequest(req, res);
 });
+
+// 
+// Get the 'next' proxy and send the upgrade request 
+//
 
 server.on('upgrade', function(req, socket, head) {
   nextProxy().proxyWebSocketRequest(req, socket, head);
