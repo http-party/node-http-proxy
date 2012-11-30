@@ -72,7 +72,7 @@ function runSet(set, callback) {
     }
 
     var mb = (set.size * set.count) / (1024 * 1024);
-    console.log(mb + ' MB');
+    console.log(set.size / (1024) + ' KB * ' + set.count + ' (' + mb + ' MB)');
 
     Object.keys(results).forEach(function (key) {
       var t = results[key],
