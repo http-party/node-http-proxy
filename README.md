@@ -78,6 +78,8 @@ http.createServer(function (req, res) {
 
 ### Setup a stand-alone proxy server with custom server logic
 
+<a href="https://runnable.com/#nodejitsu/proxy-custom-logic/server.js/launch" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
@@ -103,6 +105,8 @@ http.createServer(function (req, res) {
 ```
 
 ### Setup a stand-alone proxy server with latency (e.g. IO, etc)
+
+<a href="https://runnable.com/#nodejitsu/proxy-with-latency/server.js/launch" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
 
 ``` js
 var http = require('http'),
