@@ -56,6 +56,8 @@ See the [examples][3] for more working sample code.
 
 ### Setup a basic stand-alone proxy server
 
+<a href="https://runnable.com/#nodejitsu/node-http-proxy/server.js/launch" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
+
 ``` js
 var http = require('http'),
     httpProxy = require('http-proxy');
