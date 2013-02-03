@@ -67,9 +67,11 @@ exports.createServer = function (options, callback) {
       });
     }
 
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write(options.output || 'hello proxy');
-    res.end();
+    setTimeout(function() {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.write(options.output || 'hello proxy'); 
+      res.end(); 
+    }, options.latency || 1);
   }
 
   var server = protocols.target === 'https'

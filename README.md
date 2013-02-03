@@ -550,6 +550,7 @@ If you have a suggestion for a feature currently not supported, feel free to ope
     xforward: true // enables X-Forwarded-For
   },
   changeOrigin: false, // changes the origin of the host header to the target URL
+  timeout: 120000 // override the default 2 minute http socket timeout value in milliseconds
 }
 ```
 

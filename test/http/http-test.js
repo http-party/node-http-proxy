@@ -76,7 +76,12 @@ vows.describe(helpers.describe()).addBatch({
         outputHeaders: { "x-testheader": "target" },
         latency: 1000
       })
-    }
+    },
+    "and timeout set": macros.http.assertProxied({
+      shouldFail: true,
+      timeout: 2000,
+      requestLatency: 4000
+    })
   },
   "With a no valid target server": {
     "and no latency": macros.http.assertInvalidProxy(),
