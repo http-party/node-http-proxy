@@ -46,6 +46,11 @@ vows.describe(helpers.describe()).addBatch({
     },
     "and latency": macros.http.assertProxied({
       latency: 2000
+    }),
+    "and timeout set": macros.http.assertProxied({
+      shouldRequestFail: true,
+      timeout: 2000,
+      requestLatency: 4000
     })
   },
   "With a no valid target server": {

@@ -44,6 +44,30 @@ exports.assertRequest = function (options) {
 };
 
 //
+// ### function assertFailedRequest (options)
+// #### @options {Object} Options for this failed request assertion.
+// ####    @request {Object} Options to use for `request`.
+// ####    @assert  {Object} Test assertions against the response.
+//
+// Makes a request using `options.request` and then asserts the response
+// and body against anything in `options.assert`.
+//
+exports.assertFailedRequest = function (options) {
+  return {
+    topic: function () {
+      //
+      // Now make the HTTP request and assert.
+      //
+      options.request.rejectUnauthorized = false;
+      request(options.request, this.callback);
+    },
+    "should not succeed": function (err, res, body) {
+      assert.notStrictEqual(err,null);
+    }
+  };
+};
+
+//
 // ### function assertProxied (options)
 // #### @options {Object} Options for this test
 // ####    @latency {number} Latency in milliseconds for the proxy server.
@@ -60,7 +84,9 @@ exports.assertProxied = function (options) {
   var ports    = options.ports   || helpers.nextPortPair,
       output   = options.output  || 'hello world from ' + ports.target,
       protocol = helpers.protocols.proxy,
-      req      = options.request || {};
+      req      = options.request || {},
+      shouldRequestFail =  options.shouldRequestFail ? "assertFailedRequest" : "assertRequest",
+      timeout  = options.timeout || null;
 
   req.uri = req.uri || protocol + '://127.0.0.1:' + ports.proxy;
 
@@ -74,7 +100,8 @@ exports.assertProxied = function (options) {
         target: {
           output: output,
           port: ports.target,
-          headers: req.headers
+          headers: req.headers,
+          latency: options.requestLatency
         },
         proxy: {
           latency: options.latency,
@@ -85,12 +112,13 @@ exports.assertProxied = function (options) {
               https: helpers.protocols.target === 'https',
               host: '127.0.0.1',
               port: ports.target
-            }
+            },
+            timeout: timeout
           }
         }
       }, this.callback);
     },
-    "the proxy request": exports.assertRequest({
+    "the proxy request": exports[shouldRequestFail]({
       request: req,
       assert: {
         body: output
