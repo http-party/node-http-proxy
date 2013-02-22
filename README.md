@@ -411,7 +411,7 @@ httpProxy.createServer(
 ```
 
 ## Proxying WebSockets
-Websockets are handled automatically when using `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
+Websockets are handled automatically when using `httpProxy.createServer()`, however, if you supply a callback inside the createServer call, you will need to handle the 'upgrade' proxy event yourself. Here's how:
 
 ``` js
 var http = require('http'),
