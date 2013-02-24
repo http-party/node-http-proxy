@@ -267,7 +267,7 @@ vows.describe("Reverse Proxy Helper").addBatch({
         var origHost = "source.com";
         var target = { host:"target.com", port:8080 };
         var resp = { headers : { location: "/someApp/foo?bar=baz" }};
-        new ReverseProxyHelper(source, target).rewriteLocationHeader(req, resp, origHost)
+        new ReverseProxyHelper(target).rewriteLocationHeader(req, resp, origHost)
         return resp;
       },
       "don't rewrite (relative URL)":function (topic) {
@@ -279,7 +279,7 @@ vows.describe("Reverse Proxy Helper").addBatch({
         var origHost = "source.com";
         var target = { host:"target.com", port:8080 };
         var resp = { statusCode: 301, headers : { location: "http://target.com:8080/someApp/foo?bar=baz" }};
-        new ReverseProxyHelper(source, target).rewriteLocationHeader(req, resp, origHost)
+        new ReverseProxyHelper(target).rewriteLocationHeader(req, resp, origHost)
         return resp;
       },
       "rewrite to http://source.com/someApp/foo?bar=baz":function (topic) {
@@ -291,7 +291,7 @@ vows.describe("Reverse Proxy Helper").addBatch({
         var origHost = "source.com";
         var target = { host:"target.com", port:8080, https: false };
         var resp = { statusCode: 301, headers : { location: "http://source.com:8080/someApp/foo?bar=baz" }};
-        new ReverseProxyHelper(source, target).rewriteLocationHeader(reqHttps, resp, origHost)
+        new ReverseProxyHelper(target).rewriteLocationHeader(reqHttps, resp, origHost)
         return resp;
       },
       "rewrite to https://source.com/someApp/foo?bar=baz":function (topic) {
@@ -303,7 +303,7 @@ vows.describe("Reverse Proxy Helper").addBatch({
         var origHost = "source.com:80";
         var target = { host:"target.com", port:80, https: false };
         var resp = { statusCode: 301, headers : { location: "http://source.com/someApp/foo?bar=baz" }};
-        new ReverseProxyHelper(source, target).rewriteLocationHeader(reqHttps, resp, origHost)
+        new ReverseProxyHelper(target).rewriteLocationHeader(reqHttps, resp, origHost)
         return resp;
       },
       "rewrite to https://source.com/someApp/foo?bar=baz":function (topic) {
@@ -315,7 +315,7 @@ vows.describe("Reverse Proxy Helper").addBatch({
         var origHost = "localhost:8181";
         var target = { host:"localhost", port:8080, https: false };
         var resp = { statusCode: 301, headers : { location: "http://localhost:8080/someApp/foo?bar=baz" }};
-        new ReverseProxyHelper(source, target).rewriteLocationHeader(req, resp, origHost);
+        new ReverseProxyHelper(target).rewriteLocationHeader(req, resp, origHost);
         return resp;
       },
       "rewrite to http://localhost:8181/someApp/foo?bar=baz":function (topic) {
@@ -327,7 +327,7 @@ vows.describe("Reverse Proxy Helper").addBatch({
         var origHost = "localhost:8181";
         var target = { host:"localhost", port:8080, https: true };
         var resp = { statusCode: 301, headers : { location: "https://localhost:8080/someApp/foo?bar=baz" }};
-        new ReverseProxyHelper(source, target).rewriteLocationHeader(rea, resp, origHost);
+        new ReverseProxyHelper(target).rewriteLocationHeader(req, resp, origHost);
         return resp;
       },
       "rewrite to http://localhost:8181/someApp/foo?bar=baz":function (topic) {
