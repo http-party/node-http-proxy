@@ -43,6 +43,14 @@ vows.describe(helpers.describe('routing-table')).addBatch({
         "bar.com": "127.0.0.1:{PORT}"
       }
     }),
+    "using pathnameOnly": macros.http.assertProxiedToRoutes({
+      pathnameOnly: true,
+      routes: {
+        "/foo": "127.0.0.1:{PORT}",
+        "/bar": "127.0.0.1:{PORT}",
+        "/pizza": "127.0.0.1:{PORT}"
+      }
+    }),
     "using a routing file": macros.http.assertProxiedToRoutes({
       filename: routeFile,
       routes: {

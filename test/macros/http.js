@@ -262,6 +262,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
     //
     proxy = {
       hostnameOnly: options.hostnameOnly,
+      pathnameOnly: options.pathnameOnly,
       router: options.routes
     };
   }
