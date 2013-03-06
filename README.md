@@ -202,6 +202,24 @@ var options = {
 
 Notice here that I have not included paths on the individual domains because this is not possible when using only the HTTP 'Host' header. Care to learn more? See [RFC2616: HTTP/1.1, Section 14.23, "Host"][4].
 
+### Proxy requests using a 'Pathname Only' ProxyTable
+
+If you dont care about forwarding to different hosts, you can redirect based on the request path.
+
+``` js
+var options = {
+  pathnameOnly: true,
+  router: {
+    '/wiki': '127.0.0.1:8001',
+    '/blog': '127.0.0.1:8002',
+    '/api':  '127.0.0.1:8003'
+  }
+}
+```
+
+This comes in handy if you are running separate services or applications on separate paths.  Note, using this option disables routing by hostname entirely.
+
+
 ### Proxy requests with an additional forward proxy
 Sometimes in addition to a reverse proxy, you may want your front-facing server to forward traffic to another location. For example, if you wanted to load test your staging environment. This is possible when using node-http-proxy using similar JSON-based configuration to a proxy table: 
 
