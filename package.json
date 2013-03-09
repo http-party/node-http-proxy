@@ -23,9 +23,9 @@
     "utile": "~0.1.7"
   },
   "devDependencies": {
-    "request": "1.9.x",
-    "vows": "0.6.x",
-    "async": "0.1.x",
+    "request": "2.14.x",
+    "vows": "0.7.x",
+    "async": "0.2.x",
     "socket.io": "0.9.11",
     "socket.io-client": "0.9.11",
     "ws": "0.4.23"
