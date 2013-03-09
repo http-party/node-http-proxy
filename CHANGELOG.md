@@ -1,5 +1,9 @@
 ## ChangeLog for: node-http-proxy
 
+## Version 0.9.1 - 3/9/2012
+
+- Ensure that `webSocketProxyError` and `proxyError` both receive the error (indexzero).
+
 ## Version 0.9.0 - 3/9/2012
 - Fix #276 Ensure response.headers.location is defined (indexzero)
 - Fix #248 Make options immutable in RoutingProxy (indexzero)
