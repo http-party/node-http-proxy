@@ -1,5 +1,22 @@
 ## ChangeLog for: node-http-proxy
 
+## Version 0.9.0 - 3/9/2012
+- Fix #276 Ensure response.headers.location is defined (indexzero)
+- Fix #248 Make options immutable in RoutingProxy (indexzero)
+- Fix #359 Do not modify the protocol in redirect request for external sites. (indexzero)
+- Fix #373 Do not use "Transfer-Encoding: chunked" header for proxied DELETE requests with no "Content-Length" header. (indexzero)
+- Fix #338 Set "content-length" header to "0" if it is not already set on DELETE requests. (indexzero)
+- Updates to README.md and Examples (ramitos, jamie-stackhouse, oost, indexzero)
+- Fixes to ProxyTable and Routing Proxy (adjohnson916, otavoijr)
+- New API for ProxyTable (mikkel, tglines)
+- Add `options.timeout` for specifying socket timeouts (pdoran)
+- Improve bin/node-http-proxy (niallo)
+- Don't emit `proxyError` twice (erasmospunk)
+- Fix memory leaks in WebSocket proxying 
+- Support UNIX Sockets (yosefd)
+- Fix truncated chunked respones (jpetazzo)
+- Allow upstream listeners to get `proxyResponse` (colinmollenhour)
+
 ## Version 0.8.1 - 6/5/2012
 - Fix re-emitting of events in RoutingProxy                (coderarity)
 - New load balancer and middleware examples                (marak)
