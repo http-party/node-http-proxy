@@ -32,6 +32,12 @@ exports.assertRequest = function (options) {
     },
     "should succeed": function (err, res, body) {
       assert.isNull(err);
+      if (options.assert.headers) {
+        Object.keys(options.assert.headers).forEach(function(header){
+          assert.equal(res.headers[header], options.assert.headers[header]);
+        });
+      }
+
       if (options.assert.body) {
         assert.equal(body, options.assert.body);
       }
@@ -57,10 +63,14 @@ exports.assertRequest = function (options) {
 exports.assertProxied = function (options) {
   options = options || {};
 
-  var ports    = options.ports   || helpers.nextPortPair,
-      output   = options.output  || 'hello world from ' + ports.target,
-      protocol = helpers.protocols.proxy,
-      req      = options.request || {};
+  var ports       = options.ports   || helpers.nextPortPair,
+      output        = options.output  || 'hello world from ' + ports.target,
+      outputHeaders = options.outputHeaders,
+      targetHeaders = options.targetHeaders,
+      proxyHeaders  = options.proxyHeaders,
+      protocol      = helpers.protocols.proxy,
+      req           = options.request || {};
+
 
   req.uri = req.uri || protocol + '://127.0.0.1:' + ports.proxy;
 
@@ -73,12 +83,14 @@ exports.assertProxied = function (options) {
       helpers.http.createServerPair({
         target: {
           output: output,
+          outputHeaders: targetHeaders,
           port: ports.target,
           headers: req.headers
         },
         proxy: {
           latency: options.latency,
           port: ports.proxy,
+          outputHeaders: proxyHeaders,
           proxy: {
             forward: options.forward,
             target: {
@@ -93,6 +105,7 @@ exports.assertProxied = function (options) {
     "the proxy request": exports.assertRequest({
       request: req,
       assert: {
+        headers: outputHeaders,
         body: output
       }
     })
