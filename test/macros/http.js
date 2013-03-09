@@ -243,7 +243,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
   // Parse locations from routes for making assertion requests.
   //
   var locations = helpers.http.parseRoutes(options),
-      port = helpers.nextPort,
+      port = options.pport || helpers.nextPort,
       protocol = helpers.protocols.proxy,
       context,
       proxy;
@@ -364,4 +364,84 @@ exports.assertProxiedToRoutes = function (options, nested) {
   }
 
   return context;
+};
+
+//
+// ### function assertDynamicProxy (static, dynamic)
+// Asserts that after the `static` routes have been tested
+// and the `dynamic` routes are added / removed the appropriate
+// proxy responses are received.
+//
+exports.assertDynamicProxy = function (static, dynamic) {
+  var proxyPort = helpers.nextPort,
+      protocol = helpers.protocols.proxy,
+      context;
+
+  if (dynamic.add) {
+    dynamic.add = dynamic.add.map(function (dyn) {
+      dyn.port   = helpers.nextPort;
+      dyn.target = dyn.target + dyn.port;
+      return dyn;
+    });
+  }
+
+  context = {
+    topic: function () {
+      var that = this;
+
+      setTimeout(function () {
+        if (dynamic.drop) {
+          dynamic.drop.forEach(function (dropHost) {
+            that.proxyServer.proxy.removeHost(dropHost);
+          });
+        }
+
+        if (dynamic.add) {
+          async.forEachSeries(dynamic.add, function addOne (dyn, next) {
+            that.proxyServer.proxy.addHost(dyn.host, dyn.target);
+            helpers.http.createServer({
+              port: dyn.port,
+              output: 'hello ' + dyn.host
+            }, next);
+          }, that.callback);
+        }
+        else {
+          that.callback();
+        }
+      }, 200);
+    }
+  };
+
+  if (dynamic.drop) {
+    dynamic.drop.forEach(function (dropHost) {
+      context[dropHost] = exports.assertRequest({
+        assert: { statusCode: 404 },
+        request: {
+          uri: protocol + '://127.0.0.1:' + proxyPort,
+          headers: {
+            host: dropHost
+          }
+        }
+      });
+    });
+  }
+
+  if (dynamic.add) {
+    dynamic.add.forEach(function (dyn) {
+      context[dyn.host] = exports.assertRequest({
+        assert: { body: 'hello ' + dyn.host },
+        request: {
+          uri: protocol + '://127.0.0.1:' + proxyPort,
+          headers: {
+            host: dyn.host
+          }
+        }
+      });
+    });
+  }
+
+  static.pport = proxyPort;
+  return exports.assertProxiedToRoutes(static, {
+    "once the server has started": context
+  });
 };
