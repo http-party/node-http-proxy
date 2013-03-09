@@ -1,4 +1,6 @@
-var httpProxy = require('../../lib/node-http-proxy');
+var http = require('http'),
+    httpProxy = require('../../lib/node-http-proxy');
+
 //
 // A simple round-robin load balancing strategy.
 // 
