@@ -482,7 +482,7 @@ server.on('upgrade', function(req, socket, head) {
   //
   // Put your custom server logic here
   //
-  proxy.proxyWebSocketRequest(req, socket, head, {
+  server.proxy.proxyWebSocketRequest(req, socket, head, {
     host: 'localhost',
     port: 9000
   });
