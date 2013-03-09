@@ -43,12 +43,12 @@ var fullResponse =
 var gotResponse = false;
 
 
-var server = net.createServer(function(socket) {
+var server = net.createServer(function (socket) {
   var postBody = '';
 
   socket.setEncoding('utf8');
 
-  socket.on('data', function(chunk) {
+  socket.on('data', function (chunk) {
     postBody += chunk;
 
     if (postBody.indexOf('\r\n') > -1) {
@@ -60,17 +60,17 @@ var server = net.createServer(function(socket) {
 });
 
 
-server.listen(common.PORT, function() {
-  http.get({ port: common.PROXY_PORT }, function(res) {
+server.listen(common.PORT, function () {
+  http.get({ port: common.PROXY_PORT }, function (res) {
     var buffer = '';
     console.log('Got res code: ' + res.statusCode);
 
     res.setEncoding('utf8');
-    res.on('data', function(chunk) {
+    res.on('data', function (chunk) {
       buffer += chunk;
     });
 
-    res.on('end', function() {
+    res.on('end', function () {
       console.log('Response ended, read ' + buffer.length + ' bytes');
       assert.equal(body, buffer);
       server.close();
@@ -80,7 +80,7 @@ server.listen(common.PORT, function() {
 });
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.ok(gotResponse);
 });
 

@@ -233,7 +233,7 @@ var server = httpProxy.createServer(function (req, res, proxy) {
   });
 });
 
-server.proxy.on('end', function() {
+server.proxy.on('end', function () {
   console.log("The request was proxied.");
 });
 
@@ -325,7 +325,7 @@ var certs = {
 //
 var options = {
   https: {
-    SNICallback: function(hostname){
+    SNICallback: function (hostname) {
       return certs[hostname];
     }
   },
@@ -424,8 +424,8 @@ var server = httpProxy.createServer(
     options
 );
 
-server.listen(port, function() { ... });
-server.on('upgrade', function(req, socket, head) {
+server.listen(port, function () { ... });
+server.on('upgrade', function (req, socket, head) {
     server.proxy.proxyWebSocketRequest(req, socket, head);
 });
 ```
@@ -453,7 +453,7 @@ var server = http.createServer(function (req, res) {
   proxy.proxyRequest(req, res);
 });
 
-server.on('upgrade', function(req, socket, head) {
+server.on('upgrade', function (req, socket, head) {
   //
   // Proxy websocket requests too
   //
@@ -478,7 +478,7 @@ var server = httpProxy.createServer(function (req, res, proxy) {
   });
 })
 
-server.on('upgrade', function(req, socket, head) {
+server.on('upgrade', function (req, socket, head) {
   //
   // Put your custom server logic here
   //

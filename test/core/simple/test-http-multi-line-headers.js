@@ -27,7 +27,7 @@ var net = require('net');
 
 var gotResponse = false;
 
-var server = net.createServer(function(conn) {
+var server = net.createServer(function (conn) {
   var body = 'Yet another node.js server.';
 
   var response =
@@ -40,20 +40,20 @@ var server = net.createServer(function(conn) {
       '\r\n' +
       body;
 
-  conn.write(response, function() {
+  conn.write(response, function () {
     conn.destroy();
     server.close();
   });
 });
 
-server.listen(common.PORT, function() {
-  http.get({host: '127.0.0.1', port: common.PROXY_PORT}, function(res) {
+server.listen(common.PORT, function () {
+  http.get({host: '127.0.0.1', port: common.PROXY_PORT}, function (res) {
     assert.equal(res.headers['content-type'],
                  'text/plain;x-unix-mode=0600;name="hello.txt"');
     gotResponse = true;
   });
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.ok(gotResponse);
 });

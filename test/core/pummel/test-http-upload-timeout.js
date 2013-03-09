@@ -28,12 +28,12 @@ var common = require('../common'),
     server = http.createServer(),
     connections = 0;
 
-server.on('request', function(req, res) {
+server.on('request', function (req, res) {
   req.socket.setTimeout(1000);
-  req.socket.on('timeout', function() {
+  req.socket.on('timeout', function () {
     throw new Error('Unexpected timeout');
   });
-  req.on('end', function() {
+  req.on('end', function () {
     connections--;
     res.writeHead(200);
     res.end('done\n');
@@ -43,11 +43,11 @@ server.on('request', function(req, res) {
   });
 });
 
-server.listen(common.PORT, '127.0.0.1', function() {
+server.listen(common.PORT, '127.0.0.1', function () {
   for (var i = 0; i < 10; i++) {
     connections++;
 
-    setTimeout(function() {
+    setTimeout(function () {
       var request = http.request({
         port: common.PROXY_PORT,
         method: 'POST',

@@ -28,13 +28,13 @@ var http = require('http');
 // It is separate from test-http-malformed-request.js because it is only
 // reproduceable on the first packet on the first connection to a server.
 
-var server = http.createServer(function(req, res) {});
+var server = http.createServer(function (req, res) {});
 server.listen(common.PORT);
 
-server.on('listening', function() {
-  net.createConnection(common.PROXY_PORT).on('connect', function() {
+server.on('listening', function () {
+  net.createConnection(common.PROXY_PORT).on('connect', function () {
     this.destroy();
-  }).on('close', function() {
+  }).on('close', function () {
     server.close();
   });
 });

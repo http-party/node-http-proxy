@@ -27,13 +27,13 @@ var http = require('http');
 // I.E. a space character after the 'Content-Length' throws an `error` event.
 
 
-var s = http.createServer(function(req, res) {
+var s = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Length': '0 '});
   res.end();
 });
-s.listen(common.PORT, function() {
+s.listen(common.PORT, function () {
 
-  var request = http.request({ port: common.PROXY_PORT }, function(response) {
+  var request = http.request({ port: common.PROXY_PORT }, function (response) {
     console.log('STATUS: ' + response.statusCode);
     s.close();
   });

@@ -33,23 +33,23 @@ var UTF8_STRING = '南越国是前203年至前111年存在于岭南地区的一�
                   '采用封建制和郡县制并存的制度，它的建立保证了秦末乱世岭南地区社会秩序的稳定，' +
                   '有效的改善了岭南地区落后的政治、经济现状。';
 
-var server = http.createServer(function(req, res) {
+var server = http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
   res.end(UTF8_STRING, 'utf8');
 });
-server.listen(common.PORT, function() {
+server.listen(common.PORT, function () {
   var data = '';
   var get = http.get({
     path: '/',
     host: 'localhost',
     port: common.PROXY_PORT
-  }, function(x) {
+  }, function (x) {
     x.setEncoding('utf8');
-    x.on('data', function(c) {data += c});
-    x.on('error', function(e) {
+    x.on('data', function (c) {data += c});
+    x.on('error', function (e) {
       throw e;
     });
-    x.on('end', function() {
+    x.on('end', function () {
       assert.equal('string', typeof data);
       console.log('here is the response:');
       assert.equal(UTF8_STRING, data);
@@ -57,7 +57,7 @@ server.listen(common.PORT, function() {
       server.close();
     });
   });
-  get.on('error', function(e) {throw e});
+  get.on('error', function (e) {throw e});
   get.end();
 
 });

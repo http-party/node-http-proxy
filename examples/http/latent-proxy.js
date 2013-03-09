@@ -34,7 +34,7 @@ var util = require('util'),
 //
 httpProxy.createServer(function (req, res, proxy) {
   var buffer = httpProxy.buffer(req);
-  setTimeout(function() {
+  setTimeout(function () {
     proxy.proxyRequest(req, res, {
       port: 9000,
       host: 'localhost',

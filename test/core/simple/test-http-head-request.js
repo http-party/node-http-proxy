@@ -27,7 +27,7 @@ var util = require('util');
 
 var body = 'hello world\n';
 
-var server = http.createServer(function(req, res) {
+var server = http.createServer(function (req, res) {
   common.error('req: ' + req.method);
   res.writeHead(200, {'Content-Length': body.length});
   res.end();
@@ -36,14 +36,14 @@ var server = http.createServer(function(req, res) {
 
 var gotEnd = false;
 
-server.listen(common.PORT, function() {
+server.listen(common.PORT, function () {
   var request = http.request({
     port: common.PROXY_PORT,
     method: 'HEAD',
     path: '/'
-  }, function(response) {
+  }, function (response) {
     common.error('response start');
-    response.on('end', function() {
+    response.on('end', function () {
       common.error('response end');
       gotEnd = true;
     });
@@ -51,6 +51,6 @@ server.listen(common.PORT, function() {
   request.end();
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.ok(gotEnd);
 });

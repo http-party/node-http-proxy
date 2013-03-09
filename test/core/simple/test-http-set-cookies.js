@@ -25,7 +25,7 @@ var http = require('http');
 
 var nresponses = 0;
 
-var server = http.createServer(function(req, res) {
+var server = http.createServer(function (req, res) {
   if (req.url == '/one') {
     res.writeHead(200, [['set-cookie', 'A'],
                         ['content-type', 'text/plain']]);
@@ -39,21 +39,21 @@ var server = http.createServer(function(req, res) {
 });
 server.listen(common.PORT);
 
-server.on('listening', function() {
+server.on('listening', function () {
   //
   // one set-cookie header
   //
-  http.get({ port: common.PROXY_PORT, path: '/one' }, function(res) {
+  http.get({ port: common.PROXY_PORT, path: '/one' }, function (res) {
     // set-cookie headers are always return in an array.
     // even if there is only one.
     assert.deepEqual(['A'], res.headers['set-cookie']);
     assert.equal('text/plain', res.headers['content-type']);
 
-    res.on('data', function(chunk) {
+    res.on('data', function (chunk) {
       console.log(chunk.toString());
     });
 
-    res.on('end', function() {
+    res.on('end', function () {
       if (++nresponses == 2) {
         server.close();
       }
@@ -62,15 +62,15 @@ server.on('listening', function() {
 
   // two set-cookie headers
 
-  http.get({ port: common.PROXY_PORT, path: '/two' }, function(res) {
+  http.get({ port: common.PROXY_PORT, path: '/two' }, function (res) {
     assert.deepEqual(['A', 'B'], res.headers['set-cookie']);
     assert.equal('text/plain', res.headers['content-type']);
 
-    res.on('data', function(chunk) {
+    res.on('data', function (chunk) {
       console.log(chunk.toString());
     });
 
-    res.on('end', function() {
+    res.on('end', function () {
       if (++nresponses == 2) {
         server.close();
       }
@@ -79,6 +79,6 @@ server.on('listening', function() {
 
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(2, nresponses);
 });

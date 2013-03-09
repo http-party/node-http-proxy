@@ -45,7 +45,7 @@ function protoCtrChain(o) {
   return result.join();
 }
 
-exports.indirectInstanceOf = function(obj, cls) {
+exports.indirectInstanceOf = function (obj, cls) {
   if (obj instanceof cls) { return true; }
   var clsChain = protoCtrChain(cls.prototype);
   var objChain = protoCtrChain(obj);
@@ -53,7 +53,7 @@ exports.indirectInstanceOf = function(obj, cls) {
 };
 
 
-exports.ddCommand = function(filename, kilobytes) {
+exports.ddCommand = function (filename, kilobytes) {
   if (process.platform === 'win32') {
     var p = path.resolve(exports.fixturesDir, 'create-file.js');
     return '"' + process.argv[0] + '" "' + p + '" "' +
@@ -64,7 +64,7 @@ exports.ddCommand = function(filename, kilobytes) {
 };
 
 
-exports.spawnPwd = function(options) {
+exports.spawnPwd = function (options) {
   var spawn = require('child_process').spawn;
 
   if (process.platform === 'win32') {
@@ -78,7 +78,7 @@ exports.spawnPwd = function(options) {
 // Turn this off if the test should not check for global leaks.
 exports.globalCheck = true;
 
-process.on('exit', function() {
+process.on('exit', function () {
   if (!exports.globalCheck) return;
   var knownGlobals = [setTimeout,
                       setInterval,
@@ -152,11 +152,11 @@ var mustCallChecks = [];
 
 
 function runCallChecks() {
-  var failed = mustCallChecks.filter(function(context) {
+  var failed = mustCallChecks.filter(function (context) {
     return context.actual !== context.expected;
   });
 
-  failed.forEach(function(context) {
+  failed.forEach(function (context) {
     console.log('Mismatched %s function calls. Expected %d, actual %d.',
                 context.name,
                 context.expected,
@@ -168,7 +168,7 @@ function runCallChecks() {
 }
 
 
-exports.mustCall = function(fn, expected) {
+exports.mustCall = function (fn, expected) {
   if (typeof expected !== 'number') expected = 1;
 
   var context = {
@@ -183,7 +183,7 @@ exports.mustCall = function(fn, expected) {
 
   mustCallChecks.push(context);
 
-  return function() {
+  return function () {
     context.actual++;
     return fn.apply(this, arguments);
   };

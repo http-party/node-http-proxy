@@ -61,8 +61,8 @@ exports.createServer = function (options, callback) {
       });
     }
 
-    if (options.outputHeaders){
-      Object.keys(options.outputHeaders).forEach(function(header){
+    if (options.outputHeaders) {
+      Object.keys(options.outputHeaders).forEach(function (header) {
         res.setHeader(header, options.outputHeaders[header]);
       });
     }
@@ -120,8 +120,8 @@ exports.createProxyServer = function (options, callback) {
   function requestHandler(req, res) {
     var buffer = httpProxy.buffer(req);
 
-    if (options.outputHeaders){
-      Object.keys(options.outputHeaders).forEach(function(header){
+    if (options.outputHeaders) {
+      Object.keys(options.outputHeaders).forEach(function (header) {
         res.setHeader(header, options.outputHeaders[header]);
       });
     }

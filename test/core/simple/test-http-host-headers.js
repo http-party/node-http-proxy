@@ -37,7 +37,7 @@ function reqHandler(req, res) {
                  req.headers.host);
   }
   res.writeHead(200, {});
-  //process.nextTick(function() { res.end('ok'); });
+  //process.nextTick(function () { res.end('ok'); });
   res.end('ok');
 }
 
@@ -62,7 +62,7 @@ function testHttp() {
     }
   }
 
-  httpServer.listen(common.PORT, function(er) {
+  httpServer.listen(common.PORT, function (er) {
     console.error('listening on ' + common.PORT);
 
     if (er) throw er;

@@ -36,19 +36,19 @@ var headers = {'content-type': 'text/plain',
                 'set-cookie': cookies,
                 'hello': 'world' };
 
-var backend = http.createServer(function(req, res) {
+var backend = http.createServer(function (req, res) {
   common.debug('backend request');
   res.writeHead(200, headers);
   res.write('hello world\n');
   res.end();
 });
 
-var proxy = http.createServer(function(req, res) {
+var proxy = http.createServer(function (req, res) {
   common.debug('proxy req headers: ' + JSON.stringify(req.headers));
   var proxy_req = http.get({
     port: BACKEND_PORT,
     path: url.parse(req.url).pathname
-  }, function(proxy_res) {
+  }, function (proxy_res) {
 
     common.debug('proxy res headers: ' + JSON.stringify(proxy_res.headers));
 
@@ -58,11 +58,11 @@ var proxy = http.createServer(function(req, res) {
 
     res.writeHead(proxy_res.statusCode, proxy_res.headers);
 
-    proxy_res.on('data', function(chunk) {
+    proxy_res.on('data', function (chunk) {
       res.write(chunk);
     });
 
-    proxy_res.on('end', function() {
+    proxy_res.on('end', function () {
       res.end();
       common.debug('proxy res');
     });
@@ -79,7 +79,7 @@ function startReq() {
   var client = http.get({
     port: common.PROXY_PORT,
     path: '/test'
-  }, function(res) {
+  }, function (res) {
     common.debug('got res');
     assert.equal(200, res.statusCode);
 
@@ -88,8 +88,8 @@ function startReq() {
     assert.deepEqual(cookies, res.headers['set-cookie']);
 
     res.setEncoding('utf8');
-    res.on('data', function(chunk) { body += chunk; });
-    res.on('end', function() {
+    res.on('data', function (chunk) { body += chunk; });
+    res.on('end', function () {
       proxy.close();
       backend.close();
       common.debug('closed both');
@@ -104,6 +104,6 @@ proxy.listen(PROXY_PORT, startReq);
 common.debug('listen backend');
 backend.listen(BACKEND_PORT, startReq);
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(body, 'hello world\n');
 });

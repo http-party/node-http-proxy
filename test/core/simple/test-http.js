@@ -33,7 +33,7 @@ var responses_recvd = 0;
 var body0 = '';
 var body1 = '';
 
-var server = http.Server(function(req, res) {
+var server = http.Server(function (req, res) {
   if (responses_sent == 0) {
     assert.equal('GET', req.method);
     assert.equal('/hello', url.parse(req.url).pathname);
@@ -52,7 +52,7 @@ var server = http.Server(function(req, res) {
     this.close();
   }
 
-  req.on('end', function() {
+  req.on('end', function () {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.write('The path was ' + url.parse(req.url).pathname);
     res.end();
@@ -63,39 +63,39 @@ var server = http.Server(function(req, res) {
 });
 server.listen(common.PORT);
 
-server.on('listening', function() {
+server.on('listening', function () {
   var agent = new http.Agent({ port: common.PROXY_PORT, maxSockets: 1 });
   http.get({
     port: common.PROXY_PORT,
     path: '/hello',
     headers: {'Accept': '*/*', 'Foo': 'bar'},
     agent: agent
-  }, function(res) {
+  }, function (res) {
     assert.equal(200, res.statusCode);
     responses_recvd += 1;
     res.setEncoding('utf8');
-    res.on('data', function(chunk) { body0 += chunk; });
+    res.on('data', function (chunk) { body0 += chunk; });
     common.debug('Got /hello response');
   });
 
-  setTimeout(function() {
+  setTimeout(function () {
     var req = http.request({
       port: common.PROXY_PORT,
       method: 'POST',
       path: '/world',
       agent: agent
-    }, function(res) {
+    }, function (res) {
       assert.equal(200, res.statusCode);
       responses_recvd += 1;
       res.setEncoding('utf8');
-      res.on('data', function(chunk) { body1 += chunk; });
+      res.on('data', function (chunk) { body1 += chunk; });
       common.debug('Got /world response');
     });
     req.end();
   }, 1);
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   common.debug('responses_recvd: ' + responses_recvd);
   assert.equal(2, responses_recvd);
 

@@ -39,10 +39,10 @@ Store.prototype = {
         res.end()
       }
       var url = req.url.split('?').shift()
-      if(url === '/') {
+      if (url === '/') {
         console.log('get index')
         return send(Object.keys(store.store))
-      } else if(req.method == 'GET') {
+      } else if (req.method == 'GET') {
         var obj = store.get (url)
         send(obj || {error: 'not_found', url: url}, obj ? 200 : 404)
       } else {

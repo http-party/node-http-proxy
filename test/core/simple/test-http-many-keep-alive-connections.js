@@ -28,18 +28,18 @@ var responses = 0;
 var requests = 0;
 var connection;
 
-var server = http.Server(function(req, res) {
+var server = http.Server(function (req, res) {
   requests++;
   assert.equal(req.connection, connection);
   res.writeHead(200);
   res.end('hello world\n');
 });
 
-server.once('connection', function(c) {
+server.once('connection', function (c) {
   connection = c;
 });
 
-server.listen(common.PORT, function() {
+server.listen(common.PORT, function () {
   var callee = arguments.callee;
   var request = http.get({
     port: common.PROXY_PORT,
@@ -47,22 +47,22 @@ server.listen(common.PORT, function() {
     headers: {
       'Connection': 'Keep-alive'
     }
-  }, function(res) {
-    res.on('end', function() {
+  }, function (res) {
+    res.on('end', function () {
       if (++responses < expected) {
         callee();
       } else {
         process.exit();
       }
     });
-  }).on('error', function(e) {
+  }).on('error', function (e) {
     console.log(e.message);
     process.exit(1);
   });
   request.agent.maxSockets = 1;
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(expected, responses);
   assert.equal(expected, requests);
 });

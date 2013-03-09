@@ -50,7 +50,7 @@ var server = http.createServer(function (req, res) {
 // Get the 'next' proxy and send the upgrade request 
 //
 
-server.on('upgrade', function(req, socket, head) {
+server.on('upgrade', function (req, socket, head) {
   nextProxy().proxyWebSocketRequest(req, socket, head);
 });
 

@@ -31,7 +31,7 @@ var http = require('http');
 // responds to a HEAD request with data to res.end,
 // it does not send any body.
 
-var server = http.createServer(function(req, res) {
+var server = http.createServer(function (req, res) {
   res.writeHead(200);
   res.end('FAIL'); // broken: sends FAIL from hot path.
 });
@@ -39,14 +39,14 @@ server.listen(common.PORT);
 
 var responseComplete = false;
 
-server.on('listening', function() {
+server.on('listening', function () {
   var req = http.request({
     port: common.PROXY_PORT,
     method: 'HEAD',
     path: '/'
-  }, function(res) {
+  }, function (res) {
     common.error('response');
-    res.on('end', function() {
+    res.on('end', function () {
       common.error('response end');
       server.close();
       responseComplete = true;
@@ -56,6 +56,6 @@ server.on('listening', function() {
   req.end();
 });
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.ok(responseComplete);
 });

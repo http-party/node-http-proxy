@@ -33,7 +33,7 @@ var testsComplete = 0;
 var tests = [200, 202, 300, 404, 500];
 var testIdx = 0;
 
-var s = http.createServer(function(req, res) {
+var s = http.createServer(function (req, res) {
   var t = tests[testIdx];
   res.writeHead(t, {'Content-Type': 'text/plain'});
   console.log('--\nserver: statusCode after writeHead: ' + res.statusCode);
@@ -50,11 +50,11 @@ function nextTest() {
   }
   var test = tests[testIdx];
 
-  http.get({ port: common.PROXY_PORT }, function(response) {
+  http.get({ port: common.PROXY_PORT }, function (response) {
     console.log('client: expected status: ' + test);
     console.log('client: statusCode: ' + response.statusCode);
     assert.equal(response.statusCode, test);
-    response.on('end', function() {
+    response.on('end', function () {
       testsComplete++;
       testIdx += 1;
       nextTest();
@@ -63,7 +63,7 @@ function nextTest() {
 }
 
 
-process.on('exit', function() {
+process.on('exit', function () {
   assert.equal(4, testsComplete);
 });
 

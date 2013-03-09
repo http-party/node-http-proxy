@@ -27,7 +27,7 @@ var common = require('../common');
 var assert = require('assert');
 var http = require('http');
 
-var srv = http.createServer(function(req, res) {
+var srv = http.createServer(function (req, res) {
   assert.equal(req.headers.accept, 'abc, def, ghijklmnopqrst');
   assert.equal(req.headers.host, 'foo');
   assert.equal(req.headers['x-foo'], 'bingo');
@@ -39,7 +39,7 @@ var srv = http.createServer(function(req, res) {
   srv.close();
 });
 
-srv.listen(common.PORT, function() {
+srv.listen(common.PORT, function () {
   http.get({
     host: 'localhost',
     port: common.PROXY_PORT,
