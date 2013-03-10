@@ -17,6 +17,7 @@
     "http"
   ],
   "dependencies": {
+    "spdy" : "1.x.x",
     "colors": "0.x.x",
     "optimist": "0.3.x",
     "pkginfo": "0.2.x",
