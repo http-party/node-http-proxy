@@ -355,7 +355,6 @@ A regular request we receive is to support the modification of html/xml content 
 
 [Harmon](https://github.com/No9/harmon/) is a stream based middleware plugin that is designed to solve that problem in the most effective way possible. 
 
-
 ## Proxying WebSockets
 Websockets are handled automatically when using `httpProxy.createServer()`, but if you want to use it in conjunction with a stand-alone HTTP + WebSocket (such as [socket.io][5]) server here's how:
 
