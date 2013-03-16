@@ -428,6 +428,10 @@ httpProxy.createServer(
 ).listen(8000);
 ```
 
+A regular request we receive is to support the modification of html/xml content that is returned in the response from an upstream server. 
+
+[Harmon](https://github.com/No9/harmon/) is a stream based middleware plugin that is designed to solve that problem in the most effective way possible. 
+
 ## Proxying WebSockets
 Websockets are handled automatically when using `httpProxy.createServer()`, however, if you supply a callback inside the createServer call, you will need to handle the 'upgrade' proxy event yourself. Here's how:
 
