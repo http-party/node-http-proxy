@@ -1,10 +1,14 @@
 ## ChangeLog for: node-http-proxy
 
-## Version 0.9.1 - 3/9/2012
+## Version 0.10.0 - 3/18/2013
+
+- Breaking change: `proxyResponse` events are emitted on the `HttpProxy` or `RoutingProxy` instances as originally was intended in `0.9.x`.
+
+## Version 0.9.1 - 3/9/2013
 
 - Ensure that `webSocketProxyError` and `proxyError` both receive the error (indexzero).
 
-## Version 0.9.0 - 3/9/2012
+## Version 0.9.0 - 3/9/2013
 - Fix #276 Ensure response.headers.location is defined (indexzero)
 - Fix #248 Make options immutable in RoutingProxy (indexzero)
 - Fix #359 Do not modify the protocol in redirect request for external sites. (indexzero)
