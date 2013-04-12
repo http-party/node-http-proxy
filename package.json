@@ -1,6 +1,6 @@
 {
   "name": "http-proxy",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "A full-featured http reverse proxy for node.js",
   "author": "Nodejitsu Inc. <info@nodejitsu.com>",
   "maintainers": [
