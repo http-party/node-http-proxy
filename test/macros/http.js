@@ -156,6 +156,12 @@ exports.assertProxied = function (options) {
 // http proxy.
 //
 exports.assertRawHttpProxied = function (options) {
+  // Don't test raw requests over HTTPS since options.rawRequest won't be
+  // encrypted.
+  if(helpers.protocols.proxy == 'https') {
+    return true;
+  }
+
   options = options || {};
 
   var ports         = options.ports   || helpers.nextPortPair,
