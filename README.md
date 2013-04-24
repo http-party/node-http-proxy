@@ -175,12 +175,13 @@ var options = {
   router: {
     'foo.com/baz': '127.0.0.1:8001',
     'foo.com/buz': '127.0.0.1:8002',
+    'foo.com/socket': 'socket:/path/to/unix/socket',
     'bar.com/buz': '127.0.0.1:8003'
   }
 };
 ```
 
-The above route table will take incoming requests to 'foo.com/baz' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'foo.com/buz' and forward them to '127.0.0.1:8002'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
+The above route table will take incoming requests to 'foo.com/baz' and forward them to '127.0.0.1:8001'. Likewise it will take incoming requests to 'foo.com/buz' and forward them to '127.0.0.1:8002'.  Additionally it forwards 'foo.com/socket' to the unix-socket '/path/to/unix/socket' and prefixes the url with '/namespace'. The routes themselves are later converted to regular expressions to enable more complex matching functionality. We can create a proxy server with these options by using the following code:
 
 ``` js
 var proxyServer = httpProxy.createServer(options);
