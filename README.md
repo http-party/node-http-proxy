@@ -345,7 +345,10 @@ var options = {
   https: {
     SNICallback: function (hostname) {
       return certs[hostname];
-    }
+    },
+    cert: myCert,
+    key: myKey,
+    ca: [myCa]
   },
   hostnameOnly: true,
   router: {
