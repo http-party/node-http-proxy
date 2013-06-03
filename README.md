@@ -195,12 +195,17 @@ var options = {
   hostnameOnly: true,
   router: {
     'foo.com': '127.0.0.1:8001',
-    'bar.com': '127.0.0.1:8002'
+    '*.bar.com': '127.0.0.1:8002'
   }
 }
 ```
 
 Notice here that I have not included paths on the individual domains because this is not possible when using only the HTTP 'Host' header. Care to learn more? See [RFC2616: HTTP/1.1, Section 14.23, "Host"][4].
+
+Also note that the table entry for ```bar.com``` is a wildcard entry. This will match ```bar.com```
+just as well as any of its subdomains, to any depth (so that it will also match 
+```www.foo.unicorn.dahut.bar.com```). Wildcards are only supported with the ```hostnameOnly``` 
+option.
 
 ### Proxy requests using a 'Pathname Only' ProxyTable
 
