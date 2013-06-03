@@ -376,7 +376,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
           function createRouteTarget(location, next) {
             helpers.http.createServer({
               port: location.target.port,
-              output: 'hello from ' + location.source.href
+              output: 'hello from ' + (location.wildcard ? location.wildcard : location.source.href)
             }, next);
           }
         ),
@@ -432,7 +432,7 @@ exports.assertProxiedToRoutes = function (options, nested) {
         }
       },
       assert: {
-        body: 'hello from ' + location.source.href
+        body: 'hello from ' + (location.wildcard ? location.wildcard : location.source.href)
       }
     });
   });
