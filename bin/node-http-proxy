@@ -68,11 +68,28 @@ if (config.https) {
     Object.keys(context).forEach(function (key) {
       // If CA certs are specified, load those too.
       if (key === "ca") {
-        for (var i=0; i < context.ca.length; i++) {
-          if (context.ca === undefined) {
-            context.ca = [];
+        if(typeof context.ca == 'object') {
+          for (var i=0; i < context.ca.length; i++) {
+            if (context.ca === undefined) {
+              context.ca = [];
+            }
+            context.ca[i] = fs.readFileSync(context[key][i], 'utf8');
           }
-          context.ca[i] = fs.readFileSync(context[key][i], 'utf8');
+        }
+        else {
+          var chain = fs.readFileSync(context.ca, 'utf8');
+          chain = chain.split("\n");
+          context.ca = [];
+          var cert = [];
+          chain.forEach(function(line) {
+            if(line.length == 0)
+              return;
+            cert.push(line);
+            if(line.match(/-END CERTIFICATE-/)) {
+              context.ca.push(cert.join("\n"))
+              cert = [];
+            }
+          });
         }
       } else if(key !== 'SNI' && key !== 'SNICallback') {
         context[key] = fs.readFileSync(context[key], 'utf8');
