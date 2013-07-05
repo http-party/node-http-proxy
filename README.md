@@ -545,7 +545,7 @@ options:
   -h, --help          You're staring at it
 ```
 
-## Using HTTPS with SNI from the command line
+## Using HTTPS with SNI from the command line (with CA bundle)
 You can also utilize SNI from the command line. Below example shows
 https setup for barbaz.com which will use the default set of certificates
 and another set of certificates for wildcard domains at foobar.com.
@@ -561,7 +561,8 @@ and another set of certificates for wildcard domains at foobar.com.
     "SNI": {
       ".*.foobar.com" : {
         "key": "key2.pem",
-        "cert": "cert2.pem"
+        "cert": "cert2.pem",
+        "ca": "certum.crt"
       }
     },
     "key": "key.pem",
