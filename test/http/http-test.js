@@ -38,7 +38,7 @@ var routeFile = path.join(__dirname, 'config.json');
 vows.describe(helpers.describe()).addBatch({
   "With a valid target server": {
     "and no latency": {
-      /*"and no headers": macros.http.assertProxied(),
+      "and no headers": macros.http.assertProxied(),
       "and headers": macros.http.assertProxied({
         request: { headers: { host: 'unknown.com' } }
       }),
@@ -73,8 +73,8 @@ vows.describe(helpers.describe()).addBatch({
       "and no connection header": macros.http.assertProxied({
         request: { headers: { connection: "" } }, // Must explicitly set to "" because otherwise node will automatically add a "connection: keep-alive" header
         outputHeaders: { connection: "keep-alive" }
-      }),*/
-      "and forwarding enabled": macros.http.assertForwardProxied() /*
+      }),
+      "and forwarding enabled": macros.http.assertForwardProxied()
     },
     "and latency": {
       "and no headers": macros.http.assertProxied({
@@ -92,11 +92,11 @@ vows.describe(helpers.describe()).addBatch({
       timeout: 2000,
       requestLatency: 4000
     })
-  */}/*,
+  },
   "With a no valid target server": {
     "and no latency": macros.http.assertInvalidProxy(),
     "and latency": macros.http.assertInvalidProxy({
       latency: 2000
-    })*/
+    })
   }
 }).export(module);
