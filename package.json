@@ -1,0 +1,22 @@
+{
+  "name"           : "caronte",
+  "version"        : "0.0.0",
+  "description"    : "HTTP proxying for the masses",
+  "author"         : "yawnt <yawn.localhost@gmail.com>",
+
+  "main"           : "index.js", 
+
+  "dependencies"   : {
+    "eventemitter2": "*"
+  },
+  "devDependencies": {
+    "mocha"    : "*",
+    "expect.js": "*",
+    "dox"      : "*" 
+  },
+  "scripts"        : {
+    "test"     : "mocha -t 20000 -R spec -r expect test/*-test.js"
+  },
+
+  "license"        : "MIT"
+}
