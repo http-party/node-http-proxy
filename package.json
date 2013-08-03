@@ -7,15 +7,20 @@
   "main"           : "index.js", 
 
   "dependencies"   : {
-    "eventemitter2": "*"
+    "eventemitter2"      : "*"
   },
   "devDependencies": {
-    "mocha"    : "*",
-    "expect.js": "*",
-    "dox"      : "*" 
+    "mocha"              : "*",
+    "expect.js"          : "*",
+    "dox"                : "*",
+    "coveralls"          : "*",
+    "mocha-lcov-reporter": "*",
+    "blanket"            : "*"
   },
   "scripts"        : {
-    "test"     : "mocha -t 20000 -R spec -r expect test/*-test.js"
+    "blanket"            : { "pattern": "caronte/lib" },
+    "test"               : "mocha -R spec test/*-test.js && npm run-script test-cov",
+    "test-cov"           : "mocha --require blanket -R html-cov > cov/coverage.html"
   },
 
   "license"        : "MIT"
