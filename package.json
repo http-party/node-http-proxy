@@ -19,7 +19,7 @@
   },
   "scripts"        : {
     "blanket"            : { "pattern": "caronte/lib" },
-    "test"               : "mocha -R spec test/*-test.js && npm run-script test-cov",
+    "test"               : "mocha -R landing test/*-test.js",
     "test-cov"           : "mocha --require blanket -R html-cov > cov/coverage.html"
   },
 
