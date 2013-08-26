@@ -25,4 +25,21 @@ describe('lib/caronte/passes/web.js', function() {
       expect(done).to.eql(5000);
     });
   });
+
+  describe('#XHeaders', function () {
+    var stubRequest = {
+      connection: {
+        remoteAddress: '192.168.1.2',
+        remotePort: '8080'
+      },
+      headers: {}
+    }
+
+    it('set the correct x-forwarded-* headers', function () {
+      caronte.XHeaders(stubRequest, {}, { xfwd: true });
+      expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
+      expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
+      expect(stubRequest.headers['x-forwarded-proto']).to.be('http');
+    });
+  });
 });
