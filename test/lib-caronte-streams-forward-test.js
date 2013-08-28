@@ -5,7 +5,7 @@ var caronte       = require('../'),
     http          = require('http');
 
 
-describe('lib/caronte/passes/web.js', function () {
+describe('lib/caronte/streams/forward.js', function () {
 	describe('forward stream constructor', function () {
     it('should be an instance of Writable stream and get the correct options and methods', function () {
       var stubOptions = {
