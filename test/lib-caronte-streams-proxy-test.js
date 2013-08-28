@@ -81,4 +81,29 @@ describe('lib/caronte/streams/proxy.js', function () {
       }).end();
     });
   });
+
+  describe('caronte createProxyServer() method with error response', function () {
+    it('should make the request and response with error', function(done) {
+      var proxy = caronte.createProxyServer({
+        target: 'http://127.0.0.1:8080'
+      }).listen('8081');
+      
+      http.request({
+        hostname: '127.0.0.1',
+        port: '8081',
+        method: 'GET',
+      }, function(res) {
+        expect(res.statusCode).to.eql(500);
+
+        res.on('data', function (data) {
+          expect(data.toString()).to.eql('Internal Server Error');
+        });
+
+        res.on('end', function () { 
+          proxy.close();
+          done();
+        });
+      }).end();
+    });
+  });
 });
