@@ -441,6 +441,17 @@ A regular request we receive is to support the modification of html/xml content 
 
 [Harmon](https://github.com/No9/harmon/) is a stream based middleware plugin that is designed to solve that problem in the most effective way possible. 
 
+If you would like to handle errors passed to `next()` then attach a listener to the proxy:
+
+    server = httpProxy.createServer(
+      myMiddleWare,
+      9000, 'localhost'
+    ).listen(8000);
+
+    server.proxy.on('middlewareError', function (err, res, req) {
+      // handle the error here and call res.end()
+    });
+
 ## Proxying WebSockets
 Websockets are handled automatically when using `httpProxy.createServer()`, however, if you supply a callback inside the createServer call, you will need to handle the 'upgrade' proxy event yourself. Here's how:
 
