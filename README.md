@@ -448,7 +448,7 @@ If you would like to handle errors passed to `next()` then attach a listener to 
       9000, 'localhost'
     ).listen(8000);
 
-    server.proxy.on('middlewareError', function (err, res, req) {
+    server.proxy.on('middlewareError', function (err, req, res) {
       // handle the error here and call res.end()
     });
 
