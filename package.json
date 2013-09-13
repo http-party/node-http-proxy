@@ -15,7 +15,8 @@
     "dox"                : "*",
     "coveralls"          : "*",
     "mocha-lcov-reporter": "*",
-    "blanket"            : "*"
+    "blanket"            : "*",
+    "ws"                 : "*"
   },
   "scripts"        : {
     "blanket"            : { "pattern": "caronte/lib" },
