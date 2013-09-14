@@ -32,13 +32,14 @@ client.on('open', function() {
 
 caronte.createProxyServer({
     ws    : true,
-  target: 'http://127.0.0.1:9090'
+  forward: 'http://127.0.0.1:9090'
 }).listen(8080);
 
 
 
 var srv = http.createServer(function(req, res) {
   res.end('ciao proxy');
+  console.log('suca');
 }).listen(9090);
 /*
 srv.on('upgrade', function(req, sock, head) {
