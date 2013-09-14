@@ -3,7 +3,7 @@ var caronte = require('./'),
     http    = require('http'),
     ws      = require('ws');
   
-var proxyTo = new ws.Server({ port: 9090 });
+/*var proxyTo = new ws.Server({ port: 9090 });
 
 proxyTo.on('connection', function(ws) {
   console.log('connection!');
@@ -16,12 +16,6 @@ proxyTo.on('connection', function(ws) {
   ws.send('derpity?');
 });
 
-caronte.createProxyServer({
-  ws    : true,
-  target: 'http://127.0.0.1:9090'
-}).listen(8000);
-
-
 var client = new ws('ws://127.0.0.1:8000');
 client.on('open', function() {
   client.send('baaaka');
@@ -33,12 +27,20 @@ client.on('open', function() {
     console.log('server said: ' + msg);
   });
 });
+*/
 
 
-/*var srv = http.createServer(function(req, res) {
-  res.end('1');
-}).listen(8000);
+caronte.createProxyServer({
+    ws    : true,
+  target: 'http://127.0.0.1:9090'
+}).listen(8080);
 
+
+
+var srv = http.createServer(function(req, res) {
+  res.end('ciao proxy');
+}).listen(9090);
+/*
 srv.on('upgrade', function(req, sock, head) {
 
   var options = {
