@@ -3,4 +3,4 @@ node_modules
 cov
 atest.js
 notes
-prismus-proxy.js
+primus-proxy.js
