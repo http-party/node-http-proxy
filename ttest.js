@@ -47,6 +47,15 @@ srv.on('upgrade', function(req, socket, head) {
 
 
     socket.pipe(sock).pipe(socket);
+    //req.pipe(r).pipe(socket);
+    /*console.log(hd.toString('utf-8'));
+    var str = Object.keys(res.headers).map(function(i) {
+      return i + ": " + res.headers[i];
+    }).join('\r\n');
+    socket.write("HTTP/1.1 101 Switching Protocols\r\n" + str);
+
+    socket.write(hd);
+    socket.pipe(sock).pipe(socket);*/
   });
 
   r.end();
