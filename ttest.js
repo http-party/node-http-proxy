@@ -1,3 +1,4 @@
+'use strict'; /* jshint node:true */
 var caronte = require('./'),
     http    = require('http'),
     ws      = require('ws');
@@ -7,33 +8,38 @@ var proxyTo = new ws.Server({ port: 9090 });
 proxyTo.on('connection', function(ws) {
   console.log('connection!');
   ws.on('message', function(msg) {
-    console.log('received: ' + msg);
+    ws.send('ohai: ' + msg);
+    setTimeout(function() {
+      ws.send('HAHAHHA');
+    }, 10000);
   });
   ws.send('derpity?');
 });
 
-/*caronte.createProxyServer({
+caronte.createProxyServer({
   ws    : true,
   target: 'http://127.0.0.1:9090'
-}).listen(8000);*/
+}).listen(8000);
 
 
 var client = new ws('ws://127.0.0.1:8000');
 client.on('open', function() {
   client.send('baaaka');
   console.log('sent: baaaaka');
+  setTimeout(function() {
+    client.send('cacca');
+  }, 5000);
+  client.on('message', function(msg) {
+    console.log('server said: ' + msg);
+  });
 });
 
 
-var srv = http.createServer(function(req, res) {
+/*var srv = http.createServer(function(req, res) {
   res.end('1');
 }).listen(8000);
 
-srv.on('connection', function(s) {
-  s.pipe(process.stdout);
-});
-
-srv.on('upgrade', function(req, socket, head) {
+srv.on('upgrade', function(req, sock, head) {
 
   var options = {
     port: 9090,
@@ -42,21 +48,17 @@ srv.on('upgrade', function(req, socket, head) {
   }
   var r = http.request(options);
    
-  r.on('upgrade', function(res, sock, hd) {
-    if (hd && hd.length) sock.unshift(hd);
+  r.on('upgrade', function(res, proxySock, hd) {
+    if (hd && hd.length) proxySock.unshift(hd);
 
-
-    socket.pipe(sock).pipe(socket);
-    //req.pipe(r).pipe(socket);
-    /*console.log(hd.toString('utf-8'));
-    var str = Object.keys(res.headers).map(function(i) {
+    sock.write('HTTP/1.1 101 Switching Protocols\r\n');
+    sock.write(Object.keys(res.headers).map(function(i) {
       return i + ": " + res.headers[i];
-    }).join('\r\n');
-    socket.write("HTTP/1.1 101 Switching Protocols\r\n" + str);
-
-    socket.write(hd);
-    socket.pipe(sock).pipe(socket);*/
+    }).join('\r\n') + '\r\n\r\n');
+    proxySock.pipe(sock).pipe(proxySock);
   });
 
   r.end();
 });
+
+*/
