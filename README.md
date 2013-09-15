@@ -1,14 +1,13 @@
 Caronte
 =======
 
-Caronte is an HTTP programmable proxying library that supports 
-websockets. It is suitable for implementing components such as
-proxies and load balancers.
-
 <p align="center">
   <img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png" alt="logo"/>
 </p>
 
+Caronte is an HTTP programmable proxying library that supports 
+websockets. It is suitable for implementing components such as
+proxies and load balancers.
 
 ### Core Concept
 
