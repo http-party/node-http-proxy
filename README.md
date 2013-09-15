@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png" alt="logo"/>
+  <a href="http://dribbble.com/diegopq"><img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png" alt="Logo by DiegoPQ"/></a>
 </p>
 
 Caronte
@@ -58,6 +58,10 @@ In addition, every stage emits a corresponding event so introspection during the
 ```
 $ npm test
 ```
+
+### Logo
+
+Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 ### License
 
