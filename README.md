@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://dribbble.com/diegopq" alt="Logo by DiegoPQ"><img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png"/></a>
+  <img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png"/>
 </p>
 
 Caronte
