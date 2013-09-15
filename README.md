@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="master/doc/logo.png"/>
+  <img src="doc/logo.png?raw=true"/>
 </p>
 
 Caronte
