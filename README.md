@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png"/>
+  <img src="master/doc/logo.png"/>
 </p>
 
 Caronte
@@ -12,7 +12,7 @@ proxies and load balancers.
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
-an `options` object as argument ([valid properties are available here](https://github.com/yawnt/caronte/blob/master/lib/caronte.js#L26-L39)) 
+an `options` object as argument ([valid properties are available here](tree/master/lib/caronte.js#L26-L39)) 
 
 ```javascript
 var caronte = require('caronte');
@@ -35,7 +35,7 @@ require('http').createServer(function(req, res) {
 });
 ```
 
-When a request is proxied it follows two different pipelines ([available here](https://github.com/yawnt/caronte/tree/master/lib/caronte/passes))
+When a request is proxied it follows two different pipelines ([available here](tree/master/lib/caronte/passes))
 which apply transformations to both the `req` and `res` object. 
 The first pipeline (ingoing) is responsible for the creation and manipulation of the stream that connects your client to the target.
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data 
