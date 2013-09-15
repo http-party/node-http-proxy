@@ -1,9 +1,9 @@
-Caronte
-=======
-
 <p align="center">
   <img src="https://raw.github.com/yawnt/caronte/master/doc/logo.png" alt="logo"/>
 </p>
+
+Caronte
+=======
 
 Caronte is an HTTP programmable proxying library that supports 
 websockets. It is suitable for implementing components such as
