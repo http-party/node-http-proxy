@@ -94,8 +94,8 @@ server.listen(5050);
 
 `caronte.createProxyServer` supports the following options:
 
- *  **target**: <url string to be parsed with the url module> 
- *  **forward**: <url string to be parsed with the url module>
+ *  **target**: url string to be parsed with the url module 
+ *  **forward**: url string to be parsed with the url module
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
  *  **xfwd**: true/false, adds x-forward headers
