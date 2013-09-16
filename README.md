@@ -45,6 +45,24 @@ You can easily add a `pass` (stages) into both the pipelines (XXX: ADD API).
 
 In addition, every stage emits a corresponding event so introspection during the process is always available.
 
+#### Setup a basic stand-alone proxy server
+
+var http = require('http'),
+    caronte = require('caronte');
+//
+// Create your proxy server
+//
+caronte.createProxyServer({target:'http://localhost:9000'}).listen(8000);
+
+//
+// Create your target server
+//
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9000);
+
 #### Setup a stand-alone proxy server with custom server logic
 
 ``` js
@@ -71,6 +89,17 @@ server.listen(5050);
 * If you feel comfortable about fixing the issue, fork the repo
 * Commit to your local branch (which must be different from `master`)
 * Submit your Pull Request (be sure to include tests and update documentation)
+
+### Options
+
+`caronte.createProxyServer` supports the following options:
+
+ *  **target**: <url string to be parsed with the url module> 
+ *  **forward**: <url string to be parsed with the url module>
+ *  **ssl**: object to be passed to https.createServer()
+ *  **ws**: true/false, if you want to proxy websockets
+ *  **xfwd**: true/false, adds x-forward headers
+ *  **maxSock**: maximum number of sockets
 
 ### Test
 
