@@ -45,6 +45,25 @@ You can easily add a `pass` (stages) into both the pipelines (XXX: ADD API).
 
 In addition, every stage emits a corresponding event so introspection during the process is always available.
 
+#### Setup a stand-alone proxy server with custom server logic
+
+``` js
+var http = require('http'),
+    caronte = require('caronte');
+    
+//
+// Create a proxy server with custom application logic
+//
+var proxy = caronte.createProxyServer({});
+
+var server = require('http').createServer(function(req, res) {
+  proxy.web(req, res, { target: 'http://127.0.0.1:5060' });
+});
+
+console.log("listening on port 5050")
+server.listen(5050);
+```
+
 ### Contributing and Issues
 
 * Search on Google/Github 
