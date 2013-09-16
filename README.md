@@ -47,6 +47,7 @@ In addition, every stage emits a corresponding event so introspection during the
 
 #### Setup a basic stand-alone proxy server
 
+```js
 var http = require('http'),
     caronte = require('caronte');
 //
@@ -62,6 +63,7 @@ http.createServer(function (req, res) {
   res.write('request successfully proxied!' + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9000);
+```
 
 #### Setup a stand-alone proxy server with custom server logic
 
