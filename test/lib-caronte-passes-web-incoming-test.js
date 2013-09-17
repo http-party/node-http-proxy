@@ -1,4 +1,4 @@
-var caronte = require('../lib/caronte/passes/web'),
+var caronte = require('../lib/caronte/passes/web-incoming'),
     expect = require('expect.js');
 
 describe('lib/caronte/passes/web.js', function() {
