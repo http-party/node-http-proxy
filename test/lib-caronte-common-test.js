@@ -13,12 +13,13 @@ describe('lib/caronte/common.js', function () {
           hostname  : 'how',
           socketPath: 'are',
           port      : 'you',
-        }
+        },
+        headers: {'fizz': 'bang', 'overwritten':true},
       },
       {
         method    : 'i',
         url      : 'am',
-        headers   : 'proxy' 
+        headers   : {'pro':'xy','overwritten':false} 
       });
 
       expect(outgoing.host).to.eql('hey');
@@ -29,7 +30,16 @@ describe('lib/caronte/common.js', function () {
 
       expect(outgoing.method).to.eql('i');
       expect(outgoing.path).to.eql('am');
-      expect(outgoing.headers).to.eql('proxy')
+
+      expect(outgoing.headers.pro).to.eql('xy');
+      expect(outgoing.headers.fizz).to.eql('bang');
+      expect(outgoing.headers.overwritten).to.eql(true);
+    });
+
+    it('should set the agent to false if none is given', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {target: {},}, {});
+      expect(outgoing.agent).to.eql(false);
     });
 
     it('set the port according to the protocol', function () {
