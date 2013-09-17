@@ -7,12 +7,12 @@ describe('lib/caronte/common.js', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing,
       {
+        agent     : '?',
         target: {
           host      : 'hey',
           hostname  : 'how',
           socketPath: 'are',
           port      : 'you',
-          agent     : '?'
         }
       },
       {
@@ -35,12 +35,12 @@ describe('lib/caronte/common.js', function () {
     it('set the port according to the protocol', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing,
-      {
+      { 
+        agent     : '?',
         target: {
           host      : 'how',
           hostname  : 'are',
           socketPath: 'you',
-          agent     : '?',
           protocol: 'https:'
         }
       },
