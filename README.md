@@ -105,10 +105,14 @@ server.listen(5050);
 
  *  **target**: url string to be parsed with the url module 
  *  **forward**: url string to be parsed with the url module
+ *  **agent**: object to be passed to http(s).request (see Node's [https agent][0] and [http agent][1] agent objects)
+
+If you are using the `proxyServer.listen` method, the following options are also applicable:
+
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
  *  **xfwd**: true/false, adds x-forward headers
- *  **maxSock**: maximum number of sockets
+
 
 ### Test
 
@@ -144,3 +148,5 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 >OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 >THE SOFTWARE.
 
+[0]: http://nodejs.org/api/https.html#https_class_https_agent
+[1]: http://nodejs.org/api/http.html#http_class_http_agent
