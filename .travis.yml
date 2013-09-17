@@ -7,3 +7,6 @@ notifications:
   email:
     - travis@nodejitsu.com
   irc: "irc.freenode.org#nodejitsu"
+
+script:
+  npm run-script coveralls
