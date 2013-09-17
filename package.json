@@ -16,12 +16,14 @@
     "coveralls"          : "*",
     "mocha-lcov-reporter": "*",
     "blanket"            : "*",
-    "ws"                 : "*"
+    "ws"                 : "*",
+    "socket.io"          : "*",
+    "socket.io-client"   : "*"
   },
   "scripts"        : {
-    "blanket"            : { "pattern": "caronte/lib" },
-    "test"               : "mocha -R landing test/*-test.js",
-    "test-cov"           : "mocha --require blanket -R html-cov > cov/coverage.html"
+    "blanket"            : { "pattern": "lib/caronte" },
+    "test"               : "./node_modules/.bin/mocha -R landing test/*-test.js",
+    "test-cov"           : "./node_modules/.bin/mocha --require blanket -R html-cov > cov/coverage.html"
   },
 
   "engines"        : { 
