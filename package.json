@@ -16,7 +16,9 @@
     "coveralls"          : "*",
     "mocha-lcov-reporter": "*",
     "blanket"            : "*",
-    "ws"                 : "*"
+    "ws"                 : "*",
+    "socket.io"          : "*",
+    "socket.io-client"   : "*"
   },
   "scripts"        : {
     "blanket"            : { "pattern": "lib/caronte" },

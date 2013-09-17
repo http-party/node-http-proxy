@@ -1,7 +1,10 @@
-var caronte = require('../lib/caronte'),
-    expect  = require('expect.js'),
-    http    = require('http'),
-    ws      = require('ws');
+var caronte  = require('../lib/caronte'),
+    expect   = require('expect.js'),
+    http     = require('http'),
+    ws       = require('ws')
+    io       = require('socket.io'),
+    ioClient = require('socket.io-client');
+
 
 describe('lib/caronte.js', function() {
   describe('#createProxyServer', function() {
@@ -194,6 +197,7 @@ describe('lib/caronte.js', function() {
 
         client.on('message', function (msg) {
           expect(msg).to.be('Hello over websockets');
+          client.close();
           proxyServer.close();
           destiny.close();
           done();
@@ -208,4 +212,35 @@ describe('lib/caronte.js', function() {
       });
     });
   });
+
+  describe('#createProxyServer using the ws-incoming passes', function () {
+    it('should proxy a socket.io stream', function (done) {
+      var proxy = caronte.createProxyServer({
+        target: 'ws://127.0.0.1:8080',
+        ws: true
+      }),
+      proxyServer = proxy.listen('8081'),
+      destiny = io.listen(8080, function () {
+        var client = ioClient.connect('ws://127.0.0.1:8081');
+
+        client.on('connect', function () {
+          client.emit('incoming', 'hello there');
+        });
+
+        client.on('outgoing', function (data) {
+          expect(data).to.be('Hello over websockets');
+          proxyServer.close();
+          destiny.server.close();
+          done();
+        });
+      });
+
+      destiny.sockets.on('connection', function (socket) {
+        socket.on('incoming', function (msg) {
+          expect(msg).to.be('hello there');
+          socket.emit('outgoing', 'Hello over websockets');
+        });
+      })
+    });
+  })
 });
