@@ -12,7 +12,7 @@ proxies and load balancers.
 ### Build Status
 
 <p align="center">
- <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/>
+ <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/>&nbsp;&nbsp;
  <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png?branch=caronte"/>
 </p>
 
