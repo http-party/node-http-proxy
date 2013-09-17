@@ -13,6 +13,7 @@ proxies and load balancers.
 
 <p align="center">
  <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/>
+ <img src="https://coveralls.io/r/nodejitsu/node-http-proxy?branch=caronte"/>
 </p>
 
 ### Core Concept
