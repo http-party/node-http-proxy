@@ -38,7 +38,8 @@ proxyServer2.listen(8001);
 //
 // Create your proxy server
 //
-var options3 = {target:'https://google.com'};
+var options3 = {target:'https://google.com',
+                xfwd:true};
 
 var proxyServer3 = caronte.createProxyServer(options3);
 
