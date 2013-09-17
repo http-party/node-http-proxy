@@ -18,6 +18,9 @@
 * Written entirely in Javascript
 * Easy to use API
 
+
+node-http-proxy is `<= 0.8.x` compatible, if you're looking for a `>= 0.10` compatible version please check [caronte](https://github.com/nodejitsu/node-http-proxy/tree/caronte)
+
 ### When to use node-http-proxy
 
 Let's suppose you were running multiple http application servers, but you only wanted to expose one machine to the internet. You could setup node-http-proxy on that one machine and then reverse-proxy the incoming http requests to locally running services which were not exposed to the outside network. 
