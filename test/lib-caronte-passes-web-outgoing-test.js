@@ -86,5 +86,19 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
     expect(res.headers.how).to.eql('are you?');
   });
 
+
+  describe('#removeChunked', function() {
+    var proxyRes = {
+      headers: {
+        'transfer-encoding': 'hello'
+      }
+    };
+
+
+    caronte.removeChunked({ httpVersion: '1.0' }, {}, proxyRes);
+
+    expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
+  });
+
 });
  
