@@ -9,6 +9,12 @@ Caronte is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as
 proxies and load balancers.
 
+### Build Status
+
+<p align="center">
+ <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/>
+</p>
+
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
