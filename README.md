@@ -105,7 +105,7 @@ server.listen(5050);
 
  *  **target**: url string to be parsed with the url module 
  *  **forward**: url string to be parsed with the url module
- *  **agent**: object to be passed to http(s).request (see Node's [https agent][0] and [http agent][1] agent objects)
+ *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
 
@@ -148,5 +148,4 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 >OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 >THE SOFTWARE.
 
-[0]: http://nodejs.org/api/https.html#https_class_https_agent
-[1]: http://nodejs.org/api/http.html#http_class_http_agent
+
