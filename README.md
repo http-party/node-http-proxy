@@ -12,8 +12,10 @@ proxies and load balancers.
 ### Build Status
 
 <p align="center">
- <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/>&nbsp;&nbsp;
- <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png?branch=caronte"/>
+ <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
+ 	<img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/></a>&nbsp;&nbsp;
+ <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
+ 	<img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png?branch=caronte"/></a>
 </p>
 
 ### Core Concept
