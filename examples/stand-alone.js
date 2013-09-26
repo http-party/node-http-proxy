@@ -1,10 +1,10 @@
 var http = require('http'),
-    caronte = require('caronte');
+    httpProxy = require('http-proxy');
 //
 // Create your proxy server
 //
 console.log("Proxy server listening on port 8000");
-caronte.createProxyServer({target:'http://localhost:9000'}).listen(8000);
+httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000);
 
 //
 // Create your target server

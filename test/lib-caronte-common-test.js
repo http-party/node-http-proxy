@@ -1,7 +1,7 @@
-var common = require('../lib/caronte/common'),
+var common = require('../lib/http-proxy/common'),
     expect = require('expect.js');
 
-describe('lib/caronte/common.js', function () {
+describe('lib/http-proxy/common.js', function () {
   describe('#setupOutgoing', function () {
     it('should setup the correct headers', function () {
       var outgoing = {};

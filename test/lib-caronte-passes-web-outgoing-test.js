@@ -1,11 +1,11 @@
-var caronte = require('../lib/caronte/passes/web-outgoing'),
+var httpProxy = require('../lib/http-proxy/passes/web-outgoing'),
     expect = require('expect.js');
 
-describe('lib/caronte/passes/web-outgoing.js', function () {
+describe('lib/http-proxy/passes/web-outgoing.js', function () {
   describe('#setConnection', function () {
     it('set the right connection with 1.0 - `close`', function() {
       var proxyRes = { headers: {} };
-      caronte.setConnection({
+      httpProxy.setConnection({
         httpVersion: '1.0',
         headers: {
           connection: null
@@ -17,7 +17,7 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
 
     it('set the right connection with 1.0 - req.connection', function() {
       var proxyRes = { headers: {} };
-      caronte.setConnection({
+      httpProxy.setConnection({
         httpVersion: '1.0',
         headers: {
           connection: 'hey'
@@ -29,7 +29,7 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
 
     it('set the right connection - req.connection', function() {
       var proxyRes = { headers: {} };
-      caronte.setConnection({
+      httpProxy.setConnection({
         httpVersion: null,
         headers: {
           connection: 'hola'
@@ -41,7 +41,7 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
 
     it('set the right connection - `keep-alive`', function() {
       var proxyRes = { headers: {} };
-      caronte.setConnection({
+      httpProxy.setConnection({
         httpVersion: null,
         headers: {
           connection: null
@@ -61,7 +61,7 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
         }
       }
 
-      caronte.writeStatusCode({}, res, { statusCode: 200 });
+      httpProxy.writeStatusCode({}, res, { statusCode: 200 });
     });
   });
 
@@ -80,7 +80,7 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
       headers: {}
     };
 
-    caronte.writeHeaders({}, res, proxyRes);
+    httpProxy.writeHeaders({}, res, proxyRes);
 
     expect(res.headers.hey).to.eql('hello');
     expect(res.headers.how).to.eql('are you?');
@@ -95,7 +95,7 @@ describe('lib/caronte/passes/web-outgoing.js', function () {
     };
 
 
-    caronte.removeChunked({ httpVersion: '1.0' }, {}, proxyRes);
+    httpProxy.removeChunked({ httpVersion: '1.0' }, {}, proxyRes);
 
     expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
   });
