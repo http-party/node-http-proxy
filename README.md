@@ -2,10 +2,10 @@
   <img src="doc/logo.png?raw=true"/>
 </p>
 
-Caronte
+node-http-proxy
 =======
 
-Caronte is an HTTP programmable proxying library that supports 
+`node-http-proxy` is an HTTP programmable proxying library that supports 
 websockets. It is suitable for implementing components such as
 proxies and load balancers.
 
@@ -21,12 +21,12 @@ proxies and load balancers.
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
-an `options` object as argument ([valid properties are available here](tree/master/lib/caronte.js#L26-L39)) 
+an `options` object as argument ([valid properties are available here](tree/master/lib/http-proxy.js#L26-L39)) 
 
 ```javascript
-var caronte = require('caronte');
+var httpProxy = require('http-proxy');
 
-var proxy = caronte.createProxyServer(options);
+var proxy = httpProxy.createProxyServer(options);
 ```
 
 An object will be returned with four values:
@@ -44,7 +44,7 @@ require('http').createServer(function(req, res) {
 });
 ```
 
-When a request is proxied it follows two different pipelines ([available here](tree/master/lib/caronte/passes))
+When a request is proxied it follows two different pipelines ([available here](tree/master/lib/http-proxy/passes))
 which apply transformations to both the `req` and `res` object. 
 The first pipeline (ingoing) is responsible for the creation and manipulation of the stream that connects your client to the target.
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data 
@@ -58,11 +58,11 @@ In addition, every stage emits a corresponding event so introspection during the
 
 ```js
 var http = require('http'),
-    caronte = require('caronte');
+    httpProxy = require('http-proxy');
 //
 // Create your proxy server
 //
-caronte.createProxyServer({target:'http://localhost:9000'}).listen(8000);
+httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000);
 
 //
 // Create your target server
@@ -78,12 +78,12 @@ http.createServer(function (req, res) {
 
 ``` js
 var http = require('http'),
-    caronte = require('caronte');
+    httpProxy = require('http-proxy');
     
 //
 // Create a proxy server with custom application logic
 //
-var proxy = caronte.createProxyServer({});
+var proxy = httpProxy.createProxyServer({});
 
 var server = require('http').createServer(function(req, res) {
   proxy.web(req, res, { target: 'http://127.0.0.1:5060' });
@@ -103,7 +103,7 @@ server.listen(5050);
 
 ### Options
 
-`caronte.createProxyServer` supports the following options:
+`httpProxy.createProxyServer` supports the following options:
 
  *  **target**: url string to be parsed with the url module 
  *  **forward**: url string to be parsed with the url module
@@ -130,7 +130,7 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 >The MIT License (MIT)
 >
->Copyright (c) 2013 Nodejitsu Inc.
+>Copyright (c) 2010 - 2013 Nodejitsu Inc.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy
 >of this software and associated documentation files (the "Software"), to deal
