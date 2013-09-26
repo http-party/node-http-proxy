@@ -1,7 +1,7 @@
 var crypto = require('crypto'),
     WebSocket = require('ws'),
     async = require('async'),
-    httpProxy = require('../');
+    httpProxy = require('../../');
 
 var SERVER_PORT = 8415,
     PROXY_PORT = 8514;
