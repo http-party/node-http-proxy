@@ -1,7 +1,7 @@
-var caronte = require('../lib/caronte/passes/ws-incoming'),
+var httpProxy = require('../lib/http-proxy/passes/ws-incoming'),
     expect = require('expect.js');
 
-describe('lib/caronte/passes/ws-incoming.js', function () {
+describe('lib/http-proxy/passes/ws-incoming.js', function () {
   describe('#checkMethodAndHeader', function () {
     it('should drop non-GET connections', function () {
       var destroyCalled = false,
@@ -15,7 +15,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = caronte.checkMethodAndHeader(stubRequest, stubSocket);
+      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(true);
       expect(destroyCalled).to.be(true);
     })
@@ -32,7 +32,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = caronte.checkMethodAndHeader(stubRequest, stubSocket);
+      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(true);
       expect(destroyCalled).to.be(true);
     })
@@ -51,7 +51,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = caronte.checkMethodAndHeader(stubRequest, stubSocket);
+      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(true);
       expect(destroyCalled).to.be(true);
     })
@@ -70,7 +70,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = caronte.checkMethodAndHeader(stubRequest, stubSocket);
+      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(undefined);
       expect(destroyCalled).to.be(false);
     })
@@ -97,7 +97,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
         nodelay: false,
         keepalive: false
       },
-      returnValue = caronte.setupSocket({}, stubSocket);
+      returnValue = httpProxy.setupSocket({}, stubSocket);
       expect(returnValue).to.be(undefined);
       expect(socketConfig.timeout).to.eql(0);
       expect(socketConfig.nodelay).to.eql(true);
@@ -107,7 +107,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
 
   describe('#XHeaders', function () {
     it('return if no forward request', function () {
-      var returnValue = caronte.XHeaders({}, {}, {});
+      var returnValue = httpProxy.XHeaders({}, {}, {});
       expect(returnValue).to.be(undefined);
     });
 
@@ -119,7 +119,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
         },
         headers: {}
       }
-      caronte.XHeaders(stubRequest, {}, { xfwd: true });
+      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('ws');
@@ -136,7 +136,7 @@ describe('lib/caronte/passes/ws-incoming.js', function () {
         },
         headers: {}
       };
-      caronte.XHeaders(stubRequest, {}, { xfwd: true });
+      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.3');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8181');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('wss');

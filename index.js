@@ -10,4 +10,4 @@
  *          Dante - The Divine Comedy (Canto III)
  */
 
-module.exports = require('./lib/caronte');
+module.exports = require('./lib/http-proxy');

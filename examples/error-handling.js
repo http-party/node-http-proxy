@@ -1,17 +1,17 @@
-var caronte = require('../index');
+var httpProxy = require('../index');
 /*
  * Create your proxy server
  */
-var proxyServer = caronte.createProxyServer({target:'http://localhost:30404', ws:true});
+var proxyServer = httpProxy.createProxyServer({target:'http://localhost:30404', ws:true});
 
 // Register an error handler for web requests
-proxyServer.ee.on("caronte:outgoing:web:error", function(err, req, res){
+proxyServer.ee.on("http-proxy:outgoing:web:error", function(err, req, res){
 	res.writeHead(502);
 	res.end("There was an error proxying your request");
 });
 
 // Register an error handler for web-socket requests
-proxyServer.ee.on("caronte:outgoing:ws:error", function(err, req, socket, head){
+proxyServer.ee.on("http-proxy:outgoing:ws:error", function(err, req, socket, head){
 	socket.close();
 });
 

@@ -1,17 +1,17 @@
-var caronte  = require('../lib/caronte'),
-    expect   = require('expect.js'),
-    http     = require('http'),
-    ws       = require('ws')
-    io       = require('socket.io'),
-    ioClient = require('socket.io-client');
+var httpProxy = require('../lib/http-proxy'),
+    expect    = require('expect.js'),
+    http      = require('http'),
+    ws        = require('ws')
+    io        = require('socket.io'),
+    ioClient  = require('socket.io-client');
 
 
-describe('lib/caronte.js', function() {
+describe('lib/http-proxy.js', function() {
   describe('#createProxyServer', function() {
     it('should throw without options', function() {
       var error;
       try {
-        caronte.createProxyServer();
+        httpProxy.createProxyServer();
       } catch(e) {
         error = e;
       }
@@ -20,7 +20,7 @@ describe('lib/caronte.js', function() {
     })
 
     it('should return an object otherwise', function() {
-      var obj = caronte.createProxyServer({
+      var obj = httpProxy.createProxyServer({
         target: 'http://www.google.com:80'
       });
 
@@ -32,7 +32,7 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer with forward options and using web-incoming passes', function () {
     it('should pipe the request using web-incoming#stream method', function (done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         forward: 'http://127.0.0.1:8080'
       }).listen('8081')
 
@@ -52,7 +52,7 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer using the web-incoming passes', function () {
     it('should make the request on pipe and finish it', function(done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         target: 'http://127.0.0.1:8080'
       }).listen('8081');
 
@@ -80,7 +80,7 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer using the web-incoming passes', function () {
     it('should make the request, handle response and finish it', function(done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         target: 'http://127.0.0.1:8080'
       }).listen('8081');
 
@@ -115,11 +115,11 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer() method with error response', function () {
     it('should make the request and emit the error event', function(done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         target: 'http://127.0.0.1:8080'
       });
 
-      proxy.ee.on('caronte:outgoing:web:error', function (err) {
+      proxy.ee.on('http-proxy:outgoing:web:error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
         proxyServer.close();
@@ -138,7 +138,7 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer using the web-incoming passes', function () {
     it('should emit events correclty', function(done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         target: 'http://127.0.0.1:8080'
       }),
 
@@ -155,7 +155,7 @@ describe('lib/caronte.js', function() {
 
       source.listen('8080');
 
-      proxy.ee.on('caronte:**', function (uno, dos, tres) {
+      proxy.ee.on('http-proxy:**', function (uno, dos, tres) {
         events.push(this.event);
       })
       
@@ -171,8 +171,8 @@ describe('lib/caronte.js', function() {
         });
 
         res.on('end', function () {
-          expect(events).to.contain('caronte:outgoing:web:begin');
-          expect(events).to.contain('caronte:outgoing:web:end');
+          expect(events).to.contain('http-proxy:outgoing:web:begin');
+          expect(events).to.contain('http-proxy:outgoing:web:end');
           source.close();
           proxyServer.close();
           done();
@@ -183,7 +183,7 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer using the ws-incoming passes', function () {
     it('should proxy the websockets stream', function (done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         target: 'ws://127.0.0.1:8080',
         ws: true
       }),
@@ -215,7 +215,7 @@ describe('lib/caronte.js', function() {
 
   describe('#createProxyServer using the ws-incoming passes', function () {
     it('should proxy a socket.io stream', function (done) {
-      var proxy = caronte.createProxyServer({
+      var proxy = httpProxy.createProxyServer({
         target: 'ws://127.0.0.1:8080',
         ws: true
       }),
