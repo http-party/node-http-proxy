@@ -7,8 +7,8 @@
     "yawnt <yawnt@nodejitsu.com>",
     "indexzero <charlie@nodejitsu.com>"
   ],
-  
-  "main"           : "index.js", 
+
+  "main"           : "index.js",
 
   "dependencies"   : {
     "eventemitter2"      : "*"
@@ -22,19 +22,17 @@
     "blanket"            : "*",
     "ws"                 : "*",
     "socket.io"          : "*",
-    "socket.io-client"   : "*",
-    "coveralls"          : "*",
-    "mocha-lcov-reporter": "*"
+    "socket.io-client"   : "*"
   },
   "scripts"        : {
     "coveralls"          : "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js",
     "blanket"            : { "pattern": "lib/http-proxy" },
-    "test"               : "./node_modules/.bin/mocha -R landing test/*-test.js",
-    "test-cov"           : "./node_modules/.bin/mocha --require blanket -R html-cov > cov/coverage.html"
+    "test"               : "mocha -R landing test/*-test.js",
+    "test-cov"           : "mocha --require blanket -R html-cov > cov/coverage.html"
   },
 
-  "engines"        : { 
-    "node"               : ">=0.10.0" 
+  "engines"        : {
+    "node"               : ">=0.10.0"
   },
 
   "license"        : "MIT"
