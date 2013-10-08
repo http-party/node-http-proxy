@@ -11,7 +11,7 @@
   "main"           : "index.js",
 
   "dependencies"   : {
-    "eventemitter2"      : "*"
+    "eventemitter3"      : "*"
   },
   "devDependencies": {
     "mocha"              : "*",
