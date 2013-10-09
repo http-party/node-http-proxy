@@ -40,7 +40,7 @@ describe('lib/http-proxy.js', function() {
         expect(req.method).to.eql('GET');
         expect(req.headers.host.split(':')[1]).to.eql('8081');
         source.close();
-        proxy.close();
+        proxy._server.close();
         done();
       });
 
@@ -61,7 +61,7 @@ describe('lib/http-proxy.js', function() {
         expect(req.headers['x-forwarded-for']).to.eql('127.0.0.1');
         expect(req.headers.host.split(':')[1]).to.eql('8081');
         source.close();
-        proxy.close();
+        proxy._server.close();
         done();
       });
 
@@ -106,7 +106,7 @@ describe('lib/http-proxy.js', function() {
 
         res.on('end', function () { 
           source.close();
-          proxy.close();
+          proxy._server.close();
           done();
         });
       }).end();
@@ -122,7 +122,7 @@ describe('lib/http-proxy.js', function() {
       proxy.ee.on('http-proxy:outgoing:web:error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
-        proxyServer.close();
+        proxyServer._server.close();
         done();
       })
 
@@ -174,7 +174,7 @@ describe('lib/http-proxy.js', function() {
           expect(events).to.contain('http-proxy:outgoing:web:begin');
           expect(events).to.contain('http-proxy:outgoing:web:end');
           source.close();
-          proxyServer.close();
+          proxyServer._server.close();
           done();
         });
       }).end();
@@ -198,7 +198,7 @@ describe('lib/http-proxy.js', function() {
         client.on('message', function (msg) {
           expect(msg).to.be('Hello over websockets');
           client.close();
-          proxyServer.close();
+          proxyServer._server.close();
           destiny.close();
           done();
         });
@@ -229,7 +229,7 @@ describe('lib/http-proxy.js', function() {
 
         client.on('outgoing', function (data) {
           expect(data).to.be('Hello over websockets');
-          proxyServer.close();
+          proxyServer._server.close();
           destiny.server.close();
           done();
         });
