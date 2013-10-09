@@ -119,7 +119,7 @@ describe('lib/http-proxy.js', function() {
         target: 'http://127.0.0.1:8080'
       });
 
-      proxy.ee.on('http-proxy:outgoing:web:error', function (err) {
+      proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
         proxyServer._server.close();
@@ -136,50 +136,50 @@ describe('lib/http-proxy.js', function() {
     });
   });
 
-  describe('#createProxyServer using the web-incoming passes', function () {
-    it('should emit events correclty', function(done) {
-      var proxy = httpProxy.createProxyServer({
-        target: 'http://127.0.0.1:8080'
-      }),
+  // describe('#createProxyServer using the web-incoming passes', function () {
+  //   it('should emit events correclty', function(done) {
+  //     var proxy = httpProxy.createProxyServer({
+  //       target: 'http://127.0.0.1:8080'
+  //     }),
 
-      proxyServer = proxy.listen('8081'),
+  //     proxyServer = proxy.listen('8081'),
 
-      source = http.createServer(function(req, res) {
-        expect(req.method).to.eql('GET');
-        expect(req.headers.host.split(':')[1]).to.eql('8081');
-        res.writeHead(200, {'Content-Type': 'text/plain'})
-        res.end('Hello from ' + source.address().port);
-      }),
+  //     source = http.createServer(function(req, res) {
+  //       expect(req.method).to.eql('GET');
+  //       expect(req.headers.host.split(':')[1]).to.eql('8081');
+  //       res.writeHead(200, {'Content-Type': 'text/plain'})
+  //       res.end('Hello from ' + source.address().port);
+  //     }),
 
-      events = [];
+  //     events = [];
 
-      source.listen('8080');
+  //     source.listen('8080');
 
-      proxy.ee.on('http-proxy:**', function (uno, dos, tres) {
-        events.push(this.event);
-      })
+  //     proxy.ee.on('http-proxy:**', function (uno, dos, tres) {
+  //       events.push(this.event);
+  //     })
       
-      http.request({
-        hostname: '127.0.0.1',
-        port: '8081',
-        method: 'GET',
-      }, function(res) {
-        expect(res.statusCode).to.eql(200);
+  //     http.request({
+  //       hostname: '127.0.0.1',
+  //       port: '8081',
+  //       method: 'GET',
+  //     }, function(res) {
+  //       expect(res.statusCode).to.eql(200);
 
-        res.on('data', function (data) {
-          expect(data.toString()).to.eql('Hello from 8080');
-        });
+  //       res.on('data', function (data) {
+  //         expect(data.toString()).to.eql('Hello from 8080');
+  //       });
 
-        res.on('end', function () {
-          expect(events).to.contain('http-proxy:outgoing:web:begin');
-          expect(events).to.contain('http-proxy:outgoing:web:end');
-          source.close();
-          proxyServer._server.close();
-          done();
-        });
-      }).end();
-    });
-  });
+  //       res.on('end', function () {
+  //         expect(events).to.contain('http-proxy:outgoing:web:begin');
+  //         expect(events).to.contain('http-proxy:outgoing:web:end');
+  //         source.close();
+  //         proxyServer._server.close();
+  //         done();
+  //       });
+  //     }).end();
+  //   });
+  // });
 
   describe('#createProxyServer using the ws-incoming passes', function () {
     it('should proxy the websockets stream', function (done) {
