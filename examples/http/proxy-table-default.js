@@ -1,5 +1,5 @@
 /*
-  proxy-table.js: Example of proxying over HTTP with proxy table
+  proxy-table-default.js: Example of proxying over HTTP with proxy table with a default fallback
 
   Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
 
