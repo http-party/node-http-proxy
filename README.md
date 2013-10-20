@@ -21,7 +21,7 @@ proxies and load balancers.
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
-an `options` object as argument ([valid properties are available here](tree/master/lib/http-proxy.js#L26-L39)) 
+an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L26-L39)) 
 
 ```javascript
 var httpProxy = require('http-proxy');
@@ -44,7 +44,7 @@ require('http').createServer(function(req, res) {
 });
 ```
 
-When a request is proxied it follows two different pipelines ([available here](tree/master/lib/http-proxy/passes))
+When a request is proxied it follows two different pipelines ([available here](lib/http-proxy/passes))
 which apply transformations to both the `req` and `res` object. 
 The first pipeline (ingoing) is responsible for the creation and manipulation of the stream that connects your client to the target.
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data 
