@@ -107,7 +107,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
 
   describe('#XHeaders', function () {
     it('return if no forward request', function () {
-      var returnValue = httpProxy.XHeaders({}, {}, {});
+      var returnValue = httpProxy.XHeaders.call({ options: {}}, {}, {});
       expect(returnValue).to.be(undefined);
     });
 
@@ -119,7 +119,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
         },
         headers: {}
       }
-      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
+      httpProxy.XHeaders.call({ options: { xfwd: true }}, stubRequest, {});
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('ws');
@@ -136,7 +136,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
         },
         headers: {}
       };
-      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
+      httpProxy.XHeaders.call({ options: { xfwd: true }}, stubRequest, {});
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.3');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8181');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('wss');

@@ -8,7 +8,7 @@ describe('lib/http-proxy/passes/web.js', function() {
         method: 'DELETE',
         headers: {}
       };
-      httpProxy.deleteLength(stubRequest, {}, {});
+      httpProxy.deleteLength(stubRequest, {});
       expect(stubRequest.headers['content-length']).to.eql('0');
     })
   });
@@ -21,7 +21,7 @@ describe('lib/http-proxy/passes/web.js', function() {
         }
       }
 
-      httpProxy.timeout(stubRequest, {}, { timeout: 5000});
+      httpProxy.timeout.call({ options: { timeout: 5000 }}, stubRequest, {});
       expect(done).to.eql(5000);
     });
   });
@@ -36,7 +36,7 @@ describe('lib/http-proxy/passes/web.js', function() {
     }
 
     it('set the correct x-forwarded-* headers', function () {
-      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
+      httpProxy.XHeaders.call({ options: { xfwd: true }}, stubRequest, {});
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('http');
