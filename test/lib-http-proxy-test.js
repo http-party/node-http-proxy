@@ -122,7 +122,7 @@ describe('lib/http-proxy.js', function() {
       proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
-        proxyServer._server.close();
+        proxy._server.close();
         done();
       })
 
