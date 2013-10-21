@@ -122,7 +122,7 @@ describe('lib/http-proxy.js', function() {
       proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
-        proxy._server.close();
+        proxyServer._server.close();
         done();
       })
 
@@ -148,7 +148,9 @@ describe('lib/http-proxy.js', function() {
         setTimeout(function () {
           res.end('At this point the socket should be closed');
         }, 5)
-      }).listen('8080');
+      });
+
+      source.listen('8080');
 
       var testReq = http.request({
         hostname: '127.0.0.1',
@@ -159,8 +161,6 @@ describe('lib/http-proxy.js', function() {
       testReq.on('error', function (e) {
         expect(e).to.be.an(Error);
         expect(e.code).to.be.eql('ECONNRESET');
-        proxy._server.close();
-        source.close();
         done();
       });
 
