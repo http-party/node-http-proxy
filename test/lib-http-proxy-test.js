@@ -126,7 +126,7 @@ describe('lib/http-proxy.js', function() {
         done();
       })
 
-      var proxyServer = proxy.listen('8081');
+      proxy.listen('8081');
       
       http.request({
         hostname: '127.0.0.1',
@@ -135,6 +135,38 @@ describe('lib/http-proxy.js', function() {
       }, function() {}).end();
     });
   });
+
+  describe('#createProxyServer setting the correct timeout value', function () {
+    it('should hang up the socket at the timeout', function (done) {
+      this.timeout(30);
+      var proxy = httpProxy.createProxyServer({
+        target: 'http://127.0.0.1:8080',
+        timeout: 3
+      }).listen('8081');
+
+      var source = http.createServer(function(req, res) {
+        setTimeout(function () {
+          res.end('At this point the socket should be closed');
+        }, 5)
+      });
+
+      source.listen('8080');
+
+      var testReq = http.request({
+        hostname: '127.0.0.1',
+        port: '8081',
+        method: 'GET',
+      }, function() {});
+
+      testReq.on('error', function (e) {
+        expect(e).to.be.an(Error);
+        expect(e.code).to.be.eql('ECONNRESET');
+        done();
+      });
+
+      testReq.end();
+    })
+  })
 
   // describe('#createProxyServer using the web-incoming passes', function () {
   //   it('should emit events correclty', function(done) {
@@ -244,3 +276,7 @@ describe('lib/http-proxy.js', function() {
     });
   })
 });
+
+describe('#createProxyServer using the ws-incoming passes', function () {
+  it('should call the callback with the error');
+})
