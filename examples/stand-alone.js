@@ -1,5 +1,5 @@
 var http = require('http'),
-    httpProxy = require('http-proxy');
+    httpProxy = require('../lib/http-proxy');
 //
 // Create your proxy server
 //
