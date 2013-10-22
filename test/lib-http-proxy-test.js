@@ -295,7 +295,3 @@ describe('lib/http-proxy.js', function() {
     });
   })
 });
-
-describe('#createProxyServer using the ws-incoming passes', function () {
-  it('should call the callback with the error');
-})
