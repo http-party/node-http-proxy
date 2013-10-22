@@ -1,5 +1,7 @@
-var httpProxy = require('../lib/http-proxy/passes/web-incoming'),
-    expect = require('expect.js');
+var webPasses = require('../lib/http-proxy/passes/web-incoming'),
+    httpProxy = require('../lib/http-proxy'),
+    expect    = require('expect.js'),
+    http      = require('http');
 
 describe('lib/http-proxy/passes/web.js', function() {
   describe('#deleteLength', function() {
@@ -8,7 +10,7 @@ describe('lib/http-proxy/passes/web.js', function() {
         method: 'DELETE',
         headers: {}
       };
-      httpProxy.deleteLength(stubRequest, {}, {});
+      webPasses.deleteLength(stubRequest, {}, {});
       expect(stubRequest.headers['content-length']).to.eql('0');
     })
   });
@@ -21,7 +23,7 @@ describe('lib/http-proxy/passes/web.js', function() {
         }
       }
 
-      httpProxy.timeout(stubRequest, {}, { timeout: 5000});
+      webPasses.timeout(stubRequest, {}, { timeout: 5000});
       expect(done).to.eql(5000);
     });
   });
@@ -36,10 +38,91 @@ describe('lib/http-proxy/passes/web.js', function() {
     }
 
     it('set the correct x-forwarded-* headers', function () {
-      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
+      webPasses.XHeaders(stubRequest, {}, { xfwd: true });
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('http');
     });
+  });
+});
+
+describe('#createProxyServer.web() using own http server', function () {
+  it('should proxy the request using the web proxy handler', function (done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080'
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      source.close();
+      proxyServer.close();
+      expect(req.method).to.eql('GET');
+      expect(req.headers.host.split(':')[1]).to.eql('8081');
+      done();
+    });
+
+    proxyServer.listen('8081');
+    source.listen('8080');
+
+    http.request('http://127.0.0.1:8081', function() {}).end();
+  });
+
+  it('should proxy the request and handle error via callback', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080'
+    });
+
+    var proxyServer = http.createServer(requestHandler);
+
+    function requestHandler(req, res) {
+      proxy.web(req, res, function (err) {
+        proxyServer.close();
+        expect(err).to.be.an(Error);
+        expect(err.code).to.be('ECONNREFUSED');
+        done();
+      });
+    }
+
+    proxyServer.listen('8081');
+
+    http.request({
+      hostname: '127.0.0.1',
+      port: '8081',
+      method: 'GET',
+    }, function() {}).end();
+  });
+
+  it('should proxy the request and handle error via event listener', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080'
+    });
+
+    var proxyServer = http.createServer(requestHandler);
+
+    function requestHandler(req, res) {
+      proxy.once('error', function (err, errReq, errRes) {
+        proxyServer.close();
+        expect(err).to.be.an(Error);
+        expect(errReq).to.be.equal(req);
+        expect(errRes).to.be.equal(res);
+        expect(err.code).to.be('ECONNREFUSED');
+        done();
+      });
+
+      proxy.web(req, res);
+    }
+
+    proxyServer.listen('8081');
+
+    http.request({
+      hostname: '127.0.0.1',
+      port: '8081',
+      method: 'GET',
+    }, function() {}).end();
   });
 });
