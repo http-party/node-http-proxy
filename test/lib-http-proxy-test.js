@@ -161,6 +161,8 @@ describe('lib/http-proxy.js', function() {
       testReq.on('error', function (e) {
         expect(e).to.be.an(Error);
         expect(e.code).to.be.eql('ECONNRESET');
+        proxy._server.close();
+        source.close();
         done();
       });
 
