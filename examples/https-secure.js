@@ -1,4 +1,4 @@
-var httpProxy = require('http-proxy'),
+var httpProxy = require('../lib/http-proxy'),
     https = require('https');
 /*
  * Create your proxy server pointing to a secure domain
