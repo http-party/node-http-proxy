@@ -22,7 +22,6 @@ describe('lib/http-proxy.js', function() {
       it('should proxy the request en send back the response', function (done) {
         var ports = { source: gen.port, proxy: gen.port };
         var source = http.createServer(function(req, res) {
-          console.log('Request:', req.headers);
           expect(req.method).to.eql('GET');
           expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
           res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -32,7 +31,7 @@ describe('lib/http-proxy.js', function() {
         source.listen(ports.source);
 
         var proxy = httpProxy.createProxyServer({
-          forward: 'http://127.0.0.1:' + ports.source,
+          target: 'http://127.0.0.1:' + ports.source,
           ssl: {
             key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
             cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
@@ -44,22 +43,62 @@ describe('lib/http-proxy.js', function() {
           port: ports.proxy,
           path: '/',
           method: 'GET',
-          localAddress: '127.0.0.1',
           rejectUnauthorized: false
         }, function(res) {
-          console.log(res);
-          res.on('data', function (ch) {
-            console.log('Chunks', ch)
+          expect(res.statusCode).to.eql(200);
+
+          res.on('data', function (data) {
+            expect(data.toString()).to.eql('Hello from ' + ports.source);
+          });
+
+          res.on('end', function () {
+            source.close();
+            proxy._server.close();
+            done();
           })
-          console.log('Response:', res.statusCode);
-          source.close();
-          proxy._server.close();
-          done();
         });
 
         req.on('error', function (err) { console.log('Erroring', err); });
         req.end();
       })
-  	})
+    });
+    describe('HTTP to HTTPS', function () {
+      it('should proxy the request en send back the response', function (done) {
+        var ports = { source: gen.port, proxy: gen.port };
+        var source = https.createServer({
+          key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
+          cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+        }, function (req, res) {
+          expect(req.method).to.eql('GET');
+          expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end('Hello from ' + ports.source);
+        });
+
+        source.listen(ports.source);
+
+        var proxy = httpProxy.createProxyServer({
+          target: 'https://127.0.0.1:' + ports.source,
+        }).listen(ports.proxy);
+
+        http.request({
+          hostname: '127.0.0.1',
+          port: ports.proxy,
+          method: 'GET'
+        }, function(res) {
+          expect(res.statusCode).to.eql(200);
+
+          res.on('data', function (data) {
+            expect(data.toString()).to.eql('Hello from ' + ports.source);
+          });
+
+          res.on('end', function () {
+            source.close();
+            proxy._server.close();
+            done();
+          });
+        }).end();
+      })
+    })
   });
 });
