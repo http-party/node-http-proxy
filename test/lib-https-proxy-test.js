@@ -38,7 +38,7 @@ describe('lib/http-proxy.js', function() {
           }
         }).listen(ports.proxy);
 
-        var req = https.request({
+        https.request({
           host: 'localhost',
           port: ports.proxy,
           path: '/',
@@ -56,10 +56,7 @@ describe('lib/http-proxy.js', function() {
             proxy._server.close();
             done();
           })
-        });
-
-        req.on('error', function (err) { console.log('Erroring', err); });
-        req.end();
+        }).end();
       })
     });
     describe('HTTP to HTTPS', function () {
@@ -102,6 +99,51 @@ describe('lib/http-proxy.js', function() {
         }).end();
       })
     })
+    describe('HTTPS to HTTPS', function () {
+      it('should proxy the request en send back the response', function (done) {
+        var ports = { source: gen.port, proxy: gen.port };
+        var source = https.createServer({
+          key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
+          cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+        }, function(req, res) {
+          expect(req.method).to.eql('GET');
+          expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end('Hello from ' + ports.source);
+        });
+
+        source.listen(ports.source);
+
+        var proxy = httpProxy.createProxyServer({
+          target: 'https://127.0.0.1:' + ports.source,
+          ssl: {
+            key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
+            cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+          },
+          secure: false
+        }).listen(ports.proxy);
+
+        https.request({
+          host: 'localhost',
+          port: ports.proxy,
+          path: '/',
+          method: 'GET',
+          rejectUnauthorized: false
+        }, function(res) {
+          expect(res.statusCode).to.eql(200);
+
+          res.on('data', function (data) {
+            expect(data.toString()).to.eql('Hello from ' + ports.source);
+          });
+
+          res.on('end', function () {
+            source.close();
+            proxy._server.close();
+            done();
+          })
+        }).end();
+      })
+    });
     describe('HTTPS not allow SSL self signed', function () {
       it('should fail with error', function (done) {
         var ports = { source: gen.port, proxy: gen.port };
