@@ -17,7 +17,7 @@ Object.defineProperty(gen, 'port', {
 });
 
 describe('lib/http-proxy.js', function() {
-  describe('#createProxyServer using HTTPS', function() {
+  describe('HTTPS #createProxyServer', function() {
   	describe('HTTPS to HTTP', function () {
       it('should proxy the request en send back the response', function (done) {
         var ports = { source: gen.port, proxy: gen.port };
@@ -79,6 +79,8 @@ describe('lib/http-proxy.js', function() {
 
         var proxy = httpProxy.createProxyServer({
           target: 'https://127.0.0.1:' + ports.source,
+          // Allow to use SSL self signed
+          secure: false
         }).listen(ports.proxy);
 
         http.request({
@@ -97,6 +99,34 @@ describe('lib/http-proxy.js', function() {
             proxy._server.close();
             done();
           });
+        }).end();
+      })
+    })
+    describe('HTTPS not allow SSL self signed', function () {
+      it('should fail with error', function (done) {
+        var ports = { source: gen.port, proxy: gen.port };
+        var source = https.createServer({
+          key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
+          cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+        }).listen(ports.source);
+
+        var proxy = httpProxy.createProxyServer({
+          target: 'https://127.0.0.1:' + ports.source,
+          secure: true
+        });
+
+        proxy.listen(ports.proxy);
+
+        proxy.on('error', function (err, req, res) {
+          expect(err).to.be.an(Error);
+          expect(err.toString()).to.be('Error: DEPTH_ZERO_SELF_SIGNED_CERT')
+          done();
+        })
+
+        http.request({
+          hostname: '127.0.0.1',
+          port: ports.proxy,
+          method: 'GET'
         }).end();
       })
     })
