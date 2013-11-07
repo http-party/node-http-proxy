@@ -4,10 +4,11 @@ var httpProxy = require('../lib/http-proxy'),
  * Create your proxy server pointing to a secure domain
  * Enable ssl validation
  */
-var options = { target : 'https://google.com',
-			    agent  : https.globalAgent,
-			    headers: {host: 'google.com'}
-			  };
+var options = {
+  target : 'https://google.com',
+  agent  : https.globalAgent,
+  headers: {host: 'google.com'}
+};
 
 var proxyServer = httpProxy.createProxyServer(options);
 console.log("Proxy server listening on port 8000");
