@@ -172,5 +172,51 @@ describe('lib/http-proxy.js', function() {
         }).end();
       })
     })
+    describe('HTTPS to HTTP using own server', function () {
+      it('should proxy the request en send back the response', function (done) {
+        var ports = { source: gen.port, proxy: gen.port };
+        var source = http.createServer(function(req, res) {
+          expect(req.method).to.eql('GET');
+          expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end('Hello from ' + ports.source);
+        });
+
+        source.listen(ports.source);
+
+        var proxy = httpProxy.createServer({
+          agent: new http.Agent({ maxSockets: 2 })
+        });
+
+        var ownServer = https.createServer({
+          key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
+          cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+        }, function (req, res) {
+          proxy.web(req, res, {
+            target: 'http://127.0.0.1:' + ports.source
+          })
+        }).listen(ports.proxy);
+
+        https.request({
+          host: 'localhost',
+          port: ports.proxy,
+          path: '/',
+          method: 'GET',
+          rejectUnauthorized: false
+        }, function(res) {
+          expect(res.statusCode).to.eql(200);
+
+          res.on('data', function (data) {
+            expect(data.toString()).to.eql('Hello from ' + ports.source);
+          });
+
+          res.on('end', function () {
+            source.close();
+            ownServer.close();
+            done();
+          })
+        }).end();
+      })
+    })
   });
 });
