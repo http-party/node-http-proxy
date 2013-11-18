@@ -258,6 +258,22 @@ vows.describe("Reverse Proxy Helper").addBatch({
       "redirect - with location header":function (topic) {
         assert.equal(topic, true);
       }
+    },
+    "303 and location headers":{
+      topic:function () {
+        return new ReverseProxyHelper().isHttpRedirect({ statusCode:303, headers:{ location:'http://some/url' }});
+      },
+      "redirect - with location header":function (topic) {
+        assert.equal(topic, true);
+      }
+    },
+    "307 and location headers":{
+      topic:function () {
+        return new ReverseProxyHelper().isHttpRedirect({ statusCode:307, headers:{ location:'http://some/url' }});
+      },
+      "redirect - with location header":function (topic) {
+        assert.equal(topic, true);
+      }
     }
   },
 
