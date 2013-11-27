@@ -40,7 +40,7 @@ http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('hello http over https\n');
 	res.end();
-}).listen(9000);
+}).listen(9009);
 
 //
 // Create the HTTPS proxy server listening on port 8000
@@ -48,13 +48,13 @@ http.createServer(function (req, res) {
 httpProxy.createServer({
   target: {
     host: 'localhost',
-    port: 9000
+    port: 9009
   },
   ssl: {
     key: fs.readFileSync(path.join(fixturesDir, 'agent2-key.pem'), 'utf8'),
     cert: fs.readFileSync(path.join(fixturesDir, 'agent2-cert.pem'), 'utf8')
   }
-}).listen(8000);
+}).listen(8009);
 
-util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8009'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9009 '.yellow);

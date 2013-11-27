@@ -43,7 +43,7 @@ catch (ex) {
 // Create the target HTTP server and setup
 // socket.io on it.
 //
-var server = io.listen(9000);
+var server = io.listen(9015);
 server.sockets.on('connection', function (client) {
   util.debug('Got websocket connection');
 
@@ -60,7 +60,7 @@ server.sockets.on('connection', function (client) {
 var proxy = new httpProxy.createProxyServer({
   target: {
     host: 'localhost',
-    port: 9000
+    port: 9015
   }
 });
 var proxyServer = http.createServer(function (req, res) {
@@ -75,12 +75,12 @@ proxyServer.on('upgrade', function (req, socket, head) {
   proxy.ws(req, socket, head);
 });
 
-proxyServer.listen(8000);
+proxyServer.listen(8015);
 
 //
 // Setup the socket.io client against our proxy
 //
-var ws = client.connect('ws://localhost:8000');
+var ws = client.connect('ws://localhost:8015');
 
 ws.on('message', function (msg) {
   util.debug('Got message: ' + msg);

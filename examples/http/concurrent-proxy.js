@@ -33,8 +33,8 @@ var util = require('util'),
 // Basic Http Proxy Server
 //
 httpProxy.createServer({
-  target:'http://localhost:9000'
-}).listen(8000);
+  target:'http://localhost:9004'
+}).listen(8004);
 
 //
 // Target Http Server
@@ -62,7 +62,7 @@ http.createServer(function (req, res) {
       connections.shift()();
     }
   }
-}).listen(9000);
+}).listen(9004);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8004'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9004 '.yellow);

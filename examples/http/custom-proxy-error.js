@@ -33,13 +33,13 @@ var util = require('util'),
 // Http Proxy Server with bad target
 //
 var proxy = httpProxy.createServer({
-  target:'http://localhost:9000'
+  target:'http://localhost:9005'
 });
 
 //
 // Tell the proxy to listen on port 8000
 //
-proxy.listen(8000);
+proxy.listen(8005);
 
 //
 // Listen for the `error` event on `proxy`.
@@ -52,4 +52,4 @@ proxy.on('error', function (err, req, res) {
 });
 
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8000 '.yellow + 'with custom error message'.magenta.underline);
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8005 '.yellow + 'with custom error message'.magenta.underline);

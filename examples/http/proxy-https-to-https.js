@@ -44,16 +44,16 @@ https.createServer(httpsOpts, function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('hello https\n');
 	res.end();
-}).listen(9000);
+}).listen(9010);
 
 //
 // Create the proxy server listening on port 443
 //
 httpProxy.createServer({
   ssl: httpsOpts,
-  target: 'https://localhost:9000',
+  target: 'https://localhost:9010',
   secure: false
-}).listen(8000);
+}).listen(8010);
 
-util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('https server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8010'.yellow);
+util.puts('https server '.blue + 'started '.green.bold + 'on port '.blue + '9010 '.yellow);

@@ -34,10 +34,10 @@ var util = require('util'),
 //
 httpProxy.createServer({
   forward: {
-    port: 9000,
+    port: 9019,
     host: 'localhost'
   }
-}).listen(8000);
+}).listen(8019);
 
 //
 // Target Http Forwarding Server
@@ -47,7 +47,7 @@ http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully forwarded to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
-}).listen(9000);
+}).listen(9019);
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8000 '.yellow + 'with forward proxy'.magenta.underline);
-util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8019 '.yellow + 'with forward proxy'.magenta.underline);
+util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9019 '.yellow);

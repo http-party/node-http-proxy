@@ -41,6 +41,6 @@ httpProxy.createProxyServer({
   headers: {
     host: 'google.com'
   }
-}).listen(8000);
+}).listen(8011);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8011'.yellow);

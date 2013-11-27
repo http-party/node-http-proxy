@@ -45,13 +45,13 @@ connect.createServer(
   function (req, res) {
     proxy.web(req, res);
   }
-).listen(8000);
+).listen(8013);
 
 //
 // Basic Http Proxy Server
 //
 var proxy = httpProxy.createProxyServer({
-  target: 'http://localhost:9000'
+  target: 'http://localhost:9013'
 });
 
 //
@@ -60,8 +60,8 @@ var proxy = httpProxy.createProxyServer({
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Hello, I know Ruby\n');
-}).listen(9000);
+}).listen(9013);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8013'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9013 '.yellow);
 

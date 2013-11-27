@@ -43,13 +43,13 @@ connect.createServer(
   function (req, res) {
     proxy.web(req, res);
   }
-).listen(8000);
+).listen(8012);
 
 //
 // Basic Http Proxy Server
 //
 var proxy = httpProxy.createProxyServer({
-  target: 'http://localhost:9000'
+  target: 'http://localhost:9012'
 });
 
 //
@@ -59,7 +59,7 @@ http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
-}).listen(9000);
+}).listen(9012);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8012'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9012 '.yellow);
