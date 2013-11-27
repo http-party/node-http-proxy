@@ -5,6 +5,7 @@
   "dependencies": {
     "colors": "~0.6.2",
     "socket.io": "~0.9.16",
-    "socket.io-client": "~0.9.16"
+    "socket.io-client": "~0.9.16",
+    "connect": "~2.11.0"
   }
 }
