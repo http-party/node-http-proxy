@@ -1,5 +1,5 @@
 /*
-  gzip-middleware.js: Basic example of `connect-gzip` middleware in node-http-proxy
+  modifyBody-middleware.js: Example of middleware which modifies response
 
   Copyright (c) Nodejitsu 2013
 
@@ -27,19 +27,21 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    connect = require('connect')
+    connect = require('connect'),
     httpProxy = require('../../lib/http-proxy');
 
 //
 // Basic Connect App
 //
 connect.createServer(
-  connect.compress({
-    // Pass to connect.compress() the options
-    // that you need, just for show the example
-    // we use threshold to 1
-    threshold: 1
-  }),
+  function (req, res, next) {
+    var _write = res.write;
+
+    res.write = function (data) {
+      _write.call(res, data.toString().replace("Ruby", "nodejitsu"));
+    }
+    next();
+  },
   function (req, res) {
     proxy.web(req, res);
   }
@@ -57,9 +59,9 @@ var proxy = httpProxy.createProxyServer({
 //
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
+  res.end('Hello, I know Ruby\n');
 }).listen(9000);
 
 util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+
