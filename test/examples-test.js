@@ -13,7 +13,7 @@ var path = require('path'),
 var rootDir = path.join(__dirname, '..'),
     examplesDir = path.join(rootDir, 'examples');
 
-describe('http-proxy examples', function () {
+describe.skip('http-proxy examples', function () {
   describe('Before testing examples', function () {
     // Set a timeout to avoid this error
     this.timeout(30 * 1000);
