@@ -70,7 +70,7 @@ to the client.
 var http = require('http'),
     httpProxy = require('http-proxy');
 //
-// Create your proxy server
+// Create your proxy server and set the target in the options.
 //
 httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000);
 
@@ -85,6 +85,9 @@ http.createServer(function (req, res) {
 ```
 
 #### Setup a stand-alone proxy server with custom server logic
+This example show how you can proxy a request using your own HTTP server
+and also you can put your own logic to hanlde the request. This example
+could show how to proxy requests within another http server.
 
 ``` js
 var http = require('http'),
@@ -95,12 +98,53 @@ var http = require('http'),
 //
 var proxy = httpProxy.createProxyServer({});
 
+//
+// Create your custom server and just call `proxy.web()` to proxy 
+// a web request to the target passed in the options
+// also you can use `proxy.ws()` to proxy a websockets request
+//
 var server = require('http').createServer(function(req, res) {
+  // You can define here your custom logic to handle the request
+  // and then proxy the request.
   proxy.web(req, res, { target: 'http://127.0.0.1:5060' });
 });
 
 console.log("listening on port 5050")
 server.listen(5050);
+```
+
+#### Setup a stand-alone proxy server with latency
+
+```
+var http = require('http'),
+    httpProxy = require('http-proxy');
+
+//
+// Create a proxy server with latency
+//
+var proxy = httpProxy.createProxyServer();
+
+//
+// Create your server that make an operation that take a while
+// and then proxy de request
+//
+http.createServer(function (req, res) {
+  // This simulate an operation that take 500ms in execute
+  setTimeout(function () {
+    proxy.web(req, res, {
+      target: 'http://localhost:9008'
+    });
+  }, 500);
+}).listen(8008);
+
+//
+// Create your target server
+//
+http.createServer(function (req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9008);
 ```
 
 ### Contributing and Issues
@@ -118,6 +162,7 @@ server.listen(5050);
  *  **target**: url string to be parsed with the url module 
  *  **forward**: url string to be parsed with the url module
  *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
+ *  **secure**: true/false, if you want to verify the SSL Certs
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
 
