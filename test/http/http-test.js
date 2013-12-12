@@ -60,6 +60,16 @@ vows.describe(helpers.describe()).addBatch({
         targetHeaders: { connection: "keep-alive" },
         outputHeaders: { connection: "keep-alive" }
       }),
+      "and response keep-alive connection header from http 1.0 client": macros.http.assertRawHttpProxied({
+        rawRequest: "GET / HTTP/1.0\r\n\r\n",
+        targetHeaders: { connection: "keep-alive" },
+        match: /connection: close/i
+      }),
+      "and request keep alive from http 1.0 client": macros.http.assertRawHttpProxied({
+        rawRequest: "GET / HTTP/1.0\r\nConnection: Keep-Alive\r\n\r\n",
+        targetHeaders: { connection: "keep-alive" },
+        match: /connection: keep-alive/i
+      }),
       "and no connection header": macros.http.assertProxied({
         request: { headers: { connection: "" } }, // Must explicitly set to "" because otherwise node will automatically add a "connection: keep-alive" header
         outputHeaders: { connection: "keep-alive" }

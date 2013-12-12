@@ -9,6 +9,7 @@
 var assert = require('assert'),
     fs = require('fs'),
     async = require('async'),
+    net = require('net'),
     request = require('request'),
     helpers = require('../helpers/index');
 
@@ -138,6 +139,89 @@ exports.assertProxied = function (options) {
         body: output
       }
     })
+  };
+};
+
+//
+// ### function assertRawHttpProxied (options)
+// #### @options {Object} Options for this test
+// ####    @rawRequest {string} Raw HTTP request to perform.
+// ####    @match      {RegExp} Output to match in the response.
+// ####    @latency    {number} Latency in milliseconds for the proxy server.
+// ####    @ports      {Object} Ports for the request (target, proxy).
+// ####    @output     {string} Output to assert from.
+// ####    @forward    {Object} Options for forward proxying.
+//
+// Creates a complete end-to-end test for requesting against an
+// http proxy.
+//
+exports.assertRawHttpProxied = function (options) {
+  // Don't test raw requests over HTTPS since options.rawRequest won't be
+  // encrypted.
+  if(helpers.protocols.proxy == 'https') {
+    return true;
+  }
+
+  options = options || {};
+
+  var ports         = options.ports   || helpers.nextPortPair,
+      output        = options.output  || 'hello world from ' + ports.target,
+      outputHeaders = options.outputHeaders,
+      targetHeaders = options.targetHeaders,
+      proxyHeaders  = options.proxyHeaders,
+      protocol      = helpers.protocols.proxy,
+      timeout       = options.timeout || null,
+      assertFn      = options.shouldFail
+        ? exports.assertFailedRequest
+        : exports.assertRequest;
+
+  return {
+    topic: function () {
+      var topicCallback = this.callback;
+
+      //
+      // Create a target server and a proxy server
+      // using the `options` supplied.
+      //
+      helpers.http.createServerPair({
+        target: {
+          output: output,
+          outputHeaders: targetHeaders,
+          port: ports.target,
+          latency: options.requestLatency
+        },
+        proxy: {
+          latency: options.latency,
+          port: ports.proxy,
+          outputHeaders: proxyHeaders,
+          proxy: {
+            forward: options.forward,
+            target: {
+              https: helpers.protocols.target === 'https',
+              host: '127.0.0.1',
+              port: ports.target
+            },
+            timeout: timeout
+          }
+        }
+      }, function() {
+        var response = '';
+        var client = net.connect(ports.proxy, '127.0.0.1', function() {
+          client.write(options.rawRequest);
+        });
+
+        client.on('data', function(data) {
+          response += data.toString();
+        });
+
+        client.on('end', function() {
+          topicCallback(null, options.match, response);
+        });
+      });
+    },
+    "should succeed": function(err, match, response) {
+      assert.match(response, match);
+    }
   };
 };
 
