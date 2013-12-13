@@ -86,7 +86,7 @@ http.createServer(function (req, res) {
 
 #### Setup a stand-alone proxy server with custom server logic
 This example show how you can proxy a request using your own HTTP server
-and also you can put your own logic to hanlde the request.
+and also you can put your own logic to handle the request.
 
 ```js
 var http = require('http'),
@@ -114,7 +114,7 @@ server.listen(5050);
 
 #### Setup a stand-alone proxy server with latency
 
-```
+```js
 var http = require('http'),
     httpProxy = require('http-proxy');
 
@@ -161,9 +161,6 @@ var proxy = httpProxy.createServer({
   target:'http://localhost:9005'
 });
 
-//
-// Tell the proxy to listen on port 8000
-//
 proxy.listen(8005);
 
 //
@@ -180,7 +177,7 @@ proxy.on('error', function (err, req, res) {
 // Listen for the `proxyRes` event on `proxy`.
 //
 proxy.on('proxyRes', function (res) {
-  console.log('RAW Response from the target', res.headers);
+  console.log('RAW Response from the target', JSON.stringify(res.headers, true, 2));
 });
 
 ```
