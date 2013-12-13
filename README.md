@@ -86,10 +86,9 @@ http.createServer(function (req, res) {
 
 #### Setup a stand-alone proxy server with custom server logic
 This example show how you can proxy a request using your own HTTP server
-and also you can put your own logic to hanlde the request. This example
-could show how to proxy requests within another http server.
+and also you can put your own logic to hanlde the request.
 
-``` js
+```js
 var http = require('http'),
     httpProxy = require('http-proxy');
     
@@ -145,6 +144,122 @@ http.createServer(function (req, res) {
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9008);
+```
+
+#### Listening for proxy events
+
+* `error`: The error event is emitted if the request to the target fail.
+* `proxyRes`: This event is emitted if the request to the target got a response.
+
+```js
+var httpProxy = require('http-proxy');
+// Error example
+//
+// Http Proxy Server with bad target
+//
+var proxy = httpProxy.createServer({
+  target:'http://localhost:9005'
+});
+
+//
+// Tell the proxy to listen on port 8000
+//
+proxy.listen(8005);
+
+//
+// Listen for the `error` event on `proxy`.
+proxy.on('error', function (err, req, res) {
+  res.writeHead(500, {
+    'Content-Type': 'text/plain'
+  });
+  
+  res.end('Something went wrong. And we are reporting a custom error message.');
+});
+
+//
+// Listen for the `proxyRes` event on `proxy`.
+//
+proxy.on('proxyRes', function (res) {
+  console.log('RAW Response from the target', res.headers);
+});
+
+```
+
+#### Using HTTPS
+You can activate the validation of a secure SSL certificate to the target connection (avoid self signed certs), just set `secure: true` in the options.
+
+##### HTTPS -> HTTP
+
+```js
+//
+// Create the HTTPS proxy server in front of a HTTP server
+//
+httpProxy.createServer({
+  target: {
+    host: 'localhost',
+    port: 9009
+  },
+  ssl: {
+    key: fs.readFileSync('valid-ssl-key.pem'), 'utf8'),
+    cert: fs.readFileSync('valid-ssl-cert.pem'), 'utf8')
+  }
+}).listen(8009);
+```
+
+##### HTTPS -> HTTPS
+
+```js
+//
+// Create the proxy server listening on port 443
+//
+httpProxy.createServer({
+  ssl: {
+    key: fs.readFileSync('valid-ssl-key.pem'), 'utf8'),
+    cert: fs.readFileSync('valid-ssl-cert.pem'), 'utf8')
+  },
+  target: 'https://localhost:9010',
+  secure: true // Depends on your needs, could be false.
+}).listen(443);
+```
+
+#### Proxying WebSockets
+You can activate the websocket support for the proxy using `ws:true` in the options.
+
+```js
+//
+// Create a proxy server for websockets
+//
+httpProxy.createServer({
+  target: 'ws://localhost:9014',
+  ws: true
+}).listen(8014);
+```
+
+Also you can proxy the websocket requests just calling the `ws(req, socket, head)` method.
+
+```js
+//
+// Setup our server to proxy standard HTTP requests
+//
+var proxy = new httpProxy.createProxyServer({
+  target: {
+    host: 'localhost',
+    port: 9015
+  }
+});
+var proxyServer = http.createServer(function (req, res) {
+  proxy.web(req, res);
+});
+
+//
+// Listen to the `upgrade` event and proxy the 
+// WebSocket requests as well.
+//
+proxyServer.on('upgrade', function (req, socket, head) {
+  proxy.ws(req, socket, head);
+});
+
+proxyServer.listen(8015);
 ```
 
 ### Contributing and Issues
