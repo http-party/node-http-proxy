@@ -38,7 +38,9 @@ describe('lib/http-proxy/common.js', function () {
 
     it('should set the agent to false if none is given', function () {
       var outgoing = {};
-      common.setupOutgoing(outgoing, {target: {},}, {});
+      common.setupOutgoing(outgoing, {target:
+        'http://localhost'
+      }, { url: '/' });
       expect(outgoing.agent).to.eql(false);
     });
 
