@@ -9,4 +9,4 @@ notifications:
   irc: "irc.freenode.org#nodejitsu"
 
 script:
-  npm run-script coveralls
+  npm test

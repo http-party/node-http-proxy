@@ -1,0 +1,13 @@
+{
+  "name": "http-proxy-examples",
+  "description": "packages required to run the examples",
+  "version": "0.0.0",
+  "dependencies": {
+    "colors": "~0.6.2",
+    "socket.io": "~0.9.16",
+    "socket.io-client": "~0.9.16",
+    "connect": "~2.11.0",
+    "request": "~2.27.0",
+    "connect-restreamer": "~1.0.0"
+  }
+}
