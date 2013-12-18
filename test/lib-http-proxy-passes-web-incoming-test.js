@@ -34,7 +34,9 @@ describe('lib/http-proxy/passes/web.js', function() {
         remoteAddress: '192.168.1.2',
         remotePort: '8080'
       },
-      headers: {}
+      headers: {
+        host: '192.168.1.2:8080'
+      }
     }
 
     it('set the correct x-forwarded-* headers', function () {
@@ -88,11 +90,11 @@ describe('#createProxyServer.web() using own http server', function () {
       });
     }
 
-    proxyServer.listen('8081');
+    proxyServer.listen('8082');
 
     http.request({
       hostname: '127.0.0.1',
-      port: '8081',
+      port: '8082',
       method: 'GET',
     }, function() {}).end();
   });
@@ -117,11 +119,11 @@ describe('#createProxyServer.web() using own http server', function () {
       proxy.web(req, res);
     }
 
-    proxyServer.listen('8081');
+    proxyServer.listen('8083');
 
     http.request({
       hostname: '127.0.0.1',
-      port: '8081',
+      port: '8083',
       method: 'GET',
     }, function() {}).end();
   });

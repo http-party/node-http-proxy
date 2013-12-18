@@ -88,7 +88,9 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
           remoteAddress: '192.168.1.2',
           remotePort: '8080'
         },
-        headers: {}
+        headers: {
+          host: '192.168.1.2:8080'
+        }
       }
       httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
@@ -105,7 +107,9 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
         connection: {
           pair: true
         },
-        headers: {}
+        headers: {
+          host: '192.168.1.3:8181'
+        }
       };
       httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.3');
