@@ -8,7 +8,6 @@
 
 * Reverse proxies incoming http.ServerRequest streams
 * Can be used as a CommonJS module in node.js
-* Uses event buffering to support application latency in proxied requests
 * Reverse or Forward Proxy based on simple JSON-based configuration
 * Supports [WebSockets][1]
 * Supports [HTTPS][2]
