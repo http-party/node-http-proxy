@@ -18,6 +18,8 @@ proxies and load balancers.
  	<img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png?branch=caronte"/></a>
 </p>
 
+## Looking to Upgrade from 0.8.x ? Click [here](UPGRADING.md)
+
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
