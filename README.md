@@ -343,6 +343,10 @@ var certs = {
 //
 // Proxy options
 //
+// This section assumes that myCert, myKey and myCa are defined (they are not
+// in this example). With a SNICallback, the proxy needs a default set of
+// certificates to use.
+//
 var options = {
   https: {
     SNICallback: function (hostname) {
