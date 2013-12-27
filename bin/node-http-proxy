@@ -4,7 +4,8 @@ var path = require('path'),
     fs = require('fs'),
     util  = require('util'),
     argv = require('optimist').argv,
-    httpProxy = require('../lib/node-http-proxy');
+    httpProxy = require('../lib/node-http-proxy'),
+    crypto = require('crypto');
 
 var help = [
     "usage: node-http-proxy [options] ",
@@ -48,19 +49,60 @@ if (argv.config) {
 // If `config.https` is set, then load the required file contents into the config options.
 //
 if (config.https) {
-  Object.keys(config.https).forEach(function (key) {
-    // If CA certs are specified, load those too.
-    if (key === "ca") {
-      for (var i=0; i < config.https.ca.length; i++) {
-        if (config.https.ca === undefined) {
-          config.https.ca = [];
-        }
-        config.https.ca[i] = fs.readFileSync(config.https[key][i], 'utf8');
-      }
-    } else {
-      config.https[key] = fs.readFileSync(config.https[key], 'utf8');
+  var SNI = config.https.SNI;
+  var SNImatchers = {};
+  if(config.https.SNI) {
+    for(key in config.https.SNI) {
+        SNImatchers[key] = new RegExp("^" + key + "$", 'i'); // domain names are case insensitive
     }
-  });
+    config.https.SNICallback = function(hostname) {
+      for(key in SNI) {
+        if(hostname.match(SNImatchers[key])) {
+          return SNI[key];
+        }
+      }
+    }
+  }
+
+  function loadKeysForContext(context) {
+    Object.keys(context).forEach(function (key) {
+      // If CA certs are specified, load those too.
+      if (key === "ca") {
+        if(typeof context.ca == 'object') {
+          for (var i=0; i < context.ca.length; i++) {
+            if (context.ca === undefined) {
+              context.ca = [];
+            }
+            context.ca[i] = fs.readFileSync(context[key][i], 'utf8');
+          }
+        }
+        else {
+          var chain = fs.readFileSync(context.ca, 'utf8');
+          chain = chain.split("\n");
+          context.ca = [];
+          var cert = [];
+          chain.forEach(function(line) {
+            if(line.length == 0)
+              return;
+            cert.push(line);
+            if(line.match(/-END CERTIFICATE-/)) {
+              context.ca.push(cert.join("\n"))
+              cert = [];
+            }
+          });
+        }
+      } else if(key !== 'SNI' && key !== 'SNICallback') {
+        context[key] = fs.readFileSync(context[key], 'utf8');
+      }
+    });
+  }
+  loadKeysForContext(config.https);
+  if(SNI) {
+    for(key in SNI) {
+      loadKeysForContext(SNI[key]);
+      SNI[key] = crypto.createCredentials(SNI[key]).context;
+    }
+  }
 }
 
 //
