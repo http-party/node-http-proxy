@@ -18,9 +18,9 @@
   ],
   "dependencies": {
     "colors": "0.x.x",
-    "optimist": "0.3.x",
-    "pkginfo": "0.2.x",
-    "utile": "~0.1.7"
+    "optimist": "0.6.x",
+    "pkginfo": "0.3.x",
+    "utile": "~0.2.1"
   },
   "devDependencies": {
     "request": "2.14.x",
