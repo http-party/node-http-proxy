@@ -220,7 +220,20 @@ var options = {
 ```
 
 This comes in handy if you are running separate services or applications on separate paths.  Note, using this option disables routing by hostname entirely.
+When using pathnameOnly option any request to yourdomain/accounts/login reaches the destination without the full path. IE a POST request to localhost:3000/accounts/login reaches the destination as a POST to localhost:8001, no path is included. This same behavior persists if the destination includes the full path.
+Adding `preservePathForTarget` as an option will make your proxy bypass the behavior of omitting the path from the the target.
 
+``` js
+var options = {
+  pathnameOnly: true,
+  preservePathForTarget: true,  
+  router: {
+    '/wiki': '127.0.0.1:8001',
+    '/blog': '127.0.0.1:8002',
+    '/api':  '127.0.0.1:8003'
+  }
+}
+```
 
 ### Proxy requests with an additional forward proxy
 Sometimes in addition to a reverse proxy, you may want your front-facing server to forward traffic to another location. For example, if you wanted to load test your staging environment. This is possible when using node-http-proxy using similar JSON-based configuration to a proxy table: 
