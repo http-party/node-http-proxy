@@ -3,6 +3,7 @@
 ## Version 0.10.0 - 3/18/2013
 
 - Breaking change: `proxyResponse` events are emitted on the `HttpProxy` or `RoutingProxy` instances as originally was intended in `0.9.x`.
+- ProxyTable updated to support `default` route (aaunel)
 
 ## Version 0.9.1 - 3/9/2013
 
