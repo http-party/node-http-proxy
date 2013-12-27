@@ -174,9 +174,12 @@ exports.parseRoutes = function (options) {
       routes = options.routes;
 
   return Object.keys(routes).map(function (source) {
-    return {
-      source: url.parse(protocol + '://' + source),
-      target: url.parse(protocol + '://' + routes[source])
-    };
+    var isWildcard = source.indexOf("*.") === 0,
+        parsed = {
+          source: url.parse(protocol + '://' + (isWildcard ? source.replace("*", "www") : source)),
+          target: url.parse(protocol + '://' + routes[source])
+        };
+    if (isWildcard) parsed.wildcard = source;
+    return parsed;
   });
 };

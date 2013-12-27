@@ -29,11 +29,15 @@ vows.describe(helpers.describe('routing-table')).addBatch({
       hostnameOnly: true,
       routes: {
         "static.com":  "127.0.0.1:{PORT}",
-        "removed.com": "127.0.0.1:{PORT}"
+        "removed.com": "127.0.0.1:{PORT}",
+        "*.wild-remove.com": "127.0.0.1:{PORT}"
       }
     }, {
-      add: [{ host: 'dynamic1.com', target: '127.0.0.1:' }],
-      drop: ['removed.com']
+      add: [
+            { host: 'dynamic1.com', target: '127.0.0.1:' },
+            { host: 'wild-dynamic.com', target: '127.0.0.1:' }
+      ],
+      drop: ['removed.com', '*.wild-remove.com']
     }),
     "using RegExp": macros.http.assertProxiedToRoutes({
       routes: {
@@ -50,7 +54,8 @@ vows.describe(helpers.describe('routing-table')).addBatch({
       hostnameOnly: true,
       routes: {
         "foo.com": "127.0.0.1:{PORT}",
-        "bar.com": "127.0.0.1:{PORT}"
+        "bar.com": "127.0.0.1:{PORT}",
+        "*.wildcard.com": "127.0.0.1:{PORT}"
       }
     }),
     "using pathnameOnly": macros.http.assertProxiedToRoutes({
