@@ -1,0 +1,40 @@
+{
+  "name"           : "http-proxy",
+  "version"        : "1.0.0",
+  "description"    : "HTTP proxying for the masses",
+  "author": "Nodejitsu Inc. <info@nodejitsu.com>",
+  "maintainers"    : [
+    "yawnt <yawnt@nodejitsu.com>",
+    "indexzero <charlie@nodejitsu.com>"
+  ],
+
+  "main"           : "index.js",
+
+  "dependencies"   : {
+    "eventemitter3"      : "*"
+  },
+  "devDependencies": {
+    "mocha"              : "*",
+    "expect.js"          : "*",
+    "dox"                : "*",
+    "coveralls"          : "*",
+    "mocha-lcov-reporter": "*",
+    "blanket"            : "*",
+    "ws"                 : "*",
+    "socket.io"          : "*",
+    "socket.io-client"   : "*",
+    "async"              : "*"
+  },
+  "scripts"        : {
+    "coveralls"          : "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js",
+    "blanket"            : { "pattern": "lib/http-proxy" },
+    "test"               : "mocha -R landing test/*-test.js",
+    "test-cov"           : "mocha --require blanket -R html-cov > cov/coverage.html"
+  },
+
+  "engines"        : {
+    "node"               : ">=0.10.0"
+  },
+
+  "license"        : "MIT"
+}
