@@ -13,9 +13,9 @@ proxies and load balancers.
 
 <p align="center">
  <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
- 	<img src="https://travis-ci.org/nodejitsu/node-http-proxy.png?branch=caronte"/></a>&nbsp;&nbsp;
+ 	<img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
  <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
- 	<img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png?branch=caronte"/></a>
+ 	<img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
 </p>
 
 ### Looking to Upgrade from 0.8.x ? Click [here](UPGRADING.md)
