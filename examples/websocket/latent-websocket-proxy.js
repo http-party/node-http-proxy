@@ -1,7 +1,7 @@
 /*
   standalone-websocket-proxy.js: Example of proxying websockets over HTTP with a standalone HTTP server.
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) Nodejitsu 2013
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,7 +27,7 @@
 var util = require('util'),
     http = require('http'),
     colors = require('colors'),
-    httpProxy = require('../../lib/node-http-proxy');
+    httpProxy = require('../../lib/http-proxy');
 
 try {
   var io = require('socket.io'),
@@ -43,7 +43,7 @@ catch (ex) {
 // Create the target HTTP server and setup
 // socket.io on it.
 //
-var server = io.listen(8080);
+var server = io.listen(9016);
 server.sockets.on('connection', function (client) {
   util.debug('Got websocket connection');
 
@@ -57,15 +57,15 @@ server.sockets.on('connection', function (client) {
 //
 // Setup our server to proxy standard HTTP requests
 //
-var proxy = new httpProxy.HttpProxy({
+var proxy = new httpProxy.createProxyServer({
   target: {
     host: 'localhost', 
-    port: 8080
+    port: 9016
   }
 });
 
 var proxyServer = http.createServer(function (req, res) {
-  proxy.proxyRequest(req, res);
+  proxy.web(req, res);
 });
 
 //
@@ -73,20 +73,19 @@ var proxyServer = http.createServer(function (req, res) {
 // WebSocket requests as well.
 //
 proxyServer.on('upgrade', function (req, socket, head) {
-  var buffer = httpProxy.buffer(socket);
-  
   setTimeout(function () {
-    proxy.proxyWebSocketRequest(req, socket, head, buffer);
+    proxy.ws(req, socket, head);
   }, 1000);
 });
 
-proxyServer.listen(8081);
+proxyServer.listen(8016);
 
 //
 // Setup the socket.io client against our proxy
 //
-var ws = client.connect('ws://localhost:8081');
+var ws = client.connect('ws://localhost:8016');
 
 ws.on('message', function (msg) {
   util.debug('Got message: ' + msg);
+  ws.send('I am the client');
 });

@@ -1,5 +1,5 @@
 /*
-  latent-proxy.js: Example of proxying over HTTP with latency
+  forward-and-target-proxy.js: Example of proxying over HTTP with additional forward proxy
 
   Copyright (c) Nodejitsu 2013
 
@@ -30,16 +30,18 @@ var util = require('util'),
     httpProxy = require('../../lib/http-proxy');
 
 //
-// Http Proxy Server with Latency
+// Setup proxy server with forwarding
 //
-var proxy = httpProxy.createProxyServer();
-http.createServer(function (req, res) {
-  setTimeout(function () {
-    proxy.web(req, res, {
-      target: 'http://localhost:9008'
-    });
-  }, 500);
-}).listen(8008);
+httpProxy.createServer({
+  target: {
+    port: 9006,
+    host: 'localhost'
+  },
+  forward: {
+    port: 9007,
+    host: 'localhost'
+  }
+}).listen(8006);
 
 //
 // Target Http Server
@@ -48,7 +50,18 @@ http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
-}).listen(9008);
+}).listen(9006);
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8008 '.yellow + 'with latency'.magenta.underline);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9008 '.yellow);
+//
+// Target Http Forwarding Server
+//
+http.createServer(function (req, res) {
+  util.puts('Receiving forward for: ' + req.url);
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('request successfully forwarded to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
+  res.end();
+}).listen(9007);
+
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8006 '.yellow + 'with forward proxy'.magenta.underline);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9006 '.yellow);
+util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9007 '.yellow);

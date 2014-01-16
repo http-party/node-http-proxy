@@ -1,8 +1,40 @@
+/*
+  bodyDecoder-middleware.js: Basic example of `connect.bodyParser()` middleware in node-http-proxy
 
-var Store = require('../helpers/store')
-  , http = require('http')
+  Copyright (c) Nodejitsu 2013
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
+var http = require('http'),
+    connect = require('connect'),
+    request = require('request'),
+    colors = require('colors'),
+    util = require('util'),
+    Store = require('../helpers/store'),
+    httpProxy = require('../../lib/http-proxy'),
+    proxy = httpProxy.createProxyServer({});
 
 http.createServer(new Store().handler()).listen(7531, function () {
+  util.puts('http '.blue + 'greetings '.green + 'server'.blue + ' started '.green.bold + 'on port '.blue + '7531'.yellow);
 //try these commands:
 // get index:
 // curl localhost:7531
@@ -33,31 +65,31 @@ http.createServer(new Store().handler()).listen(7531, function () {
 //insult server:
 
   http.createServer(new Store().handler()).listen(2600, function () {
+    util.puts('http '.blue + 'insults '.red + 'server'.blue + ' started '.green.bold + 'on port '.blue + '2600'.yellow);
 
   //greetings -> 7531, insults-> 2600 
 
   // now, start a proxy server.
 
-    var bodyParser = require('connect/lib/middleware/bodyParser')
     //don't worry about incoming contont type
     //bodyParser.parse[''] = JSON.parse
 
-    require('../../lib/node-http-proxy').createServer(
+    connect.createServer(
       //refactor the body parser and re-streamer into a separate package
-      bodyParser(),
+      connect.bodyParser(),
       //body parser absorbs the data and end events before passing control to the next
       // middleware. if we want to proxy it, we'll need to re-emit these events after 
       //passing control to the middleware.
       require('connect-restreamer')(),
-      function (req, res, proxy) {
+      function (req, res) {
         //if your posting an obect which contains type: "insult"
         //it will get redirected to port 2600.
         //normal get requests will go to 7531 nad will not return insults.
         var port = (req.body && req.body.type === 'insult' ? 2600 : 7531)
-        proxy.proxyRequest(req, res, {host: 'localhost', port: port})
+        proxy.web(req, res, { target: { host: 'localhost', port: port }});
       }
     ).listen(1337, function () {
-      var request = require('request')
+      util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '1337'.yellow);
       //bodyParser needs content-type set to application/json
       //if we use request, it will set automatically if we use the 'json:' field.
       function post (greeting, type) {
@@ -84,4 +116,4 @@ http.createServer(new Store().handler()).listen(7531, function () {
 
     })
   })
-})
+});

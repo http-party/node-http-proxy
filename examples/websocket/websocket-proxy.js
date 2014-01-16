@@ -1,7 +1,7 @@
 /*
   web-socket-proxy.js: Example of proxying over HTTP and WebSockets.
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) Nodejitsu 2013
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,7 +27,7 @@
 var util = require('util'),
     http = require('http'),
     colors = require('colors'),
-    httpProxy = require('../../lib/node-http-proxy');
+    httpProxy = require('../../lib/http-proxy');
 
 try {
   var io = require('socket.io'),
@@ -43,7 +43,7 @@ catch (ex) {
 // Create the target HTTP server and setup
 // socket.io on it.
 //
-var server = io.listen(8080);
+var server = io.listen(9014);
 server.sockets.on('connection', function (client) {
   util.debug('Got websocket connection');
 
@@ -57,13 +57,14 @@ server.sockets.on('connection', function (client) {
 //
 // Create a proxy server with node-http-proxy
 //
-httpProxy.createServer(8080, 'localhost').listen(8081);
+httpProxy.createServer({ target: 'ws://localhost:9014', ws: true }).listen(8014);
 
 //
 // Setup the socket.io client against our proxy
 //
-var ws = client.connect('ws://localhost:8081');
+var ws = client.connect('ws://localhost:8014');
 
 ws.on('message', function (msg) {
   util.debug('Got message: ' + msg);
+  ws.send('I am the client');
 });

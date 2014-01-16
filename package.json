@@ -1,47 +1,40 @@
 {
-  "name": "http-proxy",
-  "version": "0.10.4",
-  "description": "A full-featured http reverse proxy for node.js",
+  "name"           : "http-proxy",
+  "version"        : "1.0.0",
+  "description"    : "HTTP proxying for the masses",
   "author": "Nodejitsu Inc. <info@nodejitsu.com>",
-  "maintainers": [
-    "indexzero <charlie@nodejitsu.com>",
-    "AvianFlu <avianflu@nodejitsu.com>"
+  "maintainers"    : [
+    "yawnt <yawnt@nodejitsu.com>",
+    "indexzero <charlie@nodejitsu.com>"
   ],
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/nodejitsu/node-http-proxy.git"
-  },
-  "keywords": [
-    "reverse",
-    "proxy",
-    "http"
-  ],
-  "dependencies": {
-    "colors": "0.x.x",
-    "optimist": "0.6.x",
-    "pkginfo": "0.3.x",
-    "utile": "~0.2.1"
+
+  "main"           : "index.js",
+
+  "dependencies"   : {
+    "eventemitter3"      : "*"
   },
   "devDependencies": {
-    "request": "2.14.x",
-    "vows": "0.7.x",
-    "async": "0.2.x",
-    "socket.io": "0.9.11",
-    "socket.io-client": "0.9.11",
-    "ws": "0.4.23"
+    "mocha"              : "*",
+    "expect.js"          : "*",
+    "dox"                : "*",
+    "coveralls"          : "*",
+    "mocha-lcov-reporter": "*",
+    "blanket"            : "*",
+    "ws"                 : "*",
+    "socket.io"          : "*",
+    "socket.io-client"   : "*",
+    "async"              : "*"
   },
-  "main": "./lib/node-http-proxy",
-  "bin": {
-    "node-http-proxy": "./bin/node-http-proxy"
+  "scripts"        : {
+    "coveralls"          : "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js",
+    "blanket"            : { "pattern": "lib/http-proxy" },
+    "test"               : "mocha -R landing test/*-test.js",
+    "test-cov"           : "mocha --require blanket -R html-cov > cov/coverage.html"
   },
-  "scripts": {
-    "test": "npm run-script test-http && npm run-script test-https && npm run-script test-core",
-    "test-http": "vows --spec && vows --spec --target=https",
-    "test-https": "vows --spec --proxy=https && vows --spec --proxy=https --target=https",
-    "test-core": "test/core/run"
-  },
-  "engines": {
-    "node": ">= 0.6.6"
-  }
-}
 
+  "engines"        : {
+    "node"               : ">=0.10.0"
+  },
+
+  "license"        : "MIT"
+}

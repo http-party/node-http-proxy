@@ -1,7 +1,7 @@
 /*
   modifyBody-middleware.js: Example of middleware which modifies response
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, Marak Squires, & Dominic Tarr.
+  Copyright (c) Nodejitsu 2013
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,12 +27,13 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('../../lib/node-http-proxy');
+    connect = require('connect'),
+    httpProxy = require('../../lib/http-proxy');
 
 //
-// Basic Http Proxy Server
+// Basic Connect App
 //
-httpProxy.createServer(
+connect.createServer(
   function (req, res, next) {
     var _write = res.write;
 
@@ -41,8 +42,17 @@ httpProxy.createServer(
     }
     next();
   },
-  9000, 'localhost'
-).listen(8000);
+  function (req, res) {
+    proxy.web(req, res);
+  }
+).listen(8013);
+
+//
+// Basic Http Proxy Server
+//
+var proxy = httpProxy.createProxyServer({
+  target: 'http://localhost:9013'
+});
 
 //
 // Target Http Server
@@ -50,8 +60,8 @@ httpProxy.createServer(
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Hello, I know Ruby\n');
-}).listen(9000);
+}).listen(9013);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8013'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9013 '.yellow);
 

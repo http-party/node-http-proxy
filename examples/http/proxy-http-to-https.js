@@ -1,5 +1,5 @@
 /*
-  latent-proxy.js: Example of proxying over HTTP with latency
+  proxy-http-to-https.js: Basic example of proxying over HTTP to a target HTTPS server
 
   Copyright (c) Nodejitsu 2013
 
@@ -24,31 +24,23 @@
 
 */
 
-var util = require('util'),
+var https = require('https'),
+    http  = require('http'),
+    util  = require('util'),
+    path  = require('path'),
+    fs    = require('fs'),
     colors = require('colors'),
-    http = require('http'),
     httpProxy = require('../../lib/http-proxy');
 
 //
-// Http Proxy Server with Latency
+// Create a HTTP Proxy server with a HTTPS target
 //
-var proxy = httpProxy.createProxyServer();
-http.createServer(function (req, res) {
-  setTimeout(function () {
-    proxy.web(req, res, {
-      target: 'http://localhost:9008'
-    });
-  }, 500);
-}).listen(8008);
+httpProxy.createProxyServer({
+  target: 'https://google.com',
+  agent  : https.globalAgent,
+  headers: {
+    host: 'google.com'
+  }
+}).listen(8011);
 
-//
-// Target Http Server
-//
-http.createServer(function (req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
-}).listen(9008);
-
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8008 '.yellow + 'with latency'.magenta.underline);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9008 '.yellow);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8011'.yellow);

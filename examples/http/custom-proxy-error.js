@@ -1,7 +1,7 @@
 /*
   custom-proxy-error.js: Example of using the custom `proxyError` event.
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) Nodejitsu 2013
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,22 +27,23 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('../../lib/node-http-proxy');
+    httpProxy = require('../../lib/http-proxy');
 
 //
-// Http Proxy Server with Latency
+// Http Proxy Server with bad target
 //
-var server = httpProxy.createServer(9000, 'localhost');
+var proxy = httpProxy.createServer({
+  target:'http://localhost:9005'
+});
 
 //
-// Tell the server to listen on port 8002
+// Tell the proxy to listen on port 8000
 //
-server.listen(8002);
+proxy.listen(8005);
 
 //
-// Listen for the `proxyError` event on `server.proxy`. _It will not
-// be raised on the server itself._
-server.proxy.on('proxyError', function (err, req, res) {
+// Listen for the `error` event on `proxy`.
+proxy.on('error', function (err, req, res) {
   res.writeHead(500, {
     'Content-Type': 'text/plain'
   });
@@ -51,4 +52,4 @@ server.proxy.on('proxyError', function (err, req, res) {
 });
 
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with custom error message'.magenta.underline);
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8005 '.yellow + 'with custom error message'.magenta.underline);

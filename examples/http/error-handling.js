@@ -1,5 +1,5 @@
 /*
-  latent-proxy.js: Example of proxying over HTTP with latency
+  error-handling.js: Example of handle erros for HTTP and WebSockets
 
   Copyright (c) Nodejitsu 2013
 
@@ -30,25 +30,34 @@ var util = require('util'),
     httpProxy = require('../../lib/http-proxy');
 
 //
-// Http Proxy Server with Latency
+// HTTP Proxy Server
 //
-var proxy = httpProxy.createProxyServer();
-http.createServer(function (req, res) {
-  setTimeout(function () {
-    proxy.web(req, res, {
-      target: 'http://localhost:9008'
-    });
-  }, 500);
-}).listen(8008);
+var proxy = httpProxy.createProxyServer({target:'http://localhost:9000', ws:true});
 
 //
-// Target Http Server
+// Example of error handling
 //
-http.createServer(function (req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
-}).listen(9008);
+function requestHandler(req, res) {
+  // Pass a callback to the web proxy method
+  // and catch the error there.
+  proxy.web(req, res, function (err) {
+    // Now you can get the err
+    // and handle it by your self
+    // if (err) throw err;
+    res.writeHead(502);
+    res.end("There was an error proxying your request");
+  });
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8008 '.yellow + 'with latency'.magenta.underline);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9008 '.yellow);
+  // In a websocket request case
+  req.on('upgrade', function (req, socket, head) {
+    proxy.ws(req, socket, head, function (err) {
+      // Now you can get the err
+      // and handle it by your self
+      // if (err) throw err;
+      socket.close();
+    })
+  })
+}
+
+http.createServer(requestHandler).listen(8000);
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8000'.yellow);

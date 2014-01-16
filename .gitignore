@@ -1,3 +1,7 @@
-config.json
-node_modules/
-npm-debug.log
+node_modules
+*.swp
+cov
+atest.js
+notes
+primus-proxy.js
+tes.js

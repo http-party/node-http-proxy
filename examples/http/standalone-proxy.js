@@ -1,7 +1,7 @@
 /*
   standalone-proxy.js: Example of proxying over HTTP with a standalone HTTP server.
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) Nodejitsu 2013
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,22 +27,19 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('../../lib/node-http-proxy');
+    httpProxy = require('../../lib/http-proxy');
 
 //
 // Http Server with proxyRequest Handler and Latency
 //
-var proxy = new httpProxy.RoutingProxy();
+var proxy = new httpProxy.createProxyServer();
 http.createServer(function (req, res) {
-  var buffer = httpProxy.buffer(req);
   setTimeout(function () {
-    proxy.proxyRequest(req, res, {
-      port: 9000,
-      host: 'localhost',
-      buffer: buffer
+    proxy.web(req, res, {
+      target: 'http://localhost:9002'
     });
   }, 200);
-}).listen(8004);
+}).listen(8002);
 
 //
 // Target Http Server
@@ -51,7 +48,7 @@ http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
-}).listen(9000);
+}).listen(9002);
 
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8004 '.yellow + 'with proxyRequest handler'.cyan.underline + ' and latency'.magenta);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxy.web() handler'.cyan.underline + ' and latency'.magenta);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9001 '.yellow);

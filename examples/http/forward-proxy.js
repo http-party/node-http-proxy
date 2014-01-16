@@ -1,7 +1,7 @@
 /*
   forward-proxy.js: Example of proxying over HTTP with additional forward proxy
 
-  Copyright (c) 2010 Charlie Robbins, Mikeal Rogers, Fedor Indutny, & Marak Squires.
+  Copyright (c) Nodejitsu 2013
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -27,26 +27,17 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('../../lib/node-http-proxy');
+    httpProxy = require('../../lib/http-proxy');
 
 //
 // Setup proxy server with forwarding
 //
-httpProxy.createServer(9000, 'localhost', {
+httpProxy.createServer({
   forward: {
-    port: 9001,
+    port: 9019,
     host: 'localhost'
   }
-}).listen(8003);
-
-//
-// Target Http Server
-//
-http.createServer(function (req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
-  res.end();
-}).listen(9000);
+}).listen(8019);
 
 //
 // Target Http Forwarding Server
@@ -56,8 +47,7 @@ http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully forwarded to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
-}).listen(9001);
+}).listen(9019);
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8003 '.yellow + 'with forward proxy'.magenta.underline);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9000 '.yellow);
-util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9001 '.yellow);
+util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8019 '.yellow + 'with forward proxy'.magenta.underline);
+util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9019 '.yellow);
