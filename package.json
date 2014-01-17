@@ -1,6 +1,6 @@
 {
   "name"           : "http-proxy",
-  "version"        : "1.0.0",
+  "version"        : "1.0.1",
   "description"    : "HTTP proxying for the masses",
   "author": "Nodejitsu Inc. <info@nodejitsu.com>",
   "maintainers"    : [
