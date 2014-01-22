@@ -261,9 +261,29 @@ describe('lib/http-proxy.js', function() {
         });
       });
     });
-  });
 
-  describe('#createProxyServer using the ws-incoming passes', function () {
+    it('should emit error on proxy error', function (done) {
+      var ports = { source: gen.port, proxy: gen.port };
+      var proxy = httpProxy.createProxyServer({
+        // note: we don't ever listen on this port
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      client = new ws('ws://127.0.0.1:' + ports.proxy);
+
+      client.on('open', function () {
+        client.send('hello there');
+      });
+
+      proxy.on('error', function (err) {
+        expect(err).to.be.an(Error);
+        expect(err.code).to.be('ECONNREFUSED');
+        proxyServer._server.close();
+        done();
+      });
+    });
+
     it('should proxy a socket.io stream', function (done) {
       var ports = { source: gen.port, proxy: gen.port };
       var proxy = httpProxy.createProxyServer({
