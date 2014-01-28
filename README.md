@@ -199,8 +199,8 @@ httpProxy.createServer({
     port: 9009
   },
   ssl: {
-    key: fs.readFileSync('valid-ssl-key.pem'), 'utf8'),
-    cert: fs.readFileSync('valid-ssl-cert.pem'), 'utf8')
+    key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
+    cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
   }
 }).listen(8009);
 ```
@@ -213,8 +213,8 @@ httpProxy.createServer({
 //
 httpProxy.createServer({
   ssl: {
-    key: fs.readFileSync('valid-ssl-key.pem'), 'utf8'),
-    cert: fs.readFileSync('valid-ssl-cert.pem'), 'utf8')
+    key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
+    cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
   },
   target: 'https://localhost:9010',
   secure: true // Depends on your needs, could be false.
