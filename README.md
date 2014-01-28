@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="doc/logo.png?raw=true"/>
+  <img src="https://raw.github.com/nodejitsu/node-http-proxy/master/doc/logo.png"/>
 </p>
 
 node-http-proxy
