@@ -1,7 +1,12 @@
 {
   "name"           : "http-proxy",
   "version"        : "1.0.2",
-  "repository" : "https://github.com/nodejitsu/node-http-proxy.git",
+  
+  "repository"     : {
+    "type"              : "git",
+    "url"               : "https://github.com/nodejitsu/node-http-proxy.git"
+  },
+  
   "description"    : "HTTP proxying for the masses",
   "author": "Nodejitsu Inc. <info@nodejitsu.com>",
   "maintainers"    : [
