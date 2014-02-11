@@ -86,6 +86,27 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
     expect(res.headers.how).to.eql('are you?');
   });
 
+  describe('#attachExtraHeaders', function() {
+    var proxyRes = {
+      headers: {
+        hey: 'hello',
+        how: 'are you?'
+      }
+    };
+
+    var res = {
+      setHeader: function(k, v) {
+        this.headers[k] = v;
+      },
+      headers: {}
+    };
+
+    httpProxy.attachExtraHeaders({}, res, proxyRes, { extraHeaders: { billy: 'sally' }});
+
+    expect(res.headers.hey).to.not.exist;
+    expect(res.headers.how).to.not.exist;
+    expect(res.headers.billy).to.eql('sally');
+  });
 
   describe('#removeChunked', function() {
     var proxyRes = {

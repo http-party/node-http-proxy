@@ -283,7 +283,7 @@ If you are using the `proxyServer.listen` method, the following options are also
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
  *  **xfwd**: true/false, adds x-forward headers
-
+ *  **extraHeaders**: an object that will attach extra headers (e.g. CORS) onto responses
 
 ### Test
 
