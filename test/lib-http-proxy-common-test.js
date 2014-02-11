@@ -15,6 +15,7 @@ describe('lib/http-proxy/common.js', function () {
           port      : 'you',
         },
         headers: {'fizz': 'bang', 'overwritten':true},
+        localAddress: 'local.address',
       },
       {
         method    : 'i',
@@ -34,6 +35,7 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.headers.pro).to.eql('xy');
       expect(outgoing.headers.fizz).to.eql('bang');
       expect(outgoing.headers.overwritten).to.eql(true);
+      expect(outgoing.localAddress).to.eql('local.address');
     });
 
     it('should set the agent to false if none is given', function () {
