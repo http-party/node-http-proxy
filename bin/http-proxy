@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+var port = parseInt(process.argv[2], 10);
+process.env.PORT = port || 3000;
+require('../lib/server');

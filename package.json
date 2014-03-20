@@ -16,6 +16,10 @@
 
   "main"           : "index.js",
 
+  "bin": {
+    "http-proxy": "./bin/http-proxy"
+  },
+
   "dependencies"   : {
     "eventemitter3"      : "*"
   },
