@@ -5,7 +5,7 @@
 node-http-proxy
 =======
 
-`node-http-proxy` is an HTTP programmable proxying library that supports 
+`node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as
 proxies and load balancers.
 
@@ -23,7 +23,7 @@ proxies and load balancers.
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
-an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L34-L51)) 
+an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L34-L51))
 
 ```javascript
 var httpProxy = require('http-proxy');
@@ -48,7 +48,7 @@ require('http').createServer(function(req, res) {
 Errors can be listened on either using the Event Emitter API
 
 ```javascript
-proxy.on('error', function(e) { 
+proxy.on('error', function(e) {
   ...
 });
 ```
@@ -60,9 +60,9 @@ proxy.web(req, res, { target: 'http://mytarget.com:8080' }, function(e) { ... })
 ```
 
 When a request is proxied it follows two different pipelines ([available here](lib/http-proxy/passes))
-which apply transformations to both the `req` and `res` object. 
+which apply transformations to both the `req` and `res` object.
 The first pipeline (ingoing) is responsible for the creation and manipulation of the stream that connects your client to the target.
-The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data 
+The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data
 to the client.
 
 
@@ -93,14 +93,14 @@ and also you can put your own logic to handle the request.
 ```js
 var http = require('http'),
     httpProxy = require('http-proxy');
-    
+
 //
 // Create a proxy server with custom application logic
 //
 var proxy = httpProxy.createProxyServer({});
 
 //
-// Create your custom server and just call `proxy.web()` to proxy 
+// Create your custom server and just call `proxy.web()` to proxy
 // a web request to the target passed in the options
 // also you can use `proxy.ws()` to proxy a websockets request
 //
@@ -171,7 +171,7 @@ proxy.on('error', function (err, req, res) {
   res.writeHead(500, {
     'Content-Type': 'text/plain'
   });
-  
+
   res.end('Something went wrong. And we are reporting a custom error message.');
 });
 
@@ -251,7 +251,7 @@ var proxyServer = http.createServer(function (req, res) {
 });
 
 //
-// Listen to the `upgrade` event and proxy the 
+// Listen to the `upgrade` event and proxy the
 // WebSocket requests as well.
 //
 proxyServer.on('upgrade', function (req, socket, head) {
@@ -263,8 +263,8 @@ proxyServer.listen(8015);
 
 ### Contributing and Issues
 
-* Search on Google/Github 
-* If you can't find anything, open an issue 
+* Search on Google/Github
+* If you can't find anything, open an issue
 * If you feel comfortable about fixing the issue, fork the repo
 * Commit to your local branch (which must be different from `master`)
 * Submit your Pull Request (be sure to include tests and update documentation)
@@ -273,7 +273,7 @@ proxyServer.listen(8015);
 
 `httpProxy.createProxyServer` supports the following options:
 
- *  **target**: url string to be parsed with the url module 
+ *  **target**: url string to be parsed with the url module
  *  **forward**: url string to be parsed with the url module
  *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
  *  **secure**: true/false, if you want to verify the SSL Certs
@@ -283,6 +283,7 @@ If you are using the `proxyServer.listen` method, the following options are also
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
  *  **xfwd**: true/false, adds x-forward headers
+ *  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
 
 
 ### Test
