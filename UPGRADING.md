@@ -16,7 +16,7 @@ Check the [README.md](https://github.com/nodejitsu/node-http-proxy/blob/caronte/
 
 ## Proxying
 
-Web proying is done by calling the `.web()` method on a Proxy instance. You can check among some use cases in the [examples folder](https://github.com/nodejitsu/node-http-proxy/tree/caronte/examples/http)
+Web proxying is done by calling the `.web()` method on a Proxy instance. You can check among some use cases in the [examples folder](https://github.com/nodejitsu/node-http-proxy/tree/caronte/examples/http)
 
 ```javascript
 //
