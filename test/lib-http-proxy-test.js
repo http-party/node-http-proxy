@@ -78,14 +78,14 @@ describe('lib/http-proxy.js', function() {
       });
 
       source.listen(ports.source);
-      
+
       http.request({
         hostname: '127.0.0.1',
         port: ports.proxy,
         method: 'POST',
         headers: {
           'x-forwarded-for': '127.0.0.1'
-        } 
+        }
       }, function() {}).end();
     });
   });
@@ -105,7 +105,7 @@ describe('lib/http-proxy.js', function() {
       });
 
       source.listen(ports.source);
-      
+
       http.request({
         hostname: '127.0.0.1',
         port: ports.proxy,
@@ -117,7 +117,7 @@ describe('lib/http-proxy.js', function() {
           expect(data.toString()).to.eql('Hello from ' + ports.source);
         });
 
-        res.on('end', function () { 
+        res.on('end', function () {
           source.close();
           proxy._server.close();
           done();
@@ -141,7 +141,7 @@ describe('lib/http-proxy.js', function() {
       })
 
       proxy.listen(ports.proxy);
-      
+
       http.request({
         hostname: '127.0.0.1',
         port: ports.proxy,
@@ -158,6 +158,11 @@ describe('lib/http-proxy.js', function() {
         target: 'http://127.0.0.1:' + ports.source,
         timeout: 3
       }).listen(ports.proxy);
+
+      proxy.on('error', function (e) {
+        expect(e).to.be.an(Error);
+        expect(e.code).to.be.eql('ECONNRESET');
+      });
 
       var source = http.createServer(function(req, res) {
         setTimeout(function () {
@@ -207,7 +212,7 @@ describe('lib/http-proxy.js', function() {
   //     proxy.ee.on('http-proxy:**', function (uno, dos, tres) {
   //       events.push(this.event);
   //     })
-      
+
   //     http.request({
   //       hostname: '127.0.0.1',
   //       port: '8081',
