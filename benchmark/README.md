@@ -10,14 +10,18 @@ All benchmarking shall be done with [wrk](https://github.com/wg/wrk) which _is t
 $ wrk
 Usage: wrk <options> <url>                            
   Options:                                            
-    -c, --connections <n>  Connections to keep open   
-    -r, --requests    <n>  Total requests to make     
-    -t, --threads     <n>  Number of threads to use   
+    -c, --connections <N>  Connections to keep open   
+    -d, --duration    <T>  Duration of test           
+    -t, --threads     <N>  Number of threads to use   
                                                       
-    -H, --header      <h>  Add header to request      
+    -s, --script      <S>  Load Lua script file       
+    -H, --header      <H>  Add header to request      
+        --latency          Print latency statistics   
+        --timeout     <T>  Socket/request timeout     
     -v, --version          Print version details      
                                                       
-  Numeric arguments may include a SI unit (2k, 2M, 2G)
+  Numeric arguments may include a SI unit (1k, 1M, 1G)
+  Time arguments may include a time unit (2s, 2m, 2h)
 ```
 
 ## Benchmarks
@@ -30,4 +34,4 @@ _This benchmark requires three terminals running:_
 
 1. **A proxy server:** `node benchmark/scripts/proxy.js`
 2. **A target server:** `node benchmark/scripts/hello.js`
-3. **A wrk process:** `wrk -c 20 -r 10000 -t 2 http://127.0.0.1:8000`
+3. **A wrk process:** `wrk -c 20 -d5m -t 2 http://127.0.0.1:8000`
