@@ -38,6 +38,48 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.localAddress).to.eql('local.address');
     });
 
+    it('should not override agentless upgrade header', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing,
+        {
+          agent: undefined,
+          target: {
+            host      : 'hey',
+            hostname  : 'how',
+            socketPath: 'are',
+            port      : 'you',
+          },
+          headers: {'connection': 'upgrade'},
+        },
+        {
+          method    : 'i',
+          url      : 'am',
+          headers   : {'pro':'xy','overwritten':false}
+        });
+      expect(outgoing.headers.connection).to.eql('upgrade');
+    });
+
+    it('should override agentless non-upgrade header to close', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing,
+        {
+          agent: undefined,
+          target: {
+            host      : 'hey',
+            hostname  : 'how',
+            socketPath: 'are',
+            port      : 'you',
+          },
+          headers: {'connection': 'xyz'},
+        },
+        {
+          method    : 'i',
+          url      : 'am',
+          headers   : {'pro':'xy','overwritten':false}
+        });
+      expect(outgoing.headers.connection).to.eql('close');
+    });
+
     it('should set the agent to false if none is given', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing, {target:
