@@ -127,4 +127,32 @@ describe('#createProxyServer.web() using own http server', function () {
       method: 'GET',
     }, function() {}).end();
   });
+
+  it('should proxy the request and provide a proxyRes event with the request and response parameters', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080'
+    });
+
+    function requestHandler(req, res) {
+      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+        source.close();
+        proxyServer.close();
+        expect(pReq).to.be.equal(req);
+        expect(pRes).to.be.equal(res);
+        done();
+      });
+
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      res.end('Response');
+    });
+
+    proxyServer.listen('8084');
+    source.listen('8080');
+    http.request('http://127.0.0.1:8084', function() {}).end();
+  });
 });
