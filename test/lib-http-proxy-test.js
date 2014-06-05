@@ -159,9 +159,9 @@ describe('lib/http-proxy.js', function() {
         timeout: 3
       }).listen(ports.proxy);
 
-      proxy.on('error', function (e) {
-        expect(e).to.be.an(Error);
-        expect(e.code).to.be.eql('ECONNRESET');
+      proxy.on('error',  function (err, req, res) {
+        res.writeHead(500, {'Content-Type': 'text/plain'});
+        res.end('Something went wrong with the request: ' + err);
       });
 
       var source = http.createServer(function(req, res) {
@@ -176,11 +176,8 @@ describe('lib/http-proxy.js', function() {
         hostname: '127.0.0.1',
         port: ports.proxy,
         method: 'GET',
-      }, function() {});
-
-      testReq.on('error', function (e) {
-        expect(e).to.be.an(Error);
-        expect(e.code).to.be.eql('ECONNRESET');
+      }, function(res) {
+        expect(res.statusCode).to.be.eql(500);
         proxy._server.close();
         source.close();
         done();
