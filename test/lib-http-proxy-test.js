@@ -159,6 +159,46 @@ describe('lib/http-proxy.js', function() {
         timeout: 3
       }).listen(ports.proxy);
 
+      proxy.on('error', function (e) {
+        expect(e).to.be.an(Error);
+        expect(e.code).to.be.eql('ECONNRESET');
+      });
+
+      var source = http.createServer(function(req, res) {
+        setTimeout(function () {
+          res.end('At this point the socket should be closed');
+        }, 5)
+      });
+
+      source.listen(ports.source);
+
+      var testReq = http.request({
+        hostname: '127.0.0.1',
+        port: ports.proxy,
+        method: 'GET',
+      }, function() {});
+
+      testReq.on('error', function (e) {
+        expect(e).to.be.an(Error);
+        expect(e.code).to.be.eql('ECONNRESET');
+        proxy._server.close();
+        source.close();
+        done();
+      });
+
+      testReq.end();
+    })
+  });
+
+  describe('#createProxyServer setting the correct proxy timeout value', function () {
+    it('should hang up the socket at the timeout', function (done) {
+      this.timeout(30);
+      var ports = { source: gen.port, proxy: gen.port };
+      var proxy = httpProxy.createProxyServer({
+        target: 'http://127.0.0.1:' + ports.source,
+        proxy_timeout: 3
+      }).listen(ports.proxy);
+
       proxy.on('error',  function (err, req, res) {
         res.writeHead(500, {'Content-Type': 'text/plain'});
         res.end('Something went wrong with the request: ' + err);
@@ -185,7 +225,7 @@ describe('lib/http-proxy.js', function() {
 
       testReq.end();
     })
-  })
+  });
 
   // describe('#createProxyServer using the web-incoming passes', function () {
   //   it('should emit events correclty', function(done) {

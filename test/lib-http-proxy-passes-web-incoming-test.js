@@ -15,6 +15,19 @@ describe('lib/http-proxy/passes/web.js', function() {
     })
   });
 
+  describe('#timeout', function() {
+    it('should set timeout on the socket', function() {
+      var done = false, stubRequest = {
+        socket: {
+          setTimeout: function(value) { done = value; }
+        }
+      }
+
+      webPasses.timeout(stubRequest, {}, { timeout: 5000});
+      expect(done).to.eql(5000);
+    });
+  });
+
   describe('#XHeaders', function () {
     var stubRequest = {
       connection: {
