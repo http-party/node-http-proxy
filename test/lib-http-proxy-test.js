@@ -294,9 +294,11 @@ describe('lib/http-proxy.js', function() {
       var proxy = httpProxy.createProxyServer({
         target: 'ws://127.0.0.1:' + ports.source,
         ws: true
-      }),
-      proxyServer = proxy.listen(ports.proxy),
-      destiny = io.listen(ports.source, function () {
+      });
+      proxyServer = proxy.listen(ports.proxy);
+      var server = http.createServer();
+      destiny = io.listen(server);
+      function startSocketIo() {
         var client = ioClient.connect('ws://127.0.0.1:' + ports.proxy);
 
         client.on('connect', function () {
@@ -306,10 +308,12 @@ describe('lib/http-proxy.js', function() {
         client.on('outgoing', function (data) {
           expect(data).to.be('Hello over websockets');
           proxyServer._server.close();
-          destiny.server.close();
+          server.close();
           done();
         });
-      });
+      }
+      server.listen(ports.source);
+      server.on('listening', startSocketIo);
 
       destiny.sockets.on('connection', function (socket) {
         socket.on('incoming', function (msg) {
