@@ -128,10 +128,10 @@ describe('#createProxyServer.web() using own http server', function () {
     }, function() {}).end();
   });
 
-  it('should proxy the request and handle timeout error (targetTimeout)', function(done) {
+  it('should proxy the request and handle timeout error (proxyTimeout)', function(done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:45000',
-      targetTimeout: 100
+      proxyTimeout: 100
     });
 
     require('net').createServer().listen(45000);
