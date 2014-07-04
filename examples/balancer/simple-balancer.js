@@ -58,7 +58,7 @@ http.createServer(function (req, res) {
   //
   // ...and then the server you just used becomes the last item in the list.
   //
-  addresses.push(target);
+  addresses.push(target.target);
 }).listen(8021);
 
 // Rinse; repeat; enjoy.
