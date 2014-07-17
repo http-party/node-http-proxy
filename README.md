@@ -114,6 +114,42 @@ console.log("listening on port 5050")
 server.listen(5050);
 ```
 
+#### Setup a stand-alone proxy server with proxy request header re-writing
+This example shows how you can proxy a request using your own HTTP server that
+modifies the outgoing proxy request by adding a special header.
+
+```js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+
+//
+// Create a proxy server with custom application logic
+//
+var proxy = httpProxy.createProxyServer({});
+
+//
+// To modify the proxy connection before data is sent, you can register a
+// modifyProxyConnection function that takes the following arguments:
+// (http.ClientRequest proxyReq, http.IncomingMessage req, 
+//  http.ServerResponse res, Object options). This mechanism is useful when
+// you need to modify the proxy request before the proxy connection
+// is made to the target.
+//
+var server = require('http').createServer(function(req, res) {
+  // You can define here your custom logic to handle the request
+  // and then proxy the request.
+  proxy.web(req, res, { 
+    target: 'http://127.0.0.1:5060',
+    modifyProxyConnection: function(proxyReq, req, res, options) {
+      proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+    }
+  });
+});
+
+console.log("listening on port 5050")
+server.listen(5050);
+```
+
 #### Setup a stand-alone proxy server with latency
 
 ```js
