@@ -53,7 +53,7 @@ describe('lib/http-proxy.js', function() {
 
           res.on('end', function () {
             source.close();
-            proxy._server.close();
+            proxy.close();
             done();
           })
         }).end();
@@ -93,7 +93,7 @@ describe('lib/http-proxy.js', function() {
 
           res.on('end', function () {
             source.close();
-            proxy._server.close();
+            proxy.close();
             done();
           });
         }).end();
@@ -138,7 +138,7 @@ describe('lib/http-proxy.js', function() {
 
           res.on('end', function () {
             source.close();
-            proxy._server.close();
+            proxy.close();
             done();
           })
         }).end();

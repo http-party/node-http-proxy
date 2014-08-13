@@ -36,6 +36,7 @@ An object will be returned with four values:
 * web `req, res, [options]` (used for proxying regular HTTP(S) requests)
 * ws `req, socket, head, [options]` (used for proxying WS(S) requests)
 * listen `port` (a function that wraps the object in a webserver, for your convenience)
+* close `[callback]` (a function that closes the inner webserver and stops listening on given port)
 
 Is it then possible to proxy requests by calling these functions
 
@@ -322,6 +323,21 @@ If you are using the `proxyServer.listen` method, the following options are also
  *  **xfwd**: true/false, adds x-forward headers
  *  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
 
+### Shutdown
+
+* When testing or running server within another program it may be necessary to close the proxy.
+* This will stop the proxy from accepting new connections.
+
+```js
+var proxy = new httpProxy.createProxyServer({
+  target: {
+    host: 'localhost',
+    port: 1337
+  }
+});
+
+proxy.close();
+```
 
 ### Test
 

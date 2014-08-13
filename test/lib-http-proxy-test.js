@@ -52,7 +52,7 @@ describe('lib/http-proxy.js', function() {
         expect(req.method).to.eql('GET');
         expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
         source.close();
-        proxy._server.close();
+        proxy.close();
         done();
       });
 
@@ -73,7 +73,7 @@ describe('lib/http-proxy.js', function() {
         expect(req.headers['x-forwarded-for']).to.eql('127.0.0.1');
         expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
         source.close();
-        proxy._server.close();
+        proxy.close();
         done();
       });
 
@@ -119,7 +119,7 @@ describe('lib/http-proxy.js', function() {
 
         res.on('end', function () {
           source.close();
-          proxy._server.close();
+          proxy.close();
           done();
         });
       }).end();
@@ -136,7 +136,7 @@ describe('lib/http-proxy.js', function() {
       proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
-        proxy._server.close();
+        proxy.close();
         done();
       })
 
@@ -181,7 +181,7 @@ describe('lib/http-proxy.js', function() {
       testReq.on('error', function (e) {
         expect(e).to.be.an(Error);
         expect(e.code).to.be.eql('ECONNRESET');
-        proxy._server.close();
+        proxy.close();
         source.close();
         done();
       });
@@ -228,7 +228,7 @@ describe('lib/http-proxy.js', function() {
   //         expect(events).to.contain('http-proxy:outgoing:web:begin');
   //         expect(events).to.contain('http-proxy:outgoing:web:end');
   //         source.close();
-  //         proxyServer._server.close();
+  //         proxyServer.close();
   //         done();
   //       });
   //     }).end();
@@ -253,7 +253,7 @@ describe('lib/http-proxy.js', function() {
         client.on('message', function (msg) {
           expect(msg).to.be('Hello over websockets');
           client.close();
-          proxyServer._server.close();
+          proxyServer.close();
           destiny.close();
           done();
         });
@@ -284,7 +284,7 @@ describe('lib/http-proxy.js', function() {
       proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
-        proxyServer._server.close();
+        proxyServer.close();
         done();
       });
     });
@@ -307,7 +307,7 @@ describe('lib/http-proxy.js', function() {
 
         client.on('outgoing', function (data) {
           expect(data).to.be('Hello over websockets');
-          proxyServer._server.close();
+          proxyServer.close();
           server.close();
           done();
         });
