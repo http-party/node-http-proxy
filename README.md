@@ -216,8 +216,8 @@ proxy.on('error', function (err, req, res) {
 //
 // Listen for the `proxyRes` event on `proxy`.
 //
-proxy.on('proxyRes', function (res) {
-  console.log('RAW Response from the target', JSON.stringify(res.headers, true, 2));
+proxy.on('proxyRes', function (proxyRes, req, res) {
+  console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
 });
 
 ```
