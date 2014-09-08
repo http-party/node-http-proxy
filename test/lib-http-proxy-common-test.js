@@ -117,6 +117,29 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.port).to.eql(443);
     });
+
+    it('should keep the original target path in the outgoing path', function(){
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {target:
+        { path: 'some-path' }
+      }, { url : 'am' });
+
+      expect(outgoing.path).to.eql('some-path/am');
+    });
+
+    it('should keep the original forward path in the outgoing path', function(){
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: {},
+        forward: {
+          path: 'some-path'
+        }
+      }, {
+        url : 'am'
+      }, 'forward');
+
+      expect(outgoing.path).to.eql('some-path/am');
+    });
   });
 
   describe('#setupSocket', function () {
