@@ -20,7 +20,7 @@ describe('lib/http-proxy/common.js', function () {
       {
         method    : 'i',
         url      : 'am',
-        headers   : {'pro':'xy','overwritten':false} 
+        headers   : {'pro':'xy','overwritten':false}
       });
 
       expect(outgoing.host).to.eql('hey');
@@ -91,7 +91,7 @@ describe('lib/http-proxy/common.js', function () {
     it('set the port according to the protocol', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing,
-      { 
+      {
         agent     : '?',
         target: {
           host      : 'how',
@@ -103,7 +103,7 @@ describe('lib/http-proxy/common.js', function () {
       {
         method    : 'i',
         url      : 'am',
-        headers   : 'proxy' 
+        headers   : 'proxy'
       });
 
       expect(outgoing.host).to.eql('how');
@@ -140,6 +140,16 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.path).to.eql('some-path/am');
     });
+
+    it('should not prepend the target path to the outgoing path with prependPath = false', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: { path: 'hellothere' },
+        prependPath: false
+      }, { url: 'hi' });
+
+      expect(outgoing.path).to.eql('hi');
+    })
   });
 
   describe('#setupSocket', function () {
