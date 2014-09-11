@@ -41,7 +41,7 @@ An object will be returned with four values:
 Is it then possible to proxy requests by calling these functions
 
 ```javascript
-require('http').createServer(function(req, res) {
+http.createServer(function(req, res) {
   proxy.web(req, res, { target: 'http://mytarget.com:8080' });
 });
 ```
@@ -105,7 +105,7 @@ var proxy = httpProxy.createProxyServer({});
 // a web request to the target passed in the options
 // also you can use `proxy.ws()` to proxy a websockets request
 //
-var server = require('http').createServer(function(req, res) {
+var server = http.createServer(function(req, res) {
   // You can define here your custom logic to handle the request
   // and then proxy the request.
   proxy.web(req, res, { target: 'http://127.0.0.1:5060' });
@@ -140,7 +140,7 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
   proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
 });
 
-var server = require('http').createServer(function(req, res) {
+var server = http.createServer(function(req, res) {
   // You can define here your custom logic to handle the request
   // and then proxy the request.
   proxy.web(req, res, {
