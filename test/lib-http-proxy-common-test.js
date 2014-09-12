@@ -150,6 +150,15 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.path).to.eql('hi');
     })
+
+    it('should properly join paths', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: { path: '/forward' },
+      }, { url: '/static/path' });
+
+      expect(outgoing.path).to.eql('/forward/static/path');
+    })
   });
 
   describe('#setupSocket', function () {
