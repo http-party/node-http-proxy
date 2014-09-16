@@ -38,7 +38,7 @@ An object will be returned with four values:
 * listen `port` (a function that wraps the object in a webserver, for your convenience)
 * close `[callback]` (a function that closes the inner webserver and stops listening on given port)
 
-Is it then possible to proxy requests by calling these functions
+It is then possible to proxy requests by calling these functions
 
 ```javascript
 http.createServer(function(req, res) {
