@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+var pkg = require('../package.json');
+var program = require('commander');
+var url = require('url');
+
+program
+  .version(pkg.version)
+  .usage('[options] target')
+  .option('-p, --port [port]', 'Port to listen on', 3000)
+  .option('--disable-web-sockets', 'Do not proxy web sockets')
+  .parse(process.argv);
+
+function exit(msg) {
+  console.error("  " + msg);
+  program.help();
+}
+
+var target = program.args[0];
+if(!target)
+  exit("Target missing");
+target = url.parse(target);
+if(!/^http:$/.test(target.protocol))
+  exit("Target protocol must be http[s]");
+target.pathname = null;
+target = url.format(target);
+
+require('../').createProxyServer({
+  target: target,
+  ws: !program.disableWebSockets
+}).listen(program.port, function() {
+  var addr = this.address();
+  console.log("Proxying from %s to %s...", addr.port, target);
+});
+
