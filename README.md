@@ -190,6 +190,7 @@ http.createServer(function (req, res) {
 
 * `error`: The error event is emitted if the request to the target fail.
 * `proxyRes`: This event is emitted if the request to the target got a response.
+* `proxySocket`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 
 ```js
 var httpProxy = require('http-proxy');
@@ -220,6 +221,13 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
   console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
 });
 
+//
+// Listen for the `proxySocket` event on `proxy`.
+//
+proxy.on('proxySocket', function (proxySocket) {
+  // listen for messages coming FROM the target here
+  proxySocket.on('data', hybiParseAndLogMessage);
+});
 ```
 
 #### Using HTTPS
