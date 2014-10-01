@@ -281,9 +281,49 @@ describe('lib/http-proxy.js', function() {
         client.send('hello there');
       });
 
+      client.on('error', function (err) {
+        expect(err).to.be.an(Error);
+        expect(err.code).to.be('ECONNRESET');
+      });
+
       proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
+        proxyServer.close();
+        done();
+      });
+    });
+
+    it('should close client socket if upstream is closed before upgrade', function (done) {
+      var ports = { source: gen.port, proxy: gen.port };
+      var server = http.createServer();
+      server.on('upgrade', function (req, socket, head) {
+        var response = [
+          'HTTP/1.1 404 Not Found',
+          'Content-type: text/html',
+          '',
+          ''
+        ];
+        socket.write(response.join('\r\n'));
+        socket.end();
+      });
+      server.listen(ports.source);
+
+      var proxy = httpProxy.createProxyServer({
+        // note: we don't ever listen on this port
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      client = new ws('ws://127.0.0.1:' + ports.proxy);
+
+      client.on('open', function () {
+        client.send('hello there');
+      });
+
+      client.on('error', function (err) {
+        expect(err).to.be.an(Error);
+        expect(err.code).to.be('ECONNRESET');
         proxyServer.close();
         done();
       });
