@@ -280,17 +280,24 @@ describe('lib/http-proxy.js', function() {
       client.on('open', function () {
         client.send('hello there');
       });
+      
+      var count = 0;
+      function maybe_done () {
+        count += 1;
+        if (count === 2) done();
+      }
 
       client.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNRESET');
+        maybe_done();
       });
 
       proxy.on('error', function (err) {
         expect(err).to.be.an(Error);
         expect(err.code).to.be('ECONNREFUSED');
         proxyServer.close();
-        done();
+        maybe_done();
       });
     });
 
