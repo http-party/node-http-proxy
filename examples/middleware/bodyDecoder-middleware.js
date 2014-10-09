@@ -42,7 +42,6 @@ var restreamer = function (){
     next()
     process.nextTick(function () {
       rawBody = new Buffer(req.body)
-      console.log('dsfgsdgsdgsdrtwergtsdgf', JSON.stringify(req.body).length)
       if(req.body) {
         req.emit('data', JSON.stringify(req.body))
       }
