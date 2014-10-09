@@ -41,7 +41,6 @@ var restreamer = function (){
     req.removeAllListeners('end')
     next()
     process.nextTick(function () {
-      rawBody = new Buffer(req.body)
       if(req.body) {
         req.emit('data', JSON.stringify(req.body))
       }
