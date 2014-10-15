@@ -2,7 +2,7 @@
 //
 // just to make these example a little bit interesting, 
 // make a little key value store with an http interface
-// (see couchbd for a grown-up version of this)
+// (see couchdb for a grown-up version of this)
 //
 // API:
 // GET / 
