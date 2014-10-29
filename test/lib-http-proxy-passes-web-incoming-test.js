@@ -264,4 +264,30 @@ describe('#createProxyServer.web() using own http server', function () {
     source.listen('8080');
     http.request('http://127.0.0.1:8086', function() {}).end();
   });
+
+  it('should proxy the request and handle changeOrigin option', function (done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      changeOrigin: true
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      source.close();
+      proxyServer.close();
+      expect(req.method).to.eql('GET');
+      expect(req.headers.host.split(':')[1]).to.eql('8080');
+      done();
+    });
+
+    proxyServer.listen('8081');
+    source.listen('8080');
+
+    http.request('http://127.0.0.1:8081', function() {}).end();
+  });
 });
