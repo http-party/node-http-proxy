@@ -202,6 +202,15 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.path).to.eql('/forward/static/path');
     })
+
+    it('should not modify the query string', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: { path: '/forward' },
+      }, { url: '/?foo=bar//&target=http://foobar.com/' });
+
+      expect(outgoing.path).to.eql('/forward/?foo=bar//&target=http://foobar.com/');
+    })
   });
 
   describe('#setupSocket', function () {
