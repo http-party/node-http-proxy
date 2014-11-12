@@ -146,7 +146,7 @@ describe('lib/http-proxy/common.js', function () {
       {
         method    : 'i',
         url      : 'am',
-        headers   : 'proxy'
+        headers   : {pro:'xy'}
       });
 
       expect(outgoing.host).to.eql('how');
@@ -156,7 +156,7 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.method).to.eql('i');
       expect(outgoing.path).to.eql('am');
-      expect(outgoing.headers).to.eql('proxy')
+      expect(outgoing.headers.pro).to.eql('xy')
 
       expect(outgoing.port).to.eql(443);
     });
