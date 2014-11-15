@@ -2,7 +2,7 @@
   <img src="https://raw.github.com/nodejitsu/node-http-proxy/master/doc/logo.png"/>
 </p>
 
-### Fork adding redirect following
+### Fork adding redirect following by P.I. Penkman.
 
 node-http-proxy
 =======
