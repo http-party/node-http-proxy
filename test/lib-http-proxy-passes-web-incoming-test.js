@@ -5,14 +5,23 @@ var webPasses = require('../lib/http-proxy/passes/web-incoming'),
 
 describe('lib/http-proxy/passes/web.js', function() {
   describe('#deleteLength', function() {
-    it('should change `content-length`', function() {
+    it('should change `content-length` for DELETE requests', function() {
       var stubRequest = {
         method: 'DELETE',
         headers: {}
       };
       webPasses.deleteLength(stubRequest, {}, {});
       expect(stubRequest.headers['content-length']).to.eql('0');
-    })
+    });
+
+    it('should change `content-length` for OPTIONS requests', function() {
+      var stubRequest = {
+        method: 'OPTIONS',
+        headers: {}
+      };
+      webPasses.deleteLength(stubRequest, {}, {});
+      expect(stubRequest.headers['content-length']).to.eql('0');
+    });
   });
 
   describe('#timeout', function() {
