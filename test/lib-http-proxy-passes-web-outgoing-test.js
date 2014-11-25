@@ -2,6 +2,58 @@ var httpProxy = require('../lib/http-proxy/passes/web-outgoing'),
     expect = require('expect.js');
 
 describe('lib/http-proxy/passes/web-outgoing.js', function () {
+  describe('#setRedirectHostRewrite', function () {
+    context('rewrites location host to option', function() {
+      beforeEach(function() {
+        this.proxyRes = {
+          statusCode: 301,
+          headers: {
+            location: "http://f.com/"
+          }
+        };
+
+        this.options = {
+          hostRewrite: "x.com"
+        };
+      });
+
+      it('on 301', function() {
+        this.proxyRes.statusCode = 301;
+        httpProxy.setRedirectHostRewrite({}, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://'+this.options.hostRewrite+'/');
+      });
+
+      it('on 302', function() {
+        this.proxyRes.statusCode = 302;
+        httpProxy.setRedirectHostRewrite({}, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://'+this.options.hostRewrite+'/');
+      });
+
+      it('on 307', function() {
+        this.proxyRes.statusCode = 307;
+        httpProxy.setRedirectHostRewrite({}, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://'+this.options.hostRewrite+'/');
+      });
+
+      it('on 308', function() {
+        this.proxyRes.statusCode = 308;
+        httpProxy.setRedirectHostRewrite({}, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://'+this.options.hostRewrite+'/');
+      });
+
+      it('not on 200', function() {
+        this.proxyRes.statusCode = 200;
+        httpProxy.setRedirectHostRewrite({}, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+      });
+
+      it('not when hostRewrite is unset', function() {
+        httpProxy.setRedirectHostRewrite({}, {}, this.proxyRes, {});
+        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+      });
+    });
+  });
+
   describe('#setConnection', function () {
     it('set the right connection with 1.0 - `close`', function() {
       var proxyRes = { headers: {} };
