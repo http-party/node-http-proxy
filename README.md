@@ -114,6 +114,11 @@ var server = http.createServer(function(req, res) {
 console.log("listening on port 5050")
 server.listen(5050);
 ```
+#### Modify a response from a proxied server
+Sometimes when you have recieved a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
+
+[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.  
+
 
 #### Setup a stand-alone proxy server with proxy request header re-writing
 This example shows how you can proxy a request using your own HTTP server that
