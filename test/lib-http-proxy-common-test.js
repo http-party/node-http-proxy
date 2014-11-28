@@ -203,13 +203,13 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.eql('/forward/static/path');
     })
 
-    it('should not modify the query string', function () {
+    it('should not modify the query string and hash string', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing, {
         target: { path: '/forward' },
-      }, { url: '/?foo=bar//&target=http://foobar.com/' });
+      }, { url: '/?foo=bar//&target=http://foobar.com/?a=1%26b=2&other=some#id12' });
 
-      expect(outgoing.path).to.eql('/forward/?foo=bar//&target=http://foobar.com/');
+      expect(outgoing.path).to.eql('/forward/?foo=bar//&target=http://foobar.com/?a=1%26b=2&other=some#id12');
     })
   });
 
