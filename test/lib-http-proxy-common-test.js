@@ -209,7 +209,7 @@ describe('lib/http-proxy/common.js', function () {
         target: { path: '/forward' },
       }, { url: '/?foo=bar//&target=http://foobar.com/' });
 
-      expect(outgoing.path).to.eql('/forward/?foo=bar//&target=http://foobar.com/');
+      expect(outgoing.path).to.eql('/forward?foo=bar//&target=http://foobar.com/');
     })
   });
 
