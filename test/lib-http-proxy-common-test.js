@@ -1,4 +1,5 @@
 var common = require('../lib/http-proxy/common'),
+    url = require('url'),
     expect = require('expect.js');
 
 describe('lib/http-proxy/common.js', function () {
@@ -210,6 +211,20 @@ describe('lib/http-proxy/common.js', function () {
       }, { url: '/?foo=bar//&target=http://foobar.com/?a=1%26b=2&other=2' });
 
       expect(outgoing.path).to.eql('/forward/?foo=bar//&target=http://foobar.com/?a=1%26b=2&other=2');
+    })
+
+    //
+    // This is the proper failing test case for the common.join problem
+    //
+    it('should correctly format the a toProxy URL', function () {
+      var outgoing = {};
+      var google = 'https://google.com'
+      common.setupOutgoing(outgoing, {
+        target: url.parse('http://sometarget.com:80'),
+        toProxy: true,
+      }, { url: google });
+
+      expect(outgoing.path).to.eql('/' + google);
     })
   });
 
