@@ -169,11 +169,11 @@ var http = require('http'),
 var proxy = httpProxy.createProxyServer();
 
 //
-// Create your server that make an operation that take a while
-// and then proxy de request
+// Create your server that makes an operation that waits a while
+// and then proxies the request
 //
 http.createServer(function (req, res) {
-  // This simulate an operation that take 500ms in execute
+  // This simulates an operation that takes 500ms to execute
   setTimeout(function () {
     proxy.web(req, res, {
       target: 'http://localhost:9008'
