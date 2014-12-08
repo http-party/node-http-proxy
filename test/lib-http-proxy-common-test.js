@@ -216,7 +216,7 @@ describe('lib/http-proxy/common.js', function () {
     //
     // This is the proper failing test case for the common.join problem
     //
-    it('should correctly format the a toProxy URL', function () {
+    it('should correctly format the toProxy URL', function () {
       var outgoing = {};
       var google = 'https://google.com'
       common.setupOutgoing(outgoing, {
@@ -225,7 +225,33 @@ describe('lib/http-proxy/common.js', function () {
       }, { url: google });
 
       expect(outgoing.path).to.eql('/' + google);
-    })
+    });
+
+    describe('when using changeOrigin', function () {
+      it('should correctly set the port to the host when it is a non-standard port using url.parse', function () {
+        var outgoing = {};
+        var myEndpoint = 'https://myCouch.com:6984';
+        common.setupOutgoing(outgoing, {
+          target: url.parse(myEndpoint),
+          changeOrigin: true
+        }, { url: '/' });
+
+        expect(outgoing.headers.host).to.eql('mycouch.com:6984');
+      });
+      it('should correctly set the port to the host when it is a non-standard port when setting host and port manually (which ignores port)', function () {
+        var outgoing = {};
+        common.setupOutgoing(outgoing, {
+          target: {
+            protocol: 'https:',
+            host: 'mycouch.com',
+            port: 6984
+          },
+          changeOrigin: true
+        }, { url: '/' });
+        expect(outgoing.headers.host).to.eql('mycouch.com:6984');
+      })
+    });
+
   });
 
   describe('#setupSocket', function () {
