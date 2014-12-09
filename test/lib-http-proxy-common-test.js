@@ -185,6 +185,18 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.eql('some-path/am');
     });
 
+    it('should properly detect https/wss protocol without the colon', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: {
+          protocol: 'https',
+          host: 'whatever.com'
+        }
+      }, { url: '/' });
+
+      expect(outgoing.port).to.eql(443);
+    });
+
     it('should not prepend the target path to the outgoing path with prependPath = false', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing, {
