@@ -190,8 +190,9 @@ http.createServer(function (req, res) {
 
 * `error`: The error event is emitted if the request to the target fail.
 * `proxyRes`: This event is emitted if the request to the target got a response.
-* `proxySocket`: This event is emitted once the proxy websocket was created and piped into the target websocket.
+* `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.
+* (DEPRECATED) `proxySocket`: Deprecated in favor to `open`.
 
 ```js
 var httpProxy = require('http-proxy');
@@ -223,9 +224,9 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
 });
 
 //
-// Listen for the `proxySocket` event on `proxy`.
+// Listen for the `open` event on `proxy`.
 //
-proxy.on('proxySocket', function (proxySocket) {
+proxy.on('open', function (proxySocket) {
   // listen for messages coming FROM the target here
   proxySocket.on('data', hybiParseAndLogMessage);
 });
