@@ -336,7 +336,6 @@ describe('lib/http-proxy.js', function() {
       });
     });
 
-
     it('should proxy a socket.io stream', function (done) {
       var ports = { source: gen.port, proxy: gen.port };
       var proxy = httpProxy.createProxyServer({
@@ -388,7 +387,7 @@ describe('lib/http-proxy.js', function() {
           client.disconnect();
         });
       }
-      
+
       proxyServer.on('close', function() {
         proxyServer.close();
         server.close();
