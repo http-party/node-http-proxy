@@ -280,7 +280,7 @@ describe('lib/http-proxy.js', function() {
       client.on('open', function () {
         client.send('hello there');
       });
-      
+
       var count = 0;
       function maybe_done () {
         count += 1;
@@ -373,7 +373,7 @@ describe('lib/http-proxy.js', function() {
     });
 
 
-    it('should emit close event when socket.io client disconnects', function (done) {
+    it('should emit open and close events when socket.io client connects and disconnects', function (done) {
       var ports = { source: gen.port, proxy: gen.port };
       var proxy = httpProxy.createProxyServer({
         target: 'ws://127.0.0.1:' + ports.source,
@@ -389,11 +389,17 @@ describe('lib/http-proxy.js', function() {
           client.disconnect();
         });
       }
-      
+      var count = 0;
+
+      proxyServer.on('open', function() {
+        count += 1;
+
+      });
+
       proxyServer.on('close', function() {
         proxyServer.close();
         server.close();
-        done();
+        if (count == 1) { done(); }
       });
 
       server.listen(ports.source);
