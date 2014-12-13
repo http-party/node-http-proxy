@@ -337,14 +337,15 @@ describe('lib/http-proxy.js', function() {
     });
 
     it('should proxy a socket.io stream', function (done) {
-      var ports = { source: gen.port, proxy: gen.port };
-      var proxy = httpProxy.createProxyServer({
+      var ports = { source: gen.port, proxy: gen.port },
+      proxy = httpProxy.createProxyServer({
         target: 'ws://127.0.0.1:' + ports.source,
         ws: true
-      });
-      proxyServer = proxy.listen(ports.proxy);
-      var server = http.createServer();
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      server = http.createServer(),
       destiny = io.listen(server);
+
       function startSocketIo() {
         var client = ioClient.connect('ws://127.0.0.1:' + ports.proxy);
 
