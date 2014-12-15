@@ -370,5 +370,42 @@ describe('lib/http-proxy.js', function() {
         });
       })
     });
+
+
+    it('should emit open and close events when socket.io client connects and disconnects', function (done) {
+      var ports = { source: gen.port, proxy: gen.port };
+      var proxy = httpProxy.createProxyServer({
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      });
+      var proxyServer = proxy.listen(ports.proxy);
+      var server = http.createServer();
+      var destiny = io.listen(server);
+
+      function startSocketIo() {
+        var client = ioClient.connect('ws://127.0.0.1:' + ports.proxy);
+        client.on('connect', function () {
+          client.disconnect();
+        });
+      }
+      var count = 0;
+
+      proxyServer.on('open', function() {
+        count += 1;
+
+      });
+
+      proxyServer.on('close', function() {
+        proxyServer.close();
+        server.close();
+        if (count == 1) { done(); }
+      });
+
+      server.listen(ports.source);
+      server.on('listening', startSocketIo);
+
+    });
+
+
   })
 });
