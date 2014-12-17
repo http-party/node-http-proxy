@@ -117,7 +117,7 @@ server.listen(5050);
 #### Modify a response from a proxied server
 Sometimes when you have received a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
 
-[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.  
+[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
 
 
 #### Setup a stand-alone proxy server with proxy request header re-writing
@@ -197,7 +197,7 @@ http.createServer(function (req, res) {
 * `proxyRes`: This event is emitted if the request to the target got a response.
 * `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.
-* (DEPRECATED) `proxySocket`: Deprecated in favor to `open`.
+* (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
 
 ```js
 var httpProxy = require('http-proxy');
