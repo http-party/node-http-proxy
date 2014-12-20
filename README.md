@@ -23,7 +23,7 @@ proxies and load balancers.
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
-an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L34-L51))
+an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L33-L50))
 
 ```javascript
 var httpProxy = require('http-proxy');
