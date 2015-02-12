@@ -340,7 +340,10 @@ proxyServer.listen(8015);
  *  **secure**: true/false, if you want to verify the SSL Certs
  *  **xfwd**: true/false, adds x-forward headers
  *  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
- *  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
+ *  **prependPath**: specify whether you want to prepend the target's path to the proxy path
+ *  **localAddress**: Local interface string to bind for outgoing connections
+ *  **changeOrigin**: changes the origin of the host header to the target URL
+ *  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
 
