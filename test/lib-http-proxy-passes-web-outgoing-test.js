@@ -6,113 +6,110 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
     beforeEach(function() {
       this.req = {
         headers: {
-          host: "x2.com"
+          host: "ext-auto.com"
         }
       };
       this.proxyRes = {
         statusCode: 301,
         headers: {
-          location: "http://f.com/"
+          location: "http://backend.com/"
         }
+      };
+      this.options = {
+        target: "http://backend.com"
       };
     });
 
     context('rewrites location host with hostRewrite', function() {
       beforeEach(function() {
-        this.options = {
-          hostRewrite: "x.com"
-        };
+        this.options.hostRewrite = "ext-manual.com";
       });
       [301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('http://'+this.options.hostRewrite+'/');
+          expect(this.proxyRes.headers.location).to.eql('http://ext-manual.com/');
         });
       });
 
       it('not on 200', function() {
         this.proxyRes.statusCode = 200;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when hostRewrite is unset', function() {
         delete this.options.hostRewrite;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('takes precedence over autoRewrite', function() {
         this.options.autoRewrite = true;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://'+this.options.hostRewrite+'/');
+        expect(this.proxyRes.headers.location).to.eql('http://ext-manual.com/');
       });
     });
 
     context('rewrites location host with autoRewrite', function() {
       beforeEach(function() {
-        this.options = {
-          autoRewrite: true,
-        };
+        this.options.autoRewrite = true;
       });
       [301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('http://'+this.req.headers.host+'/');
+          expect(this.proxyRes.headers.location).to.eql('http://ext-auto.com/');
         });
       });
 
       it('not on 200', function() {
         this.proxyRes.statusCode = 200;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when autoRewrite is unset', function() {
         delete this.options.autoRewrite;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
     });
 
     context('rewrites location protocol with protocolRewrite', function() {
       beforeEach(function() {
-        this.options = {
-          protocolRewrite: 'https',
-        };
+        this.options.protocolRewrite = 'https';
       });
       [301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('https://f.com/');
+          expect(this.proxyRes.headers.location).to.eql('https://backend.com/');
         });
       });
 
       it('not on 200', function() {
         this.proxyRes.statusCode = 200;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when protocolRewrite is unset', function() {
         delete this.options.protocolRewrite;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://f.com/');
+        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('works together with hostRewrite', function() {
-        this.options.hostRewrite = 'x.com'
+        this.options.hostRewrite = 'ext-manual.com'
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('https://x.com/');
+        expect(this.proxyRes.headers.location).to.eql('https://ext-manual.com/');
       });
 
       it('works together with autoRewrite', function() {
         this.options.autoRewrite = true
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('https://x2.com/');
+        expect(this.proxyRes.headers.location).to.eql('https://ext-auto.com/');
       });
     });
   });
