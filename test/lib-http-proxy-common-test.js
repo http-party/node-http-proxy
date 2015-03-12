@@ -17,6 +17,7 @@ describe('lib/http-proxy/common.js', function () {
         },
         headers: {'fizz': 'bang', 'overwritten':true},
         localAddress: 'local.address',
+        auth:'username:pass'
       },
       {
         method    : 'i',
@@ -37,6 +38,7 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.headers.fizz).to.eql('bang');
       expect(outgoing.headers.overwritten).to.eql(true);
       expect(outgoing.localAddress).to.eql('local.address');
+      expect(outgoing.auth).to.eql('username:pass');
     });
 
     it('should not override agentless upgrade header', function () {
