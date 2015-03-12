@@ -17,7 +17,7 @@ describe('lib/http-proxy/common.js', function () {
         },
         headers: {'fizz': 'bang', 'overwritten':true},
         localAddress: 'local.address',
-	auth:'username:pass'
+	      auth:'username:pass'
       },
       {
         method    : 'i',
