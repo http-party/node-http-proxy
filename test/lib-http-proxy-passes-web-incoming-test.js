@@ -299,4 +299,31 @@ describe('#createProxyServer.web() using own http server', function () {
 
     http.request('http://127.0.0.1:8081', function() {}).end();
   });
+
+  it('should proxy the request with the Authorization header set', function (done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      auth: 'user:pass'
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      source.close();
+      proxyServer.close();
+      var auth = new Buffer(req.headers.authorization.split(' ')[1], 'base64');
+      expect(req.method).to.eql('GET');
+      expect(auth.toString()).to.eql('user:pass');
+      done();
+    });
+
+    proxyServer.listen('8081');
+    source.listen('8080');
+
+    http.request('http://127.0.0.1:8081', function() {}).end();
+  });
 });
