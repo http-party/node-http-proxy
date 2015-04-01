@@ -299,6 +299,17 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.ciphers).eql('my-ciphers');
       expect(outgoing.secureProtocol).eql('my-secure-protocol');
     });
+
+    // url.parse('').path => null
+    it('should not pass null as last arg to #urlJoin', function(){
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {target:
+        { path: '' }
+      }, { url : '' });
+
+      expect(outgoing.path).to.be('/');
+    });
+
   });
 
   describe('#setupSocket', function () {
