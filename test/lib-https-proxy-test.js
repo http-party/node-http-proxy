@@ -35,6 +35,7 @@ describe('lib/http-proxy.js', function() {
           ssl: {
             key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
             cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+            ciphers: 'AES128-GCM-SHA256',
           }
         }).listen(ports.proxy);
 
@@ -65,6 +66,7 @@ describe('lib/http-proxy.js', function() {
         var source = https.createServer({
           key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
           cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+          ciphers: 'AES128-GCM-SHA256',
         }, function (req, res) {
           expect(req.method).to.eql('GET');
           expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
@@ -105,6 +107,7 @@ describe('lib/http-proxy.js', function() {
         var source = https.createServer({
           key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
           cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+          ciphers: 'AES128-GCM-SHA256',
         }, function(req, res) {
           expect(req.method).to.eql('GET');
           expect(req.headers.host.split(':')[1]).to.eql(ports.proxy);
@@ -119,6 +122,7 @@ describe('lib/http-proxy.js', function() {
           ssl: {
             key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
             cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+            ciphers: 'AES128-GCM-SHA256',
           },
           secure: false
         }).listen(ports.proxy);
@@ -150,6 +154,7 @@ describe('lib/http-proxy.js', function() {
         var source = https.createServer({
           key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
           cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+          ciphers: 'AES128-GCM-SHA256',
         }).listen(ports.source);
 
         var proxy = httpProxy.createProxyServer({
@@ -191,6 +196,7 @@ describe('lib/http-proxy.js', function() {
         var ownServer = https.createServer({
           key: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-key.pem')),
           cert: fs.readFileSync(path.join(__dirname, 'fixtures', 'agent2-cert.pem')),
+          ciphers: 'AES128-GCM-SHA256',
         }, function (req, res) {
           proxy.web(req, res, {
             target: 'http://127.0.0.1:' + ports.source
