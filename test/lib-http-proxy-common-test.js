@@ -241,6 +241,31 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.eql('/' + google);
     });
 
+    describe('when using ignorePath', function () {
+      it('should ignore the path of the `req.url` passed in but use the target path', function () {
+        var outgoing = {};
+        var myEndpoint = 'https://whatever.com/some/crazy/path/whoooo';
+        common.setupOutgoing(outgoing, {
+          target: url.parse(myEndpoint),
+          ignorePath: true
+        }, { url: '/more/crazy/pathness' });
+
+        expect(outgoing.path).to.eql('/some/crazy/path/whoooo/');
+      });
+
+      it('and prependPath: false, it should ignore path of target and incoming request', function () {
+         var outgoing = {};
+        var myEndpoint = 'https://whatever.com/some/crazy/path/whoooo';
+        common.setupOutgoing(outgoing, {
+          target: url.parse(myEndpoint),
+          ignorePath: true,
+          prependPath: false
+        }, { url: '/more/crazy/pathness' });
+
+        expect(outgoing.path).to.eql('/');
+      });
+    });
+
     describe('when using changeOrigin', function () {
       it('should correctly set the port to the host when it is a non-standard port using url.parse', function () {
         var outgoing = {};
