@@ -119,6 +119,32 @@ Sometimes when you have received a HTML/XML document from the server of origin y
 
 [Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
 
+#### Modify a request before forward the request (Request Payload)
+```js
+var http = require('http'),
+    httpProxy = require('http-proxy');
+var proxy = httpProxy.createProxyServer({});
+var server = http.createServer(function(req, res) {
+  proxy.web(req, res, { target: 'http://127.0.0.1:5060' });
+});
+proxy.on('start', function (request, response, target, next) {
+		var buffer = '';
+		// get current payload
+		request.on('data', function (chunk) {
+			buffer += chunk;
+		});
+		request.on('end', function () {
+		    // an async operation
+			setTimeout(function () {
+			    var newPayload = buffer.replace('<message ', '<message id="my-hash" ');
+				next(newPayload);
+			}, 250);
+		});
+	});
+});
+console.log("listening on port 5050")
+server.listen(5050);
+```
 
 #### Setup a stand-alone proxy server with proxy request header re-writing
 This example shows how you can proxy a request using your own HTTP server that
@@ -197,6 +223,7 @@ http.createServer(function (req, res) {
 * `proxyRes`: This event is emitted if the request to the target got a response.
 * `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.
+* `start`: This event is emitted before the proxy send the request to target/forward; websocket not supported
 * (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
 
 ```js
