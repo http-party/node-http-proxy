@@ -47,7 +47,7 @@ https.createServer(httpsOpts, function (req, res) {
 }).listen(9010);
 
 //
-// Create the proxy server listening on port 443
+// Create the proxy server listening on port 8010
 //
 httpProxy.createServer({
   ssl: httpsOpts,
