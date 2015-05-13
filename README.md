@@ -9,6 +9,10 @@ node-http-proxy
 websockets. It is suitable for implementing components such as
 proxies and load balancers.
 
+### Installation
+
+`npm install http-proxy --save`
+
 ### Build Status
 
 <p align="center">
