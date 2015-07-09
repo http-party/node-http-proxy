@@ -339,12 +339,25 @@ proxyServer.listen(8015);
 `httpProxy.createProxyServer` supports the following options:
 
  *  **target**: url string to be parsed with the url module
- *  **forward**: url string to be parsed with the url module
- *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
- *  **secure**: true/false, if you want to verify the SSL Certs
- *  **xfwd**: true/false, adds x-forward headers
- *  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
- *  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
+*  **forward**: url string to be parsed with the url module
+*  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
+*  **ssl**: object to be passed to https.createServer()
+*  **ws**: true/false, if you want to proxy websockets
+*  **xfwd**: true/false, adds x-forward headers
+*  **secure**: true/false, if you want to verify the SSL Certs
+*  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
+*  **prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
+*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request
+*  **localAddress**: Local interface string to bind for outgoing connections
+*  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
+*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.  
+*  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
+*  **autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
+*  **protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
+
+**NOTE:**  
+`options.ws` and `options.ssl` are optional.  
+`options.target` and `options.forward` cannot both be missing
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
 
