@@ -14,6 +14,7 @@
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "1.x.x",
+    "isstream": "~0.1.2",
     "requires-port": "0.x.x"
   },
   "devDependencies": {
