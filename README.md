@@ -338,7 +338,7 @@ proxyServer.listen(8015);
 
 `httpProxy.createProxyServer` supports the following options:
 
- *  **target**: url string to be parsed with the url module
+*  **target**: url string to be parsed with the url module
 *  **forward**: url string to be parsed with the url module
 *  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
 *  **ssl**: object to be passed to https.createServer()
