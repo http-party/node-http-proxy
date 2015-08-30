@@ -407,6 +407,43 @@ describe('lib/http-proxy.js', function() {
 
     });
 
+    it('should pass all set-cookie headers to client', function (done) {
+      var ports = { source: gen.port, proxy: gen.port };
+      var proxy = httpProxy.createProxyServer({
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      destiny = new ws.Server({ port: ports.source }, function () {
+        var key = new Buffer(Math.random().toString(35)).toString('base64');
+        
+        var requestOptions = {
+          port: ports.proxy,
+          host: '127.0.0.1',
+          headers: {
+            'Connection': 'Upgrade',
+            'Upgrade': 'websocket',
+            'Host': 'ws://127.0.0.1',
+            'Sec-WebSocket-Version': 13,
+            'Sec-WebSocket-Key': key
+          }
+        };
 
+        var req = http.request(requestOptions);
+        
+        req.on('upgrade', function (res, socket, upgradeHead) {
+          expect(res.headers['set-cookie'].length).to.be(2);
+          done();
+        });
+        
+        req.end();
+      });
+      
+      destiny.on('headers', function (headers) {
+        headers.push('Set-Cookie: test1=test1');
+        headers.push('Set-Cookie: test2=test2');
+      });
+    });
+    
   })
 });
