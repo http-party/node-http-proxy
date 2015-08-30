@@ -415,7 +415,7 @@ describe('lib/http-proxy.js', function() {
       }),
       proxyServer = proxy.listen(ports.proxy),
       destiny = new ws.Server({ port: ports.source }, function () {
-        var key = new Buffer(Math.random().toString(35)).toString('base64');
+        var key = new Buffer(Math.random().toString()).toString('base64');
         
         var requestOptions = {
           port: ports.proxy,
