@@ -332,7 +332,7 @@ describe('lib/http-proxy/common.js', function () {
         { path: '' }
       }, { url : '' });
 
-      expect(outgoing.path).to.be('/');
+      expect(outgoing.path).to.be('');
     });
 
   });
