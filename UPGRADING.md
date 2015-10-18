@@ -92,5 +92,6 @@ which were in the core and delegate them to eventual "userland" modules.
 
 The new API makes it really easy to implement code that behaves like the old Middleware API. You can check some examples [here](https://github.com/nodejitsu/node-http-proxy/tree/caronte/examples/middleware)
 
+### ProxyTable API
 
-
+See this [link](http://blog.nodejitsu.com/node-http-proxy-1dot0/) for an example of how to add proxy table functionality using the new API.
