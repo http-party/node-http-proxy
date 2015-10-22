@@ -198,6 +198,8 @@ http.createServer(function (req, res) {
 #### Listening for proxy events
 
 * `error`: The error event is emitted if the request to the target fail.
+* `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
+* `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
 * `proxyRes`: This event is emitted if the request to the target got a response.
 * `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.

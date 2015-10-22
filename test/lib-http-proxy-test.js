@@ -444,6 +444,49 @@ describe('lib/http-proxy.js', function() {
         headers.push('Set-Cookie: test2=test2');
       });
     });
+
+    it('should detect a proxyReq event and modify headers', function (done) {
+      var ports = { source: gen.port, proxy: gen.port },
+          proxy,
+          proxyServer,
+          destiny;
+
+      proxy = httpProxy.createProxyServer({
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      });
+
+      proxy.on('proxyReqWs', function(proxyReq, req, socket, options, head) {
+        proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+      });
+
+      proxyServer = proxy.listen(ports.proxy);
+
+      destiny = new ws.Server({ port: ports.source }, function () {
+        var client = new ws('ws://127.0.0.1:' + ports.proxy);
+
+        client.on('open', function () {
+          client.send('hello there');
+        });
+
+        client.on('message', function (msg) {
+          expect(msg).to.be('Hello over websockets');
+          client.close();
+          proxyServer.close();
+          destiny.close();
+          done();
+        });
+      });
+
+      destiny.on('connection', function (socket) {
+        expect(socket.upgradeReq.headers['x-special-proxy-header']).to.eql('foobar');
+
+        socket.on('message', function (msg) {
+          expect(msg).to.be('hello there');
+          socket.send('Hello over websockets');
+        });
+      });
+    });
     
   })
 });
