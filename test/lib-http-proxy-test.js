@@ -456,7 +456,7 @@ describe('lib/http-proxy.js', function() {
         ws: true
       });
 
-      proxy.on('proxyReqWs', function(proxyReq, req, res, options) {
+      proxy.on('proxyReqWs', function(proxyReq, req, socket, options, head) {
         proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
       });
 
