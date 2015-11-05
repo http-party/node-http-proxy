@@ -14,7 +14,7 @@
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "1.x.x",
-    "requires-port": "0.x.x"
+    "requires-port": "1.x.x"
   },
   "devDependencies": {
     "async": "*",
@@ -24,10 +24,10 @@
     "expect.js": "*",
     "mocha": "*",
     "mocha-lcov-reporter": "*",
-    "semver": "^4.3.3",
+    "semver": "^5.0.3",
     "socket.io": "*",
     "socket.io-client": "*",
-    "ws": "~0.5.0"
+    "ws": "^0.8.0"
   },
   "scripts": {
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js",
