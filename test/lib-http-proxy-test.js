@@ -487,6 +487,69 @@ describe('lib/http-proxy.js', function() {
         });
       });
     });
+
+    it('should forward frames with single frame payload (including on node 4.x)', function (done) {
+      var payload = Array(65529).join('0');
+      var ports = { source: gen.port, proxy: gen.port };
+      var proxy = httpProxy.createProxyServer({
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      destiny = new ws.Server({ port: ports.source }, function () {
+        var client = new ws('ws://127.0.0.1:' + ports.proxy);
+
+        client.on('open', function () {
+          client.send(payload);
+        });
+
+        client.on('message', function (msg) {
+          expect(msg).to.be('Hello over websockets');
+          client.close();
+          proxyServer.close();
+          destiny.close();
+          done();
+        });
+      });
+
+      destiny.on('connection', function (socket) {
+        socket.on('message', function (msg) {
+          expect(msg).to.be(payload);
+          socket.send('Hello over websockets');
+        });
+      });
+    });
     
-  })
+    it('should forward continuation frames with big payload (including on node 4.x)', function (done) {
+      var payload = Array(65530).join('0');
+      var ports = { source: gen.port, proxy: gen.port };
+      var proxy = httpProxy.createProxyServer({
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      destiny = new ws.Server({ port: ports.source }, function () {
+        var client = new ws('ws://127.0.0.1:' + ports.proxy);
+
+        client.on('open', function () {
+          client.send(payload);
+        });
+
+        client.on('message', function (msg) {
+          expect(msg).to.be('Hello over websockets');
+          client.close();
+          proxyServer.close();
+          destiny.close();
+          done();
+        });
+      });
+
+      destiny.on('connection', function (socket) {
+        socket.on('message', function (msg) {
+          expect(msg).to.be(payload);
+          socket.send('Hello over websockets');
+        });
+      });
+    });
+  });
 });
