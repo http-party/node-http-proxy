@@ -328,6 +328,9 @@ proxyServer.on('upgrade', function (req, socket, head) {
 proxyServer.listen(8015);
 ```
 
+#### ProxyTable API
+A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
+
 ### Contributing and Issues
 
 * Search on Google/Github

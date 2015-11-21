@@ -94,4 +94,4 @@ The new API makes it really easy to implement code that behaves like the old Mid
 
 ### ProxyTable API
 
-See this [link](http://blog.nodejitsu.com/node-http-proxy-1dot0/) for an example of how to add proxy table functionality using the new API.
+See this [link](https://github.com/donasaur/http-proxy-rules/) for an add-on proxy rules module that you can use to simulate the old ProxyTable API.
