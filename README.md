@@ -5,24 +5,50 @@
 node-http-proxy
 =======
 
+<p align="left">
+ <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
+  <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
+ <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
+  <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
+</p>
+
 `node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as
 proxies and load balancers.
+
+### Table of Contents
+  * [Installation](#installation)
+  * [Upgrading from 0.8.x ?](#upgrading-from-08x-)
+  * [Core Concept](#core-concept)
+  * [Use Cases](#use-cases)
+    * [Setup a basic stand-alone proxy server](#setup-a-basic-stand-alone-proxy-server)
+    * [Setup a stand-alone proxy server with custom server logic](#setup-a-stand-alone-proxy-server-with-custom-server-logic)
+    * [Setup a stand-alone proxy server with proxy request header re-writing](#setup-a-stand-alone-proxy-server-with-proxy-request-header-re-writing)
+    * [Modify a response from a proxied server](#modify-a-response-from-a-proxied-server)
+    * [Setup a stand-alone proxy server with latency](#setup-a-stand-alone-proxy-server-with-latency)
+    * [Using HTTPS](#using-https)
+    * [Proxying WebSockets](#proxying-websockets)
+  * [Options](#options)
+  * [Listening for proxy events](#listening-for-proxy-events)
+  * [Shutdown](#shutdown)
+  * [Miscellaneous](#miscellaneous)
+    * [Test](#test)
+    * [ProxyTable API](#proxytable-api)
+    * [Logo](#logo)
+  * [Contributing and Issues](#contributing-and-issues)
+  * [License](#license)
 
 ### Installation
 
 `npm install http-proxy --save`
 
-### Build Status
+**[Back to top](#table-of-contents)**
 
-<p align="center">
- <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
- 	<img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
- <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
- 	<img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
-</p>
+### Upgrading from 0.8.x ?
 
-### Looking to Upgrade from 0.8.x ? Click [here](UPGRADING.md)
+Click [here](UPGRADING.md)
+
+**[Back to top](#table-of-contents)**
 
 ### Core Concept
 
@@ -32,8 +58,9 @@ an `options` object as argument ([valid properties are available here](lib/http-
 ```javascript
 var httpProxy = require('http-proxy');
 
-var proxy = httpProxy.createProxyServer(options);
+var proxy = httpProxy.createProxyServer(options); // See (†)
 ```
+†Unless listen(..) is invoked on the object, this does not create a webserver. See below.
 
 An object will be returned with four values:
 
@@ -70,6 +97,9 @@ The first pipeline (ingoing) is responsible for the creation and manipulation of
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data
 to the client.
 
+**[Back to top](#table-of-contents)**
+
+### Use Cases
 
 #### Setup a basic stand-alone proxy server
 
@@ -79,7 +109,7 @@ var http = require('http'),
 //
 // Create your proxy server and set the target in the options.
 //
-httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000);
+httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000); // See (†)
 
 //
 // Create your target server
@@ -90,6 +120,9 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9000);
 ```
+†Invoking listen(..) triggers the creation of a web server. Otherwise, just the proxy instance is created.
+
+**[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with custom server logic
 This example show how you can proxy a request using your own HTTP server
@@ -118,11 +151,8 @@ var server = http.createServer(function(req, res) {
 console.log("listening on port 5050")
 server.listen(5050);
 ```
-#### Modify a response from a proxied server
-Sometimes when you have received a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
 
-[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
-
+**[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with proxy request header re-writing
 This example shows how you can proxy a request using your own HTTP server that
@@ -161,6 +191,15 @@ console.log("listening on port 5050")
 server.listen(5050);
 ```
 
+**[Back to top](#table-of-contents)**
+
+#### Modify a response from a proxied server
+Sometimes when you have received a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
+
+[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
+
+**[Back to top](#table-of-contents)**
+
 #### Setup a stand-alone proxy server with latency
 
 ```js
@@ -195,9 +234,124 @@ http.createServer(function (req, res) {
 }).listen(9008);
 ```
 
-#### Listening for proxy events
+**[Back to top](#table-of-contents)**
 
-* `error`: The error event is emitted if the request to the target fail.
+#### Using HTTPS
+You can activate the validation of a secure SSL certificate to the target connection (avoid self signed certs), just set `secure: true` in the options.
+
+##### HTTPS -> HTTP
+
+```js
+//
+// Create the HTTPS proxy server in front of a HTTP server
+//
+httpProxy.createServer({
+  target: {
+    host: 'localhost',
+    port: 9009
+  },
+  ssl: {
+    key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
+    cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
+  }
+}).listen(8009);
+```
+
+##### HTTPS -> HTTPS
+
+```js
+//
+// Create the proxy server listening on port 443
+//
+httpProxy.createServer({
+  ssl: {
+    key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
+    cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
+  },
+  target: 'https://localhost:9010',
+  secure: true // Depends on your needs, could be false.
+}).listen(443);
+```
+
+**[Back to top](#table-of-contents)**
+
+#### Proxying WebSockets
+You can activate the websocket support for the proxy using `ws:true` in the options.
+
+```js
+//
+// Create a proxy server for websockets
+//
+httpProxy.createServer({
+  target: 'ws://localhost:9014',
+  ws: true
+}).listen(8014);
+```
+
+Also you can proxy the websocket requests just calling the `ws(req, socket, head)` method.
+
+```js
+//
+// Setup our server to proxy standard HTTP requests
+//
+var proxy = new httpProxy.createProxyServer({
+  target: {
+    host: 'localhost',
+    port: 9015
+  }
+});
+var proxyServer = http.createServer(function (req, res) {
+  proxy.web(req, res);
+});
+
+//
+// Listen to the `upgrade` event and proxy the
+// WebSocket requests as well.
+//
+proxyServer.on('upgrade', function (req, socket, head) {
+  proxy.ws(req, socket, head);
+});
+
+proxyServer.listen(8015);
+```
+
+**[Back to top](#table-of-contents)**
+
+### Options
+
+`httpProxy.createProxyServer` supports the following options:
+
+*  **target**: url string to be parsed with the url module
+*  **forward**: url string to be parsed with the url module
+*  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
+*  **ssl**: object to be passed to https.createServer()
+*  **ws**: true/false, if you want to proxy websockets
+*  **xfwd**: true/false, adds x-forward headers
+*  **secure**: true/false, if you want to verify the SSL Certs
+*  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
+*  **prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
+*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request
+*  **localAddress**: Local interface string to bind for outgoing connections
+*  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
+*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.  
+*  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
+*  **autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
+*  **protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
+
+**NOTE:**  
+`options.ws` and `options.ssl` are optional.  
+`options.target` and `options.forward` cannot both be missing
+
+If you are using the `proxyServer.listen` method, the following options are also applicable:
+
+ *  **ssl**: object to be passed to https.createServer()
+ *  **ws**: true/false, if you want to proxy websockets
+
+**[Back to top](#table-of-contents)**
+
+### Listening for proxy events
+
+* `error`: The error event is emitted if the request to the target fail. **We do not do any error handling of messages passed between client and proxy, and messages passed between proxy and target, so it is recommended that you listen on errors and handle them.**
 * `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
 * `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
 * `proxyRes`: This event is emitted if the request to the target got a response.
@@ -251,123 +405,7 @@ proxy.on('close', function (req, socket, head) {
 });
 ```
 
-#### Using HTTPS
-You can activate the validation of a secure SSL certificate to the target connection (avoid self signed certs), just set `secure: true` in the options.
-
-##### HTTPS -> HTTP
-
-```js
-//
-// Create the HTTPS proxy server in front of a HTTP server
-//
-httpProxy.createServer({
-  target: {
-    host: 'localhost',
-    port: 9009
-  },
-  ssl: {
-    key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
-    cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
-  }
-}).listen(8009);
-```
-
-##### HTTPS -> HTTPS
-
-```js
-//
-// Create the proxy server listening on port 443
-//
-httpProxy.createServer({
-  ssl: {
-    key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
-    cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
-  },
-  target: 'https://localhost:9010',
-  secure: true // Depends on your needs, could be false.
-}).listen(443);
-```
-
-#### Proxying WebSockets
-You can activate the websocket support for the proxy using `ws:true` in the options.
-
-```js
-//
-// Create a proxy server for websockets
-//
-httpProxy.createServer({
-  target: 'ws://localhost:9014',
-  ws: true
-}).listen(8014);
-```
-
-Also you can proxy the websocket requests just calling the `ws(req, socket, head)` method.
-
-```js
-//
-// Setup our server to proxy standard HTTP requests
-//
-var proxy = new httpProxy.createProxyServer({
-  target: {
-    host: 'localhost',
-    port: 9015
-  }
-});
-var proxyServer = http.createServer(function (req, res) {
-  proxy.web(req, res);
-});
-
-//
-// Listen to the `upgrade` event and proxy the
-// WebSocket requests as well.
-//
-proxyServer.on('upgrade', function (req, socket, head) {
-  proxy.ws(req, socket, head);
-});
-
-proxyServer.listen(8015);
-```
-
-#### ProxyTable API
-A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
-
-### Contributing and Issues
-
-* Search on Google/Github
-* If you can't find anything, open an issue
-* If you feel comfortable about fixing the issue, fork the repo
-* Commit to your local branch (which must be different from `master`)
-* Submit your Pull Request (be sure to include tests and update documentation)
-
-### Options
-
-`httpProxy.createProxyServer` supports the following options:
-
-*  **target**: url string to be parsed with the url module
-*  **forward**: url string to be parsed with the url module
-*  **agent**: object to be passed to http(s).request (see Node's [https agent](http://nodejs.org/api/https.html#https_class_https_agent) and [http agent](http://nodejs.org/api/http.html#http_class_http_agent) objects)
-*  **ssl**: object to be passed to https.createServer()
-*  **ws**: true/false, if you want to proxy websockets
-*  **xfwd**: true/false, adds x-forward headers
-*  **secure**: true/false, if you want to verify the SSL Certs
-*  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
-*  **prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
-*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request
-*  **localAddress**: Local interface string to bind for outgoing connections
-*  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
-*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.  
-*  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
-*  **autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
-*  **protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
-
-**NOTE:**  
-`options.ws` and `options.ssl` are optional.  
-`options.target` and `options.forward` cannot both be missing
-
-If you are using the `proxyServer.listen` method, the following options are also applicable:
-
- *  **ssl**: object to be passed to https.createServer()
- *  **ws**: true/false, if you want to proxy websockets
+**[Back to top](#table-of-contents)**
 
 ### Shutdown
 
@@ -385,15 +423,35 @@ var proxy = new httpProxy.createProxyServer({
 proxy.close();
 ```
 
-### Test
+**[Back to top](#table-of-contents)**
+
+### Miscellaneous
+
+#### ProxyTable API
+
+A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
+
+#### Test
 
 ```
 $ npm test
 ```
 
-### Logo
+#### Logo
 
 Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
+
+**[Back to top](#table-of-contents)**
+
+### Contributing and Issues
+
+* Search on Google/Github
+* If you can't find anything, open an issue
+* If you feel comfortable about fixing the issue, fork the repo
+* Commit to your local branch (which must be different from `master`)
+* Submit your Pull Request (be sure to include tests and update documentation)
+
+**[Back to top](#table-of-contents)**
 
 ### License
 
@@ -418,5 +476,3 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 >LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 >OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 >THE SOFTWARE.
-
-
