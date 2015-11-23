@@ -18,7 +18,7 @@ proxies and load balancers.
 
 ### Table of Contents
   * [Installation](#installation)
-  * [Upgrading from 0.8.x ?](#upgrade-from-08x)
+  * [Upgrading from 0.8.x ?](#upgrading-from-08x-)
   * [Core Concept](#core-concept)
   * [Use Cases](#use-cases)
     * [Setup a basic stand-alone proxy server](#setup-a-basic-stand-alone-proxy-server)
@@ -42,9 +42,13 @@ proxies and load balancers.
 
 `npm install http-proxy --save`
 
+**[Back to top](#table-of-contents)**
+
 ### Upgrading from 0.8.x ?
 
 Click [here](UPGRADING.md)
+
+**[Back to top](#table-of-contents)**
 
 ### Core Concept
 
@@ -93,6 +97,8 @@ The first pipeline (ingoing) is responsible for the creation and manipulation of
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data
 to the client.
 
+**[Back to top](#table-of-contents)**
+
 ### Use Cases
 
 #### Setup a basic stand-alone proxy server
@@ -115,6 +121,8 @@ http.createServer(function (req, res) {
 }).listen(9000);
 ```
 †Invoking listen(..) triggers the creation of a web server. Otherwise, just the proxy instance is created.
+
+**[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with custom server logic
 This example show how you can proxy a request using your own HTTP server
@@ -143,6 +151,8 @@ var server = http.createServer(function(req, res) {
 console.log("listening on port 5050")
 server.listen(5050);
 ```
+
+**[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with proxy request header re-writing
 This example shows how you can proxy a request using your own HTTP server that
@@ -181,10 +191,14 @@ console.log("listening on port 5050")
 server.listen(5050);
 ```
 
+**[Back to top](#table-of-contents)**
+
 #### Modify a response from a proxied server
 Sometimes when you have received a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
 
 [Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
+
+**[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with latency
 
@@ -219,6 +233,8 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9008);
 ```
+
+**[Back to top](#table-of-contents)**
 
 #### Using HTTPS
 You can activate the validation of a secure SSL certificate to the target connection (avoid self signed certs), just set `secure: true` in the options.
@@ -256,6 +272,8 @@ httpProxy.createServer({
   secure: true // Depends on your needs, could be false.
 }).listen(443);
 ```
+
+**[Back to top](#table-of-contents)**
 
 #### Proxying WebSockets
 You can activate the websocket support for the proxy using `ws:true` in the options.
@@ -297,6 +315,8 @@ proxyServer.on('upgrade', function (req, socket, head) {
 proxyServer.listen(8015);
 ```
 
+**[Back to top](#table-of-contents)**
+
 ### Options
 
 `httpProxy.createProxyServer` supports the following options:
@@ -326,6 +346,8 @@ If you are using the `proxyServer.listen` method, the following options are also
 
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
+
+**[Back to top](#table-of-contents)**
 
 ### Listening for proxy events
 
@@ -383,6 +405,8 @@ proxy.on('close', function (req, socket, head) {
 });
 ```
 
+**[Back to top](#table-of-contents)**
+
 ### Shutdown
 
 * When testing or running server within another program it may be necessary to close the proxy.
@@ -398,6 +422,8 @@ var proxy = new httpProxy.createProxyServer({
 
 proxy.close();
 ```
+
+**[Back to top](#table-of-contents)**
 
 ### Miscellaneous
 
@@ -415,6 +441,8 @@ $ npm test
 
 Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
+**[Back to top](#table-of-contents)**
+
 ### Contributing and Issues
 
 * Search on Google/Github
@@ -422,6 +450,8 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 * If you feel comfortable about fixing the issue, fork the repo
 * Commit to your local branch (which must be different from `master`)
 * Submit your Pull Request (be sure to include tests and update documentation)
+
+**[Back to top](#table-of-contents)**
 
 ### License
 
