@@ -5,24 +5,46 @@
 node-http-proxy
 =======
 
+<p align="left">
+ <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
+  <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
+ <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
+  <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
+</p>
+
 `node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as
 proxies and load balancers.
+
+### Table of Contents
+  * [Installation](#installation)
+  * [Upgrading from 0.8.x ?](#upgrade-from-08x)
+  * [Core Concept](#core-concept)
+  * [Use Cases](#use-cases)
+    * [Setup a basic stand-alone proxy server](#setup-a-basic-stand-alone-proxy-server)
+    * [Setup a stand-alone proxy server with custom server logic](#setup-a-stand-alone-proxy-server-with-custom-server-logic)
+    * [Setup a stand-alone proxy server with proxy request header re-writing](#setup-a-stand-alone-proxy-server-with-proxy-request-header-re-writing)
+    * [Modify a response from a proxied server](#modify-a-response-from-a-proxied-server)
+    * [Setup a stand-alone proxy server with latency](#setup-a-stand-alone-proxy-server-with-latency)
+    * [Using HTTPS](#using-https)
+    * [Proxying WebSockets](#proxying-websockets)
+  * [Options](#options)
+  * [Listening for proxy events](#listening-for-proxy-events)
+  * [Shutdown](#shutdown)
+  * [Miscellaneous](#miscellaneous)
+    * [Test](#test)
+    * [ProxyTable API](#proxytable-api)
+    * [Logo](#logo)
+  * [Contributing and Issues](#contributing-and-issues)
+  * [License](#license)
 
 ### Installation
 
 `npm install http-proxy --save`
 
-### Build Status
+### Upgrading from 0.8.x ?
 
-<p align="center">
- <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
- 	<img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
- <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
- 	<img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
-</p>
-
-### Looking to Upgrade from 0.8.x ? Click [here](UPGRADING.md)
+Click [here](UPGRADING.md)
 
 ### Core Concept
 
@@ -32,8 +54,9 @@ an `options` object as argument ([valid properties are available here](lib/http-
 ```javascript
 var httpProxy = require('http-proxy');
 
-var proxy = httpProxy.createProxyServer(options);
+var proxy = httpProxy.createProxyServer(options); // See (†)
 ```
+†Unless listen(..) is invoked on the object, this does not create a webserver. See below.
 
 An object will be returned with four values:
 
@@ -70,6 +93,7 @@ The first pipeline (ingoing) is responsible for the creation and manipulation of
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data
 to the client.
 
+### Use Cases
 
 #### Setup a basic stand-alone proxy server
 
@@ -79,7 +103,7 @@ var http = require('http'),
 //
 // Create your proxy server and set the target in the options.
 //
-httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000);
+httpProxy.createProxyServer({target:'http://localhost:9000'}).listen(8000); // See (†)
 
 //
 // Create your target server
@@ -90,6 +114,7 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9000);
 ```
+†Invoking listen(..) triggers the creation of a web server. Otherwise, just the proxy instance is created.
 
 #### Setup a stand-alone proxy server with custom server logic
 This example show how you can proxy a request using your own HTTP server
@@ -118,11 +143,6 @@ var server = http.createServer(function(req, res) {
 console.log("listening on port 5050")
 server.listen(5050);
 ```
-#### Modify a response from a proxied server
-Sometimes when you have received a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
-
-[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
-
 
 #### Setup a stand-alone proxy server with proxy request header re-writing
 This example shows how you can proxy a request using your own HTTP server that
@@ -161,6 +181,11 @@ console.log("listening on port 5050")
 server.listen(5050);
 ```
 
+#### Modify a response from a proxied server
+Sometimes when you have received a HTML/XML document from the server of origin you would like to modify it before forwarding it on.
+
+[Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
+
 #### Setup a stand-alone proxy server with latency
 
 ```js
@@ -193,62 +218,6 @@ http.createServer(function (req, res) {
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9008);
-```
-
-#### Listening for proxy events
-
-* `error`: The error event is emitted if the request to the target fail.
-* `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
-* `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
-* `proxyRes`: This event is emitted if the request to the target got a response.
-* `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
-* `close`: This event is emitted once the proxy websocket was closed.
-* (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
-
-```js
-var httpProxy = require('http-proxy');
-// Error example
-//
-// Http Proxy Server with bad target
-//
-var proxy = httpProxy.createServer({
-  target:'http://localhost:9005'
-});
-
-proxy.listen(8005);
-
-//
-// Listen for the `error` event on `proxy`.
-proxy.on('error', function (err, req, res) {
-  res.writeHead(500, {
-    'Content-Type': 'text/plain'
-  });
-
-  res.end('Something went wrong. And we are reporting a custom error message.');
-});
-
-//
-// Listen for the `proxyRes` event on `proxy`.
-//
-proxy.on('proxyRes', function (proxyRes, req, res) {
-  console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
-});
-
-//
-// Listen for the `open` event on `proxy`.
-//
-proxy.on('open', function (proxySocket) {
-  // listen for messages coming FROM the target here
-  proxySocket.on('data', hybiParseAndLogMessage);
-});
-
-//
-// Listen for the `close` event on `proxy`.
-//
-proxy.on('close', function (req, socket, head) {
-  // view disconnected websocket connections
-  console.log('Client disconnected');
-});
 ```
 
 #### Using HTTPS
@@ -328,17 +297,6 @@ proxyServer.on('upgrade', function (req, socket, head) {
 proxyServer.listen(8015);
 ```
 
-#### ProxyTable API
-A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
-
-### Contributing and Issues
-
-* Search on Google/Github
-* If you can't find anything, open an issue
-* If you feel comfortable about fixing the issue, fork the repo
-* Commit to your local branch (which must be different from `master`)
-* Submit your Pull Request (be sure to include tests and update documentation)
-
 ### Options
 
 `httpProxy.createProxyServer` supports the following options:
@@ -369,6 +327,62 @@ If you are using the `proxyServer.listen` method, the following options are also
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
 
+### Listening for proxy events
+
+* `error`: The error event is emitted if the request to the target fail. **We do not do any error handling of messages passed between client and proxy, and messages passed between proxy and target, so it is recommended that you listen on errors and handle them.**
+* `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
+* `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
+* `proxyRes`: This event is emitted if the request to the target got a response.
+* `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
+* `close`: This event is emitted once the proxy websocket was closed.
+* (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
+
+```js
+var httpProxy = require('http-proxy');
+// Error example
+//
+// Http Proxy Server with bad target
+//
+var proxy = httpProxy.createServer({
+  target:'http://localhost:9005'
+});
+
+proxy.listen(8005);
+
+//
+// Listen for the `error` event on `proxy`.
+proxy.on('error', function (err, req, res) {
+  res.writeHead(500, {
+    'Content-Type': 'text/plain'
+  });
+
+  res.end('Something went wrong. And we are reporting a custom error message.');
+});
+
+//
+// Listen for the `proxyRes` event on `proxy`.
+//
+proxy.on('proxyRes', function (proxyRes, req, res) {
+  console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+});
+
+//
+// Listen for the `open` event on `proxy`.
+//
+proxy.on('open', function (proxySocket) {
+  // listen for messages coming FROM the target here
+  proxySocket.on('data', hybiParseAndLogMessage);
+});
+
+//
+// Listen for the `close` event on `proxy`.
+//
+proxy.on('close', function (req, socket, head) {
+  // view disconnected websocket connections
+  console.log('Client disconnected');
+});
+```
+
 ### Shutdown
 
 * When testing or running server within another program it may be necessary to close the proxy.
@@ -385,15 +399,29 @@ var proxy = new httpProxy.createProxyServer({
 proxy.close();
 ```
 
-### Test
+### Miscellaneous
+
+#### ProxyTable API
+
+A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
+
+#### Test
 
 ```
 $ npm test
 ```
 
-### Logo
+#### Logo
 
 Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
+
+### Contributing and Issues
+
+* Search on Google/Github
+* If you can't find anything, open an issue
+* If you feel comfortable about fixing the issue, fork the repo
+* Commit to your local branch (which must be different from `master`)
+* Submit your Pull Request (be sure to include tests and update documentation)
 
 ### License
 
@@ -418,5 +446,3 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 >LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 >OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 >THE SOFTWARE.
-
-
