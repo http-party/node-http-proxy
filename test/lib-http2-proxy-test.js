@@ -21,7 +21,6 @@ Object.defineProperty(gen, 'port', {
 describe('lib/http-proxy.js', function() {
   describe('HTTP2 #createProxyServer', function() {
     
-
     describe('HTTP2 to HTTP', function () {
       it('should proxy the request en send back the response', function (done) {
         var ports = { source: gen.port, proxy: gen.port };
@@ -181,12 +180,15 @@ describe('lib/http-proxy.js', function() {
         proxy.listen(ports.proxy);
 
         proxy.on('error', function (err, req, res) {
+          console.log('\n' + JSON.stringify(err) + '\n');
           expect(err).to.be.an(Error);
           if (semver.gt(process.versions.node, '0.12.0')) {
             expect(err.toString()).to.be('Error: self signed certificate')
           } else {
             expect(err.toString()).to.be('Error: DEPTH_ZERO_SELF_SIGNED_CERT')
           }
+          source.close();
+          proxy.close();
           done();
         });
       
