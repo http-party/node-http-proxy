@@ -27,6 +27,7 @@
     "semver": "^5.0.3",
     "socket.io": "*",
     "socket.io-client": "*",
+    "sse": "0.0.6",
     "ws": "^0.8.0"
   },
   "scripts": {

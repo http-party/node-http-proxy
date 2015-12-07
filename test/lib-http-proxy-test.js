@@ -3,6 +3,7 @@ var httpProxy = require('../lib/http-proxy'),
     http      = require('http'),
     ws        = require('ws')
     io        = require('socket.io'),
+    SSE       = require('sse'),
     ioClient  = require('socket.io-client');
 
 //
@@ -62,6 +63,41 @@ describe('lib/http-proxy.js', function() {
   });
 
   describe('#createProxyServer using the web-incoming passes', function () {
+    it('should proxy sse', function(done){
+      var ports = { source: gen.port, proxy: gen.port },
+      proxy = httpProxy.createProxyServer({
+        target: 'http://localhost:' + ports.source,
+      }),
+      proxyServer = proxy.listen(ports.proxy),
+      source = http.createServer(),
+      sse = new SSE(source, {path: '/'});
+
+      sse.on('connection', function(client) {
+        client.send('Hello over SSE');
+        client.close();
+      });
+
+      source.listen(ports.source);
+
+      var options = {
+        hostname: 'localhost',
+        port: ports.proxy,
+      };
+
+      var req = http.request(options, function(res) {
+        var streamData = '';
+        res.on('data', function (chunk) {
+          streamData += chunk.toString('utf8');
+        });
+        res.on('end', function (chunk) {
+          expect(streamData).to.equal(':ok\n\ndata: Hello over SSE\n\n');
+          source.close();
+          proxy.close();
+          done();
+        });
+      }).end();
+    });
+
     it('should make the request on pipe and finish it', function(done) {
       var ports = { source: gen.port, proxy: gen.port };
       var proxy = httpProxy.createProxyServer({
@@ -335,7 +371,6 @@ describe('lib/http-proxy.js', function() {
         done();
       });
     });
-
 
     it('should proxy a socket.io stream', function (done) {
       var ports = { source: gen.port, proxy: gen.port },
