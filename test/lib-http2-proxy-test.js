@@ -180,7 +180,6 @@ describe('lib/http-proxy.js', function() {
         proxy.listen(ports.proxy);
 
         proxy.on('error', function (err, req, res) {
-          console.log('\n' + JSON.stringify(err) + '\n');
           expect(err).to.be.an(Error);
           if (semver.gt(process.versions.node, '0.12.0')) {
             expect(err.toString()).to.be('Error: self signed certificate')
