@@ -164,6 +164,15 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.port).to.eql(443);
     });
 
+    it('should set outgoing port to one specified', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: url.parse('https://sometarget.com'),
+        port: 1234
+      }, { url: '/' });
+      expect(outgoing.port).to.eql(1234);
+    });
+
     it('should keep the original target path in the outgoing path', function(){
       var outgoing = {};
       common.setupOutgoing(outgoing, {target:
