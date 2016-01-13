@@ -330,7 +330,7 @@ proxyServer.listen(8015);
 *  **secure**: true/false, if you want to verify the SSL Certs
 *  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
 *  **prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
-*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request
+*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **localAddress**: Local interface string to bind for outgoing connections
 *  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
 *  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.  
