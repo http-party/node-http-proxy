@@ -250,7 +250,7 @@ describe('lib/http-proxy/common.js', function () {
           ignorePath: true
         }, { url: '/more/crazy/pathness' });
 
-        expect(outgoing.path).to.eql('/some/crazy/path/whoooo/');
+        expect(outgoing.path).to.eql('/some/crazy/path/whoooo');
       });
 
       it('and prependPath: false, it should ignore path of target and incoming request', function () {
@@ -262,7 +262,7 @@ describe('lib/http-proxy/common.js', function () {
           prependPath: false
         }, { url: '/more/crazy/pathness' });
 
-        expect(outgoing.path).to.eql('/');
+        expect(outgoing.path).to.eql('');
       });
     });
 
