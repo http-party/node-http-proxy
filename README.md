@@ -457,7 +457,7 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 >The MIT License (MIT)
 >
->Copyright (c) 2010 - 2013 Nodejitsu Inc.
+>Copyright (c) 2010 - 2016 Nodejitsu Inc.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy
 >of this software and associated documentation files (the "Software"), to deal
