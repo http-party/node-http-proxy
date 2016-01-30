@@ -429,7 +429,7 @@ proxy.close();
 
 #### ProxyTable API
 
-A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
+A proxy table API is available through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
 
 #### Test
 
