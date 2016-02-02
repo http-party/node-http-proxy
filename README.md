@@ -399,7 +399,7 @@ proxy.on('open', function (proxySocket) {
 //
 // Listen for the `close` event on `proxy`.
 //
-proxy.on('close', function (req, socket, head) {
+proxy.on('close', function (res, socket, head) {
   // view disconnected websocket connections
   console.log('Client disconnected');
 });
