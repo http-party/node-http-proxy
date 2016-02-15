@@ -22,6 +22,18 @@ describe('lib/http-proxy/passes/web.js', function() {
       webPasses.deleteLength(stubRequest, {}, {});
       expect(stubRequest.headers['content-length']).to.eql('0');
     });
+
+    it('should remove `transfer-encoding` from empty DELETE requests', function() {
+      var stubRequest = {
+        method: 'DELETE',
+        headers: {
+          'transfer-encoding': 'chunked'
+        }
+      };
+      webPasses.deleteLength(stubRequest, {}, {});
+      expect(stubRequest.headers['content-length']).to.eql('0');
+      expect(stubRequest.headers).to.not.have.key('transfer-encoding');
+    });
   });
 
   describe('#timeout', function() {
