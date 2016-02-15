@@ -35,7 +35,7 @@
     "blanket": {
       "pattern": "lib/http-proxy"
     },
-    "test": "mocha -R landing test/*-test.js",
+    "test": "mocha test/*-test.js",
     "test-cov": "mocha --require blanket -R html-cov > cov/coverage.html"
   },
   "engines": {
