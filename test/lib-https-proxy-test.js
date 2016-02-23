@@ -1,7 +1,7 @@
 var httpProxy = require('../lib/http-proxy'),
     semver    = require('semver'),
     expect    = require('expect.js'),
-    http      = require('http')
+    http      = require('http'),
     https     = require('https'),
     path      = require('path'),
     fs        = require('fs');

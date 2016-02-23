@@ -1,7 +1,7 @@
 var httpProxy = require('../lib/http-proxy'),
     expect    = require('expect.js'),
     http      = require('http'),
-    ws        = require('ws')
+    ws        = require('ws'),
     io        = require('socket.io'),
     SSE       = require('sse'),
     ioClient  = require('socket.io-client');
