@@ -229,7 +229,7 @@ describe('#createProxyServer.web() using own http server', function () {
 
     var started = new Date().getTime();
     function requestHandler(req, res) {
-      proxy.once('error', function (err, errReq, errRes) {
+      proxy.once('disconnected', function (err, errReq, errRes) {
         proxyServer.close();
         expect(err).to.be.an(Error);
         expect(errReq).to.be.equal(req);
