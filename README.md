@@ -333,14 +333,14 @@ proxyServer.listen(8015);
 *  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **localAddress**: Local interface string to bind for outgoing connections
 *  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
-*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.  
+*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.
 *  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 *  **autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
 *  **protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
 *  **headers**: object with extra headers to be added to target requests.
 
-**NOTE:**  
-`options.ws` and `options.ssl` are optional.  
+**NOTE:**
+`options.ws` and `options.ssl` are optional.
 `options.target` and `options.forward` cannot both be missing
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
@@ -458,7 +458,7 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 >The MIT License (MIT)
 >
->Copyright (c) 2010 - 2016 Nodejitsu Inc.
+>Copyright (c) 2010 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy
 >of this software and associated documentation files (the "Software"), to deal

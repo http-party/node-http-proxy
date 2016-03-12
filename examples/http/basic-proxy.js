@@ -1,7 +1,7 @@
 /*
   basic-proxy.js: Basic example of proxying over HTTP
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -31,10 +31,10 @@ var util = require('util'),
 
 var welcome = [
   '#    # ##### ##### #####        #####  #####   ####  #    # #   #',
-  '#    #   #     #   #    #       #    # #    # #    #  #  #   # # ',  
-  '######   #     #   #    # ##### #    # #    # #    #   ##     #  ',   
-  '#    #   #     #   #####        #####  #####  #    #   ##     #  ',   
-  '#    #   #     #   #            #      #   #  #    #  #  #    #  ',   
+  '#    #   #     #   #    #       #    # #    # #    #  #  #   # # ',
+  '######   #     #   #    # ##### #    # #    # #    #   ##     #  ',
+  '#    #   #     #   #####        #####  #####  #    #   ##     #  ',
+  '#    #   #     #   #            #      #   #  #    #  #  #    #  ',
   '#    #   #     #   #            #      #    #  ####  #    #   #  '
 ].join('\n');
 
