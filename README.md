@@ -62,7 +62,7 @@ var proxy = httpProxy.createProxyServer(options); // See (†)
 ```
 †Unless listen(..) is invoked on the object, this does not create a webserver. See below.
 
-An object will be returned with four values:
+An object will be returned with four methods:
 
 * web `req, res, [options]` (used for proxying regular HTTP(S) requests)
 * ws `req, socket, head, [options]` (used for proxying WS(S) requests)
