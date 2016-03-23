@@ -328,7 +328,7 @@ proxyServer.listen(8015);
 *  **ws**: true/false, if you want to proxy websockets
 *  **xfwd**: true/false, adds x-forward headers
 *  **secure**: true/false, if you want to verify the SSL Certs
-*  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
+*  **toProxy**: true/false, passes the absolute URL as the `path` (useful for proxying to proxies)
 *  **prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
 *  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **localAddress**: Local interface string to bind for outgoing connections
