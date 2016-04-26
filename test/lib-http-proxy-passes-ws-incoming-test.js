@@ -15,7 +15,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
+      var returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(true);
       expect(destroyCalled).to.be(true);
     })
@@ -32,7 +32,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
+      var returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(true);
       expect(destroyCalled).to.be(true);
     })
@@ -51,7 +51,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
+      var returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(true);
       expect(destroyCalled).to.be(true);
     })
@@ -70,7 +70,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
           destroyCalled = true;
         }
       }
-      returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
+      var returnValue = httpProxy.checkMethodAndHeader(stubRequest, stubSocket);
       expect(returnValue).to.be(undefined);
       expect(destroyCalled).to.be(false);
     })
