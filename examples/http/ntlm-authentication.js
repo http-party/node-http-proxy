@@ -10,7 +10,7 @@ var agent =  new Agent({
   keepAliveTimeout: 30000 // free socket keepalive for 30 seconds
 });
 
-var proxy = httpProxy.createProxy({ target: 'http://whatever.com', agent: agent);
+var proxy = httpProxy.createProxy({ target: 'http://whatever.com', agent: agent });
 
 //
 // Modify headers of the request before it gets sent
