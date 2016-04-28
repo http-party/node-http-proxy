@@ -51,4 +51,4 @@ http.createServer(function (req, res) {
 }).listen(9002);
 
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxy.web() handler'.cyan.underline + ' and latency'.magenta);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9001 '.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9002 '.yellow);
