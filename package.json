@@ -18,6 +18,8 @@
   "devDependencies": {
     "async": "*",
     "blanket": "*",
+    "colors": "^1.1.2",
+    "connect": "^3.4.1",
     "coveralls": "*",
     "dox": "*",
     "expect.js": "*",
@@ -27,6 +29,7 @@
     "socket.io": "*",
     "socket.io-client": "*",
     "sse": "0.0.6",
+    "util": "^0.10.3",
     "ws": "^0.8.0"
   },
   "scripts": {
