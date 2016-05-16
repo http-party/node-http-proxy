@@ -156,11 +156,9 @@ describe('#createProxyServer.web() using own http server', function () {
     var proxyServer = http.createServer(requestHandler);
 
     function requestHandler(req, res) {
-      proxy.once('error', function (err, errReq, errRes) {
+      proxy.once('error', function (err) {
         proxyServer.close();
         expect(err).to.be.an(Error);
-        expect(errReq).to.be.equal(req);
-        expect(errRes).to.be.equal(res);
         expect(err.code).to.be('ECONNREFUSED');
         done();
       });
@@ -189,11 +187,9 @@ describe('#createProxyServer.web() using own http server', function () {
 
     var started = new Date().getTime();
     function requestHandler(req, res) {
-      proxy.once('error', function (err, errReq, errRes) {
+      proxy.once('error', function (err) {
         proxyServer.close();
         expect(err).to.be.an(Error);
-        expect(errReq).to.be.equal(req);
-        expect(errRes).to.be.equal(res);
         expect(new Date().getTime() - started).to.be.greaterThan(99);
         expect(err.code).to.be('ECONNRESET');
         done();
@@ -229,11 +225,9 @@ describe('#createProxyServer.web() using own http server', function () {
 
     var started = new Date().getTime();
     function requestHandler(req, res) {
-      proxy.once('error', function (err, errReq, errRes) {
+      proxy.once('error', function (err) {
         proxyServer.close();
         expect(err).to.be.an(Error);
-        expect(errReq).to.be.equal(req);
-        expect(errRes).to.be.equal(res);
         expect(err.code).to.be('ECONNRESET');
         doneOne();
       });
