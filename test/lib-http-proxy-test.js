@@ -419,7 +419,7 @@ describe('lib/http-proxy.js', function() {
       var destiny = io.listen(server);
 
       function startSocketIo() {
-        var client = ioClient.connect('ws://127.0.0.1:' + ports.proxy);
+        var client = ioClient.connect('ws://127.0.0.1:' + ports.proxy, {rejectUnauthorized: null});
         client.on('connect', function () {
           client.disconnect();
         });
