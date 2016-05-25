@@ -5,6 +5,8 @@
 node-http-proxy
 =======
 
+[![Join the chat at https://gitter.im/nodejitsu/node-http-proxy](https://badges.gitter.im/nodejitsu/node-http-proxy.svg)](https://gitter.im/nodejitsu/node-http-proxy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 <p align="left">
  <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
   <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
