@@ -1,4 +1,5 @@
 var httpProxy = require('../lib/http-proxy'),
+    semver    = require('semver'),
     expect    = require('expect.js'),
     http      = require('http'),
     ws        = require('ws')
@@ -585,6 +586,53 @@ describe('lib/http-proxy.js', function() {
           socket.send('Hello over websockets');
         });
       });
+    });
+  });
+  describe('#createProxyServer with keepHeaderCase option', function () {
+    /* Requires node 1.0.0 or greater */
+    if (semver.lt(process.versions.node, '1.0.0')) return;
+
+    it('should not modify headers\' case', function (done) {
+      var ports = { source: gen.port, proxy: gen.port };
+
+      var proxy = httpProxy.createProxyServer({
+        keepHeaderCase: true,
+        target: 'http://127.0.0.1:' + ports.source
+      }).listen(ports.proxy);
+
+      var source = http.createServer(function(req, res) {
+        expect(req.method).to.eql('GET');
+        res.writeHead(200, {
+          'Content-Type': 'text/plain',
+          'Content-Length': 2,
+          'X-Check-Case': 'on'});
+        res.end('OK');
+      });
+
+      source.listen(ports.source);
+
+      http.request({
+        hostname: '127.0.0.1',
+        port: ports.proxy,
+        method: 'GET'
+      }, function (res) {
+        expect(res.statusCode).to.eql(200);
+
+        expect(res.headers['x-check-case']).to.eql('on');
+        expect(res.rawHeaders).to.contain('X-Check-Case');
+        var idx = res.rawHeaders.indexOf('X-Check-Case');
+        expect(res.rawHeaders[idx + 1]).to.eql('on');
+
+        res.on('data', function (data) {
+          expect(data.toString()).to.eql('OK');
+        });
+
+        res.on('end', function () {
+          source.close();
+          proxy.close();
+          done();
+        });
+      }).end();
     });
   });
 });
