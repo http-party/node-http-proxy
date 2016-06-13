@@ -1,7 +1,7 @@
 /*
   standalone-proxy.js: Example of proxying over HTTP with a standalone HTTP server.
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -51,4 +51,4 @@ http.createServer(function (req, res) {
 }).listen(9002);
 
 util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxy.web() handler'.cyan.underline + ' and latency'.magenta);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9001 '.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9002 '.yellow);

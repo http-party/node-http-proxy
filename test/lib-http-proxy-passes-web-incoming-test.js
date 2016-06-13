@@ -22,6 +22,18 @@ describe('lib/http-proxy/passes/web.js', function() {
       webPasses.deleteLength(stubRequest, {}, {});
       expect(stubRequest.headers['content-length']).to.eql('0');
     });
+
+    it('should remove `transfer-encoding` from empty DELETE requests', function() {
+      var stubRequest = {
+        method: 'DELETE',
+        headers: {
+          'transfer-encoding': 'chunked'
+        }
+      };
+      webPasses.deleteLength(stubRequest, {}, {});
+      expect(stubRequest.headers['content-length']).to.eql('0');
+      expect(stubRequest.headers).to.not.have.key('transfer-encoding');
+    });
   });
 
   describe('#timeout', function() {
@@ -217,7 +229,7 @@ describe('#createProxyServer.web() using own http server', function () {
 
     var started = new Date().getTime();
     function requestHandler(req, res) {
-      proxy.once('error', function (err, errReq, errRes) {
+      proxy.once('econnreset', function (err, errReq, errRes) {
         proxyServer.close();
         expect(err).to.be.an(Error);
         expect(errReq).to.be.equal(req);

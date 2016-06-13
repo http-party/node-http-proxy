@@ -1,7 +1,7 @@
 /*
   proxy-https-to-https.js: Basic example of proxying over HTTPS to a target HTTPS server
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -36,9 +36,9 @@ var https = require('https'),
       key: fs.readFileSync(path.join(fixturesDir, 'agent2-key.pem'), 'utf8'),
       cert: fs.readFileSync(path.join(fixturesDir, 'agent2-cert.pem'), 'utf8')
     };
-    
+
 //
-// Create the target HTTPS server 
+// Create the target HTTPS server
 //
 https.createServer(httpsOpts, function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });

@@ -241,6 +241,28 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.eql('/' + google);
     });
 
+    it('should not replace :\ to :\\ when no https word before', function () {
+      var outgoing = {};
+      var google = 'https://google.com:/join/join.js'
+      common.setupOutgoing(outgoing, {
+        target: url.parse('http://sometarget.com:80'),
+        toProxy: true,
+      }, { url: google });
+
+      expect(outgoing.path).to.eql('/' + google);
+    });
+    
+    it('should not replace :\ to :\\ when no http word before', function () {
+      var outgoing = {};
+      var google = 'http://google.com:/join/join.js'
+      common.setupOutgoing(outgoing, {
+        target: url.parse('http://sometarget.com:80'),
+        toProxy: true,
+      }, { url: google });
+
+      expect(outgoing.path).to.eql('/' + google);
+    });
+    
     describe('when using ignorePath', function () {
       it('should ignore the path of the `req.url` passed in but use the target path', function () {
         var outgoing = {};
@@ -250,7 +272,7 @@ describe('lib/http-proxy/common.js', function () {
           ignorePath: true
         }, { url: '/more/crazy/pathness' });
 
-        expect(outgoing.path).to.eql('/some/crazy/path/whoooo/');
+        expect(outgoing.path).to.eql('/some/crazy/path/whoooo');
       });
 
       it('and prependPath: false, it should ignore path of target and incoming request', function () {
@@ -262,7 +284,7 @@ describe('lib/http-proxy/common.js', function () {
           prependPath: false
         }, { url: '/more/crazy/pathness' });
 
-        expect(outgoing.path).to.eql('/');
+        expect(outgoing.path).to.eql('');
       });
     });
 

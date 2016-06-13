@@ -13,7 +13,7 @@ node-http-proxy
 </p>
 
 `node-http-proxy` is an HTTP programmable proxying library that supports
-websockets. It is suitable for implementing components such as
+websockets. It is suitable for implementing components such as reverse
 proxies and load balancers.
 
 ### Table of Contents
@@ -62,7 +62,7 @@ var proxy = httpProxy.createProxyServer(options); // See (†)
 ```
 †Unless listen(..) is invoked on the object, this does not create a webserver. See below.
 
-An object will be returned with four values:
+An object will be returned with four methods:
 
 * web `req, res, [options]` (used for proxying regular HTTP(S) requests)
 * ws `req, socket, head, [options]` (used for proxying WS(S) requests)
@@ -328,18 +328,19 @@ proxyServer.listen(8015);
 *  **ws**: true/false, if you want to proxy websockets
 *  **xfwd**: true/false, adds x-forward headers
 *  **secure**: true/false, if you want to verify the SSL Certs
-*  **toProxy**: passes the absolute URL as the `path` (useful for proxying to proxies)
+*  **toProxy**: true/false, passes the absolute URL as the `path` (useful for proxying to proxies)
 *  **prependPath**: true/false, Default: true - specify whether you want to prepend the target's path to the proxy path
-*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request
+*  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **localAddress**: Local interface string to bind for outgoing connections
 *  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
-*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.  
+*  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.
 *  **hostRewrite**: rewrites the location hostname on (301/302/307/308) redirects.
 *  **autoRewrite**: rewrites the location host/port on (301/302/307/308) redirects based on requested host/port. Default: false.
 *  **protocolRewrite**: rewrites the location protocol on (301/302/307/308) redirects to 'http' or 'https'. Default: null.
+*  **headers**: object with extra headers to be added to target requests.
 
-**NOTE:**  
-`options.ws` and `options.ssl` are optional.  
+**NOTE:**
+`options.ws` and `options.ssl` are optional.
 `options.target` and `options.forward` cannot both be missing
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
@@ -399,7 +400,7 @@ proxy.on('open', function (proxySocket) {
 //
 // Listen for the `close` event on `proxy`.
 //
-proxy.on('close', function (req, socket, head) {
+proxy.on('close', function (res, socket, head) {
   // view disconnected websocket connections
   console.log('Client disconnected');
 });
@@ -429,7 +430,7 @@ proxy.close();
 
 #### ProxyTable API
 
-A proxy table API is available through through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
+A proxy table API is available through this add-on [module](https://github.com/donasaur/http-proxy-rules), which lets you define a set of rules to translate matching routes to target routes that the reverse proxy will talk to.
 
 #### Test
 
@@ -457,7 +458,7 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 >The MIT License (MIT)
 >
->Copyright (c) 2010 - 2013 Nodejitsu Inc.
+>Copyright (c) 2010 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy
 >of this software and associated documentation files (the "Software"), to deal
