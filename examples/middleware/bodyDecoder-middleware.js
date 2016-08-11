@@ -34,28 +34,25 @@ var http = require('http'),
     proxy = httpProxy.createProxyServer({});
 
 
-//restreame
-var restreamer = function (){
-  return function (req, res, next) { //restreame
-    req.removeAllListeners('data')
-    req.removeAllListeners('end')
-    next()
-    process.nextTick(function () {
-      if(req.body) {
-        req.emit('data', JSON.stringify(req.body))
-      }
-      req.emit('end')
-    })
+//restream parsed body before proxying
+proxy.on('proxyReq', function(proxyReq, req, res, options) {
+  if(req.body) {
+    let bodyData = JSON.stringify(req.body);
+    // incase if content-type is application/x-www-form-urlencoded -> we need to change to application/json
+    proxyReq.setHeader('Content-Type','application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+    // stream the content
+    proxyReq.write(bodyData);
   }
-}
+});
 
 
 //
 //  Basic Http Proxy Server
 //
 var app = connect()
-  .use(bodyParser.json())//json
-  .use(restreamer())//restreame
+  .use(bodyParser.json())//json parser
+  .use(bodyParser.urlencoded())//urlencoded parser
   .use(function(req, res){
     // modify body here,
     // eg: req.body = {a: 1}.
@@ -84,9 +81,17 @@ http.createServer(app1).listen(9013, function(){
   //request to 8013 to proxy
   request.post({//
     url: 'http://127.0.0.1:8013',
-    json: {content: 123, type: "greeting"}
+    json: {content: 123, type: "greeting from json request"}
   },function(err, res,data){
-    console.log('return:' ,err, data)
+    console.log('return for json request:' ,err, data)
+  })
+
+  // application/x-www-form-urlencoded request
+  request.post({//
+    url: 'http://127.0.0.1:8013',
+    form: {content: 123, type: "greeting from urlencoded request"}
+  },function(err, res,data){
+    console.log('return for urlencoded request:' ,err, data)
   })
 });
 
