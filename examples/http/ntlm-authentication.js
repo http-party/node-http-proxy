@@ -13,8 +13,8 @@ var agent =  new Agent({
 var proxy = httpProxy.createProxy({ target: 'http://whatever.com', agent: agent });
 
 //
-// Modify headers of the request before it gets sent
-// So that we handle the NLTM authentication request
+// Modify headers of the response before it gets sent
+// So that we handle the NLTM authentication response
 //
 proxy.on('proxyRes', function (proxyRes) {
   var key = 'www-authenticate';
