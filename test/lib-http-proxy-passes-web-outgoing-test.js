@@ -220,7 +220,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       headers: {}
     };
 
-    httpProxy.writeHeaders({}, res, proxyRes);
+    httpProxy.writeHeaders({}, res, proxyRes, {});
 
     expect(res.headers.hey).to.eql('hello');
     expect(res.headers.how).to.eql('are you?');
