@@ -337,6 +337,18 @@ proxyServer.listen(8015);
 *  **hostRewrite**: rewrites the location hostname on (201/301/302/307/308) redirects.
 *  **autoRewrite**: rewrites the location host/port on (201/301/302/307/308) redirects based on requested host/port. Default: false.
 *  **protocolRewrite**: rewrites the location protocol on (201/301/302/307/308) redirects to 'http' or 'https'. Default: null.
+*  **cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
+   * `false` (default): disable cookie rewriting
+   * String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
+   * Object: mapping of domains to new domains, use `"*"` to match all domains.  
+     For example keep one domain unchanged, rewrite one domain and remove other domains:
+     ```
+     cookieDomainRewrite: {
+       "unchanged.domain": "unchanged.domain",
+       "old.domain": "new.domain",
+       "*": ""
+     }
+     ```
 *  **headers**: object with extra headers to be added to target requests.
 
 **NOTE:**
