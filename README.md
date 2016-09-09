@@ -93,7 +93,7 @@ proxy.web(req, res, { target: 'http://mytarget.com:8080' }, function(e) { ... })
 
 When a request is proxied it follows two different pipelines ([available here](lib/http-proxy/passes))
 which apply transformations to both the `req` and `res` object.
-The first pipeline (ingoing) is responsible for the creation and manipulation of the stream that connects your client to the target.
+The first pipeline (incoming) is responsible for the creation and manipulation of the stream that connects your client to the target.
 The second pipeline (outgoing) is responsible for the creation and manipulation of the stream that, from your target, returns data
 to the client.
 
