@@ -13,6 +13,7 @@
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "1.x.x",
+    "http2": "^3.2.0",
     "requires-port": "1.x.x"
   },
   "devDependencies": {
