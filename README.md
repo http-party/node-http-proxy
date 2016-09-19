@@ -350,6 +350,13 @@ proxyServer.listen(8015);
      }
      ```
 *  **headers**: object with extra headers to be added to target requests.
+*  **proxyPipe**: overrides proxy response destination instead of "res" stream passed to proxyServer.web:
+   ```
+   proxyPipe: {
+     stream: "A stream object into which the proxy response will be piped",
+     options: "An optional object to pass to the options parameter in .pipe()"
+   }
+   ```
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
