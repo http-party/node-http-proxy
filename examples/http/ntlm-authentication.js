@@ -1,4 +1,4 @@
-var httpProxy = require('http-proxy');
+var httpProxy = require('../../lib/http-proxy');
 var Agent = require('agentkeepalive');
 
 var agent =  new Agent({

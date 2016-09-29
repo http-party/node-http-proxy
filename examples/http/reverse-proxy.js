@@ -23,7 +23,7 @@
 
 var http = require('http'),
     net = require('net'),
-    httpProxy = require('http-proxy'),
+    httpProxy = require('../../lib/http-proxy');
     url = require('url'),
     util = require('util');
 
