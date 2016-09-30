@@ -198,6 +198,8 @@ Sometimes when you have received a HTML/XML document from the server of origin y
 
 [Harmon](https://github.com/No9/harmon) allows you to do this in a streaming style so as to keep the pressure on the proxy to a minimum.
 
+Sometimes the proxy server only returns the JSON data. For example, call API from the server. You can try [node-http-proxy-json](https://github.com/langjt/node-http-proxy-json).
+
 **[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with latency
