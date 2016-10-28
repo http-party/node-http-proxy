@@ -1,5 +1,5 @@
 {
-  "name": "@terminus/http-proxy",
+  "name": "http-proxy",
   "version": "1.15.2",
   "repository": {
     "type": "git",
