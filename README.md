@@ -171,8 +171,8 @@ var http = require('http'),
 // the proxy connection is made to the target.
 //
 function beforeProxyRequest(req, options, outgoingOptions) {
-  outgoingOptions.headers = outgoingOptions.headers || [ ];
-  outgoingOptions.headers.push('X-Special-Proxy-Header: foobar');
+  outgoingOptions.headers = outgoingOptions.headers || { };
+  outgoingOptions.headers['X-Special-Proxy-Header'] = 'foobar';
 });
 
 //
