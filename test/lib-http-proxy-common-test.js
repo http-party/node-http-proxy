@@ -6,9 +6,6 @@ describe('lib/http-proxy/common.js', function () {
   describe('#setupOutgoing', function () {
     it('should setup the correct headers', function () {
       var outgoing = {};
-      var beforeProxy = function (req, options, outgoingOpts) {
-        outgoingOpts.headers['X-Special-Proxy-Header'] = 'foobar';
-      };
       common.setupOutgoing(outgoing,
       {
         agent     : '?',
@@ -20,8 +17,7 @@ describe('lib/http-proxy/common.js', function () {
         },
         headers: {'fizz': 'bang', 'overwritten':true},
         localAddress: 'local.address',
-        auth:'username:pass',
-        beforeProxyRequest: beforeProxy
+        auth:'username:pass'
       },
       {
         method    : 'i',
@@ -41,7 +37,6 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.headers.pro).to.eql('xy');
       expect(outgoing.headers.fizz).to.eql('bang');
       expect(outgoing.headers.overwritten).to.eql(true);
-      expect(outgoing.headers['X-Special-Proxy-Header']).to.eql('foobar');
       expect(outgoing.localAddress).to.eql('local.address');
       expect(outgoing.auth).to.eql('username:pass');
     });
@@ -65,6 +60,30 @@ describe('lib/http-proxy/common.js', function () {
           headers   : {'pro':'xy','overwritten':false}
         });
       expect(outgoing.headers.connection).to.eql('upgrade');
+    });
+
+    it('should run the beforeProxyRequest callback', function () {
+      var outgoing = {};
+      var beforeProxy = function (req, options, outgoingOpts) {
+        outgoingOpts.headers['X-Special-Proxy-Header'] = 'foobar';
+      };
+      common.setupOutgoing(outgoing,
+        {
+          agent: undefined,
+          target: {
+            host      : 'hey',
+            hostname  : 'how',
+            socketPath: 'are',
+            port      : 'you',
+          },
+          beforeProxyRequest: beforeProxy
+        },
+        {
+          method    : 'i',
+          url      : 'am',
+          headers   : {'pro':'xy','overwritten':false}
+        });
+      expect(outgoing.headers['X-Special-Proxy-Header']).to.eql('foobar');
     });
 
     it('should not override agentless connection: contains upgrade', function () {
