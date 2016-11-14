@@ -62,6 +62,30 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.headers.connection).to.eql('upgrade');
     });
 
+    it('should run the beforeProxyRequest callback', function () {
+      var outgoing = {};
+      var beforeProxy = function (req, options, outgoingOpts) {
+        outgoingOpts.headers['X-Special-Proxy-Header'] = 'foobar';
+      };
+      common.setupOutgoing(outgoing,
+        {
+          agent: undefined,
+          target: {
+            host      : 'hey',
+            hostname  : 'how',
+            socketPath: 'are',
+            port      : 'you',
+          },
+          beforeProxyRequest: beforeProxy
+        },
+        {
+          method    : 'i',
+          url      : 'am',
+          headers   : {'pro':'xy','overwritten':false}
+        });
+      expect(outgoing.headers['X-Special-Proxy-Header']).to.eql('foobar');
+    });
+
     it('should not override agentless connection: contains upgrade', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing,
