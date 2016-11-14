@@ -162,21 +162,24 @@ modifies the outgoing proxy request by adding a special header.
 var http = require('http'),
     httpProxy = require('http-proxy');
 
+// To modify the proxy connection before data is sent, you can supply a
+// 'beforeProxyRequest' handler function in the passed-in config options.
+// Before the request is proxied to the target host, http-proxy will call
+// this handler with the following arguments:
+// (http.IncomingMessage req, Object options, Object requestOutgoingOptions).
+// This mechanism is useful when you need to modify the proxy request before
+// the proxy connection is made to the target.
+//
+function beforeProxyRequest(req, options, outgoingOptions) {
+  outgoingOptions.headers = outgoingOptions.headers || [ ];
+  outgoingOptions.headers.push('X-Special-Proxy-Header: foobar');
+});
+
 //
 // Create a proxy server with custom application logic
 //
-var proxy = httpProxy.createProxyServer({});
-
-// To modify the proxy connection before data is sent, you can listen
-// for the 'proxyReq' event. When the event is fired, you will receive
-// the following arguments:
-// (http.ClientRequest proxyReq, http.IncomingMessage req,
-//  http.ServerResponse res, Object options). This mechanism is useful when
-// you need to modify the proxy request before the proxy connection
-// is made to the target.
-//
-proxy.on('proxyReq', function(proxyReq, req, res, options) {
-  proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+var proxy = httpProxy.createProxyServer({
+    beforeProxyRequest: beforeProxyRequest
 });
 
 var server = http.createServer(function(req, res) {
@@ -351,6 +354,10 @@ proxyServer.listen(8015);
      ```
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) when proxy receives no response from target
+*  **beforeProxyRequest**: optional callback function.  If passed, it will be called with three arguments immediately before sending the request to the target host: 
+    * `req` the incoming `ClientRequest` object
+    * `options` - the Options Config object passed to the proxy at initialization.  i.e., the subject of this section.
+    * `outgoing` - the `request()` options, so that this handler can modify the outgoing request (e.g., add a header)
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
