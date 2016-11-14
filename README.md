@@ -354,7 +354,7 @@ proxyServer.listen(8015);
      ```
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) when proxy receives no response from target
-*  **beforeProxyRequest**: optional callback function.  If passed, it will be called with three arguments immediately before sending the request to the target host: 
+*  **beforeProxyRequest**: optional callback function - should be synchronous.  If passed, it will be called with three arguments immediately before sending the request to the target host: 
     * `req` the incoming `ClientRequest` object
     * `options` - the Options Config object passed to the proxy at initialization.  i.e., the subject of this section.
     * `outgoing` - the `request()` options, so that this handler can modify the outgoing request (e.g., add a header)
