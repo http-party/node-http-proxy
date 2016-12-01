@@ -234,11 +234,18 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
           hey: 'hello',
           how: 'are you?',
           'set-cookie': 'hello; domain=my.domain; path=/'
-        }
+        },
+        rawHeaders: [
+          'Hey', 'hello',
+          'How', 'are you?',
+          'Set-Cookie', 'hello; domain=my.domain; path=/'
+        ]
       };
       this.res = {
         setHeader: function(k, v) {
-          this.headers[k] = v;
+          // https://nodejs.org/api/http.html#http_message_headers
+          // Header names are lower-cased
+          this.headers[k.toLowerCase()] = v;
         },
         headers: {}
       };
@@ -260,7 +267,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
 
       expect(this.res.headers['set-cookie']).to.eql('hello; domain=my.domain; path=/');
     });
-    
+
     it('rewrites domain', function() {
       var options = {
         cookieDomainRewrite: 'my.new.domain'
@@ -290,6 +297,12 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         }
       };
       this.proxyRes.headers['set-cookie'] = [
+        'hello-on-my.domain; domain=my.domain; path=/',
+        'hello-on-my.old.domain; domain=my.old.domain; path=/',
+        'hello-on-my.special.domain; domain=my.special.domain; path=/'
+      ];
+      var setCookieValueIndex = this.proxyRes.rawHeaders.indexOf('Set-Cookie') + 1;
+      this.proxyRes.rawHeaders[setCookieValueIndex] = [
         'hello-on-my.domain; domain=my.domain; path=/',
         'hello-on-my.old.domain; domain=my.old.domain; path=/',
         'hello-on-my.special.domain; domain=my.special.domain; path=/'

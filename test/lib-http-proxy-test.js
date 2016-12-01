@@ -148,6 +148,9 @@ describe('lib/http-proxy.js', function() {
         method: 'GET'
       }, function(res) {
         expect(res.statusCode).to.eql(200);
+        expect(res.headers['content-type']).to.eql('text/plain');
+        expect(res.rawHeaders.indexOf('Content-Type')).not.to.eql(-1);
+        expect(res.rawHeaders.indexOf('text/plain')).not.to.eql(-1);
 
         res.on('data', function (data) {
           expect(data.toString()).to.eql('Hello from ' + ports.source);
