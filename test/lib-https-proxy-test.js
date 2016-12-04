@@ -19,7 +19,7 @@ Object.defineProperty(gen, 'port', {
 
 describe('lib/http-proxy.js', function() {
   describe('HTTPS #createProxyServer', function() {
-  	describe('HTTPS to HTTP', function () {
+    describe('HTTPS to HTTP', function () {
       it('should proxy the request en send back the response', function (done) {
         var ports = { source: gen.port, proxy: gen.port };
         var source = http.createServer(function(req, res) {
