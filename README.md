@@ -333,6 +333,7 @@ proxyServer.listen(8015);
 *  **ignorePath**: true/false, Default: false - specify whether you want to ignore the proxy path of the incoming request (note: you will have to append / manually if required).
 *  **localAddress**: Local interface string to bind for outgoing connections
 *  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
+*  **preserveHeaderKeyCase**: true/false, Default: false - specify whether you want to keep letter case of response header key
 *  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.
 *  **hostRewrite**: rewrites the location hostname on (201/301/302/307/308) redirects.
 *  **autoRewrite**: rewrites the location host/port on (201/301/302/307/308) redirects based on requested host/port. Default: false.

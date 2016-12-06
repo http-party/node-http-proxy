@@ -130,7 +130,8 @@ describe('lib/http-proxy.js', function() {
     it('should make the request, handle response and finish it', function(done) {
       var ports = { source: gen.port, proxy: gen.port };
       var proxy = httpProxy.createProxyServer({
-        target: 'http://127.0.0.1:' + ports.source
+        target: 'http://127.0.0.1:' + ports.source,
+        preserveHeaderKeyCase: true
       }).listen(ports.proxy);
 
       var source = http.createServer(function(req, res) {
