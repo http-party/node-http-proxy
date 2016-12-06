@@ -240,6 +240,14 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         }
       };
       this.rawProxyRes = {
+        headers: {
+          hey: 'hello',
+          how: 'are you?',
+          'set-cookie': [
+            'hello; domain=my.domain; path=/',
+            'there; domain=my.domain; path=/'
+          ]
+        },
         rawHeaders: [
           'Hey', 'hello',
           'How', 'are you?',
@@ -343,6 +351,11 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
           'my.special.domain': 'my.special.domain'
         }
       };
+      this.rawProxyRes.headers['set-cookie'] = [
+        'hello-on-my.domain; domain=my.domain; path=/',
+        'hello-on-my.old.domain; domain=my.old.domain; path=/',
+        'hello-on-my.special.domain; domain=my.special.domain; path=/'
+      ];
       this.rawProxyRes.rawHeaders = this.rawProxyRes.rawHeaders.concat([
         'Set-Cookie',
         'hello-on-my.domain; domain=my.domain; path=/',
