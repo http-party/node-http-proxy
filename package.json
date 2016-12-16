@@ -12,7 +12,7 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "eventemitter3": "1.x.x",
+    "eventemitter3": "2.0.x",
     "requires-port": "1.x.x"
   },
   "devDependencies": {
