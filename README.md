@@ -356,6 +356,7 @@ proxyServer.listen(8015);
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
 `options.target` and `options.forward` cannot both be missing
+use `options.target` or `options.forward`, otherwise requests to upstream may be occur twice
 
 If you are using the `proxyServer.listen` method, the following options are also applicable:
 
