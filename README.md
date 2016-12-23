@@ -53,7 +53,7 @@ Click [here](UPGRADING.md)
 ### Core Concept
 
 A new proxy is created by calling `createProxyServer` and passing
-an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L33-L50))
+an `options` object as argument ([valid properties are available here](lib/http-proxy.js#L26-L42))
 
 ```javascript
 var httpProxy = require('http-proxy');
