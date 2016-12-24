@@ -460,6 +460,8 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 ### Contributing and Issues
 
+* Read carefully our [Code Of Conduct](https://github.com/nodejitsu/node-http-proxy/blob/master/CODE_OF_CONDUCT.md)
+
 * Search on Google/Github
 * If you can't find anything, open an issue
 * If you feel comfortable about fixing the issue, fork the repo
