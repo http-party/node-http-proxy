@@ -2,17 +2,20 @@
   <img src="https://raw.github.com/nodejitsu/node-http-proxy/master/doc/logo.png"/>
 </p>
 
-node-http-proxy
+# node-http-proxy
 =======
 
 <p align="left">
  <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
-  <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
+  <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/>
+ </a>
+ &nbsp;&nbsp;
  <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
-  <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
+  <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/>
+ </a>
 </p>
 
-`node-http-proxy` is an HTTP programmable proxying library that supports
+**node-http-proxy** is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as reverse
 proxies and load balancers.
 
@@ -60,7 +63,7 @@ var httpProxy = require('http-proxy');
 
 var proxy = httpProxy.createProxyServer(options); // See (†)
 ```
-†Unless listen(..) is invoked on the object, this does not create a webserver. See below.
+*Unless listen(port) method is invoked within the object, ``createProxyServer`` does not create a webserver. See below.*
 
 An object will be returned with four methods:
 
@@ -120,7 +123,7 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9000);
 ```
-†Invoking listen(..) triggers the creation of a web server. Otherwise, just the proxy instance is created.
+*Invoking listen(port) method triggers the creation of a web server. Otherwise, just the proxy instance is created.*
 
 **[Back to top](#table-of-contents)**
 
@@ -461,6 +464,7 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 ### Contributing and Issues
 
 * Read carefully our [Code Of Conduct](https://github.com/nodejitsu/node-http-proxy/blob/master/CODE_OF_CONDUCT.md)
+
 * Search on Google/Github
 * If you can't find anything, open an issue
 * If you feel comfortable about fixing the issue, fork the repo
