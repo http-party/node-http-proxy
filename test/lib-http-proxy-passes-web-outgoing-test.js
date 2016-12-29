@@ -24,7 +24,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       beforeEach(function() {
         this.options.hostRewrite = 'ext-manual.com';
       });
-      [201, 301, 302, 307, 308].forEach(function(code) {
+      [201, 301, 302, 303, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
@@ -69,7 +69,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       beforeEach(function() {
         this.options.autoRewrite = true;
       });
-      [201, 301, 302, 307, 308].forEach(function(code) {
+      [201, 301, 302, 303, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
@@ -108,7 +108,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       beforeEach(function() {
         this.options.protocolRewrite = 'https';
       });
-      [201, 301, 302, 307, 308].forEach(function(code) {
+      [201, 301, 302, 303, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
