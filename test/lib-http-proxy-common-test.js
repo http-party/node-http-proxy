@@ -330,7 +330,8 @@ describe('lib/http-proxy/common.js', function () {
           cert: 'my-cert',
           ca: 'my-ca',
           ciphers: 'my-ciphers',
-          secureProtocol: 'my-secure-protocol'
+          secureProtocol: 'my-secure-protocol',
+          servername: 'my-servername',
         }
       },
       {
@@ -345,6 +346,7 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.ca).eql('my-ca');
       expect(outgoing.ciphers).eql('my-ciphers');
       expect(outgoing.secureProtocol).eql('my-secure-protocol');
+      expect(outgoing.servername).eql('my-servername');
     });
 
     // url.parse('').path => null
