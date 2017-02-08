@@ -34,19 +34,6 @@ var util = require('util'),
 //
 // Basic Connect App
 //
-connect.createServer(
-  function (req, res, next) {
-    var _write = res.write;
-
-    res.write = function (data) {
-      _write.call(res, data.toString().replace("Ruby", "nodejitsu"));
-    }
-    next();
-  },
-  function (req, res) {
-    proxy.web(req, res);
-  }
-).listen(8013);
 
 //
 // Basic Http Proxy Server
