@@ -352,6 +352,7 @@ proxyServer.listen(8015);
      ```
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) when proxy receives no response from target
+*  **binding**: object allowing for per hostname targeting / forwarding. Each object key specifies hostname glob. When the glob is matched, the options listed under the key are used by the proxy. To merge the base option config with a partial, domain glob specific configuration, specify _merge: true at the partial config root. Intended to be used with a single (port, protocol) proxy and star certificate in case SSL is needed.
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
