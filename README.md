@@ -372,6 +372,7 @@ proxyServer.listen(8015);
        "*": ""
      }
      ```
+*  **cookieRemoveSecure**: true/false, Default: false - removes the `secure` attribute from cookies so they can be used by non-HTTPS origins
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests

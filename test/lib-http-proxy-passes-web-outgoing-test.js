@@ -235,7 +235,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
           how: 'are you?',
           'set-cookie': [
             'hello; domain=my.domain; path=/',
-            'there; domain=my.domain; path=/'
+            'there; domain=my.domain; path=/; secure'
           ]
         }
       };
@@ -403,6 +403,26 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         .to.contain('hello-on-my.old.domain; domain=my.new.domain; path=/');
       expect(this.res.headers['set-cookie'])
         .to.contain('hello-on-my.special.domain; domain=my.special.domain; path=/');
+    });
+
+    it('does not remove `secure` attribute by default', function() {
+      var options = {};
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie'])
+        .to.contain('there; domain=my.domain; path=/; secure');
+    });
+
+    it('removes `secure` attribute when cookieRemoveSecure true', function() {
+      var options = {
+        cookieRemoveSecure: true
+      };
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie'])
+        .to.contain('there; domain=my.domain; path=/');
     });
   });
 
