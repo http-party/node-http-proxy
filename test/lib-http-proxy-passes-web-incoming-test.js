@@ -225,6 +225,10 @@ describe('#createProxyServer.web() using own http server', function () {
         expect(errRes).to.be.equal(res);
         expect(new Date().getTime() - started).to.be.greaterThan(99);
         expect(err.code).to.be('ECONNRESET');
+        expect(err.request).to.be.an(Object);
+        expect(err.request.proxyRequestType).to.be('target');
+        expect(err.request._headers.host).to.be('127.0.0.1:8084');
+        expect(err.request.path).to.be('/');
         done();
       });
 
@@ -264,6 +268,10 @@ describe('#createProxyServer.web() using own http server', function () {
         expect(errReq).to.be.equal(req);
         expect(errRes).to.be.equal(res);
         expect(err.code).to.be('ECONNRESET');
+        expect(err.request).to.be.an(Object);
+        expect(err.request.proxyRequestType).to.be('target');
+        expect(err.request._headers.host).to.be('127.0.0.1:8085');
+        expect(err.request.path).to.be('/');
         doneOne();
       });
 
