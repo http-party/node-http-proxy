@@ -377,6 +377,7 @@ proxyServer.listen(8015);
 *  **timeout**: timeout (in millis) for incoming requests
 *  **followRedirects**: true/false, Default: false - specify whether you want to follow redirects
 *  **selfHandleRequest** true/false, if set to true, none of the webOutgoing passes are called and its your responsibility ro appropriately return the response by listening and acting on the `proxyRes` event
+*  **modifyResponse**: do not pipe proxyRes to res, so you can respond to client with your own response. It still goes through all out going web passes unlike selfHandleRequest
 *  **buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
     ```
@@ -395,6 +396,7 @@ proxyServer.listen(8015);
 
     };
     ```
+
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
 `options.target` and `options.forward` cannot both be missing
@@ -484,6 +486,30 @@ proxy.close();
 **[Back to top](#table-of-contents)**
 
 ### Miscellaneous
+
+### Modify response
+
+```
+
+    var option = {
+        target: target,
+        modifyResponse : true
+    };
+    proxy.on('proxyRes', function (proxyRes, req, res) {
+        var body = new Buffer('');
+        proxyRes.on('data', function (data) {
+            body = Buffer.concat([body, data]);
+        });
+        proxyRes.on('end', function () {
+            body = body.toString();
+            console.log("res from proxied server:", body);
+            res.end("my response to cli");
+        });
+    });
+    proxy.web(req, res, option);
+
+
+```
 
 #### ProxyTable API
 
