@@ -352,6 +352,7 @@ proxyServer.listen(8015);
      ```
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) when proxy receives no response from target
+*  **modifyresponse**: do not pipe proxyRes to res, so you can response to client with your self response
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
@@ -441,6 +442,30 @@ proxy.close();
 **[Back to top](#table-of-contents)**
 
 ### Miscellaneous
+
+### Modify response
+
+```
+
+    var option = {
+        target: target,
+        modifyResponse : true
+    };
+    proxy.on('proxyRes', function (proxyRes, req, res) {
+        var body = new Buffer('');
+        proxyRes.on('data', function (data) {
+            body = Buffer.concat([body, data]);
+        });
+        proxyRes.on('end', function () {
+            body = body.toString();
+            console.log("res from proxied server:", body);
+            res.end("my response to cli");
+        });
+    });
+    proxy.web(req, res, option);
+        
+
+```
 
 #### ProxyTable API
 
