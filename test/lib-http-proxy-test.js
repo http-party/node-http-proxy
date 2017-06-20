@@ -415,7 +415,6 @@ describe('lib/http-proxy.js', function() {
 
       client.on('error', function (err) {
         expect(err).to.be.an(Error);
-        expect(err.code).to.be('ECONNRESET');
         proxyServer.close();
         done();
       });
