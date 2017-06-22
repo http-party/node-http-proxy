@@ -22,6 +22,18 @@ describe('lib/http-proxy/passes/web.js', function() {
       webPasses.deleteLength(stubRequest, {}, {});
       expect(stubRequest.headers['content-length']).to.eql('0');
     });
+
+    it('should remove `transfer-encoding` from empty DELETE requests', function() {
+      var stubRequest = {
+        method: 'DELETE',
+        headers: {
+          'transfer-encoding': 'chunked'
+        }
+      };
+      webPasses.deleteLength(stubRequest, {}, {});
+      expect(stubRequest.headers['content-length']).to.eql('0');
+      expect(stubRequest.headers).to.not.have.key('transfer-encoding');
+    });
   });
 
   describe('#timeout', function() {
@@ -165,6 +177,35 @@ describe('#createProxyServer.web() using own http server', function () {
     }, function() {}).end();
   });
 
+  it('should forward the request and handle error via event listener', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      forward: 'http://127.0.0.1:8080'
+    });
+
+    var proxyServer = http.createServer(requestHandler);
+
+    function requestHandler(req, res) {
+      proxy.once('error', function (err, errReq, errRes) {
+        proxyServer.close();
+        expect(err).to.be.an(Error);
+        expect(errReq).to.be.equal(req);
+        expect(errRes).to.be.equal(res);
+        expect(err.code).to.be('ECONNREFUSED');
+        done();
+      });
+
+      proxy.web(req, res);
+    }
+
+    proxyServer.listen('8083');
+
+    http.request({
+      hostname: '127.0.0.1',
+      port: '8083',
+      method: 'GET',
+    }, function() {}).end();
+  });
+
   it('should proxy the request and handle timeout error (proxyTimeout)', function(done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:45000',
@@ -217,7 +258,7 @@ describe('#createProxyServer.web() using own http server', function () {
 
     var started = new Date().getTime();
     function requestHandler(req, res) {
-      proxy.once('error', function (err, errReq, errRes) {
+      proxy.once('econnreset', function (err, errReq, errRes) {
         proxyServer.close();
         expect(err).to.be.an(Error);
         expect(errReq).to.be.equal(req);

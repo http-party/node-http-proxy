@@ -1,7 +1,7 @@
 /*
   standalone-websocket-proxy.js: Example of proxying websockets over HTTP with a standalone HTTP server.
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -68,7 +68,7 @@ var proxyServer = http.createServer(function (req, res) {
 });
 
 //
-// Listen to the `upgrade` event and proxy the 
+// Listen to the `upgrade` event and proxy the
 // WebSocket requests as well.
 //
 proxyServer.on('upgrade', function (req, socket, head) {

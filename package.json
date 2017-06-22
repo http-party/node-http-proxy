@@ -1,20 +1,19 @@
 {
   "name": "http-proxy",
-  "version": "1.11.1",
+  "version": "1.16.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/nodejitsu/node-http-proxy.git"
   },
   "description": "HTTP proxying for the masses",
-  "author": "Nodejitsu Inc. <info@nodejitsu.com>",
+  "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "maintainers": [
-    "yawnt <yawnt@nodejitsu.com>",
-    "indexzero <charlie@nodejitsu.com>"
+    "jcrugzz <jcrugzz@gmail.com>"
   ],
   "main": "index.js",
   "dependencies": {
-    "eventemitter3": "1.x.x",
-    "requires-port": "0.x.x"
+    "eventemitter3": "2.0.x",
+    "requires-port": "1.x.x"
   },
   "devDependencies": {
     "async": "*",
@@ -24,17 +23,18 @@
     "expect.js": "*",
     "mocha": "*",
     "mocha-lcov-reporter": "*",
-    "semver": "^4.3.3",
+    "semver": "^5.0.3",
     "socket.io": "*",
     "socket.io-client": "*",
-    "ws": "~0.5.0"
+    "sse": "0.0.6",
+    "ws": "^0.8.0"
   },
   "scripts": {
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js",
     "blanket": {
       "pattern": "lib/http-proxy"
     },
-    "test": "mocha -R landing test/*-test.js",
+    "test": "mocha test/*-test.js",
     "test-cov": "mocha --require blanket -R html-cov > cov/coverage.html"
   },
   "engines": {
