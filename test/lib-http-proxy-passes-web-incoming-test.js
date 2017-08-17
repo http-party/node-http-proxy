@@ -1,6 +1,7 @@
 var webPasses = require('../lib/http-proxy/passes/web-incoming'),
     httpProxy = require('../lib/http-proxy'),
     expect    = require('expect.js'),
+    url       = require('url'),
     http      = require('http');
 
 describe('lib/http-proxy/passes/web.js', function() {
@@ -366,5 +367,41 @@ describe('#createProxyServer.web() using own http server', function () {
     source.listen('8080');
 
     http.request('http://127.0.0.1:8081', function() {}).end();
+  });
+});
+
+describe('#followRedirects', function () {
+  it('should proxy the request follow redirects', function (done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      followRedirects: true
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+
+      if (url.parse(req.url).pathname === '/redirect') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('ok');
+      }
+
+      res.writeHead(301, { 'Location': '/redirect' });
+      res.end();
+    });
+
+    proxyServer.listen('8081');
+    source.listen('8080');
+
+    http.request('http://127.0.0.1:8081', function(res) {
+      source.close();
+      proxyServer.close();
+      expect(res.statusCode).to.eql(200);
+      done();
+    }).end();
   });
 });
