@@ -375,6 +375,7 @@ proxyServer.listen(8015);
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
+*  **followRedirects**: true/false, Default: false - specify whether you want to follow redirects
 *  **selfHandleRequest** true/false, if set to true, none of the webOutgoing passes are called and its your responsibility ro appropriately return the response by listening and acting on the `proxyRes` event
 *  **buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
