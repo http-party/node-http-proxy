@@ -376,7 +376,24 @@ proxyServer.listen(8015);
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
 *  **selfHandleRequest** true/false, if set to true, none of the webOutgoing passes are called and its your responsibility ro appropriately return the response by listening and acting on the `proxyRes` event
+*  **buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
+    ```
+    'use strict';
+
+    const streamify = require('stream-array');
+    const HttpProxy = require('http-proxy');
+    const proxy = new HttpProxy();
+
+    module.exports = (req, res, next) => {
+
+      proxy.web(req, res, {
+        target: 'http://localhost:4003/',
+        buffer: streamify(req.rawBody)
+      }, next);
+
+    };
+    ```
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
 `options.target` and `options.forward` cannot both be missing
@@ -385,6 +402,7 @@ If you are using the `proxyServer.listen` method, the following options are also
 
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
+
 
 **[Back to top](#table-of-contents)**
 
