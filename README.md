@@ -265,6 +265,24 @@ httpProxy.createServer({
 }).listen(443);
 ```
 
+##### HTTP -> HTTPS (using a PKCS12 client certificate)
+
+```js
+//
+// Create an HTTP proxy server with an HTTPS target
+//
+httpProxy.createProxyServer({
+  target: {
+    protocol: 'https:',
+    host: 'my-domain-name',
+    port: 443,
+    pfx: fs.readFileSync('path/to/certificate.p12'),
+    passphrase: 'password',
+  },
+  changeOrigin: true,
+}).listen(8000);
+```
+
 **[Back to top](#table-of-contents)**
 
 #### Proxying WebSockets
