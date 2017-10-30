@@ -125,7 +125,7 @@ http.createServer(function (req, res) {
 **[Back to top](#table-of-contents)**
 
 #### Setup a stand-alone proxy server with custom server logic
-This example show how you can proxy a request using your own HTTP server
+This example shows how you can proxy a request using your own HTTP server
 and also you can put your own logic to handle the request.
 
 ```js
@@ -237,7 +237,7 @@ http.createServer(function (req, res) {
 **[Back to top](#table-of-contents)**
 
 #### Using HTTPS
-You can activate the validation of a secure SSL certificate to the target connection (avoid self signed certs), just set `secure: true` in the options.
+You can activate the validation of a secure SSL certificate to the target connection (avoid self-signed certs), just set `secure: true` in the options.
 
 ##### HTTPS -> HTTP
 
