@@ -361,6 +361,24 @@ If you are using the `proxyServer.listen` method, the following options are also
 
  *  **ssl**: object to be passed to https.createServer()
  *  **ws**: true/false, if you want to proxy websockets
+ *  **buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
+
+    ```
+    'use strict';
+
+    const streamify = require('stream-array');
+    const proxy = require('http-proxy-middleware');
+
+    module.exports = (req, res, next) => {
+
+      const dummyEndpointProxy = proxy({
+        target: 'http://localhost:4003/',
+        buffer: streamify(req.rawBody)
+      });
+
+      return dummyEndpointProxy(req, res, next);
+    };
+    ```
 
 **[Back to top](#table-of-contents)**
 
