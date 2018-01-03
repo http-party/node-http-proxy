@@ -367,4 +367,49 @@ describe('#createProxyServer.web() using own http server', function () {
 
     http.request('http://127.0.0.1:8081', function() {}).end();
   });
+
+  it('should proxy requests to multiple servers with different options', function (done) {
+    var proxy = httpProxy.createProxyServer();
+
+    // proxies to two servers depending on url, rewriting the url as well
+    // http://127.0.0.1:8080/s1/ -> http://127.0.0.1:8081/
+    // http://127.0.0.1:8080/ -> http://127.0.0.1:8082/
+    function requestHandler(req, res) {
+      if (req.url.indexOf('/s1/') === 0) {
+        proxy.web(req, res, {
+          ignorePath: true,
+          target: 'http://127.0.0.1:8081' + req.url.substring(3)
+        });
+      } else {
+        proxy.web(req, res, {
+          target: 'http://127.0.0.1:8082'
+        });
+      }
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source1 = http.createServer(function(req, res) {
+      expect(req.method).to.eql('GET');
+      expect(req.headers.host.split(':')[1]).to.eql('8080');
+      expect(req.url).to.eql('/test1');
+    });
+
+    var source2 = http.createServer(function(req, res) {
+      source1.close();
+      source2.close();
+      proxyServer.close();
+      expect(req.method).to.eql('GET');
+      expect(req.headers.host.split(':')[1]).to.eql('8080');
+      expect(req.url).to.eql('/test2');
+      done();
+    });
+
+    proxyServer.listen('8080');
+    source1.listen('8081');
+    source2.listen('8082');
+
+    http.request('http://127.0.0.1:8080/s1/test1', function() {}).end();
+    http.request('http://127.0.0.1:8080/test2', function() {}).end();
+  });
 });
