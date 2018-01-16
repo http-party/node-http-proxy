@@ -315,6 +315,43 @@ describe('#createProxyServer.web() using own http server', function () {
     http.request('http://127.0.0.1:8086', function() {}).end();
   });
 
+  it('should allow the proxyRes event to be aborted and manipulated', function(done) {
+    var changed_response = 'response_changed';
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8082'
+    });
+
+    function requestHandler(req, res) {
+      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+        proxyRes.abort();
+        expect(pReq).to.be.equal(req);
+        expect(pRes).to.be.equal(res);
+        res.end(changed_response);
+      });
+
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      res.end('Response');
+    });
+
+    proxyServer.listen('8087');
+    source.listen('8082');
+    http.request('http://127.0.0.1:8087', function(res) {
+      var chunks = [];
+      res.on('data', Array.prototype.push.bind(chunks));
+      res.on('end', function() {
+        source.close();
+        proxyServer.close();
+        expect(chunks.join('')).to.be.equal(changed_response);
+        done();
+      });
+    }).end();
+  });
+
   it('should proxy the request and handle changeOrigin option', function (done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080',
