@@ -16,6 +16,27 @@ node-http-proxy
 websockets. It is suitable for implementing components such as reverse
 proxies and load balancers.
 
+### Fork details
+This fork offers the option for overriding the proxy-outgoing HTTP-method.
+
+Example usage:
+
+`var server = http.createServer(function(req, res) {
+  // You can define here your custom logic to handle the request
+  // and then proxy the request.
+  proxy.web(req, res, { target: 'http://127.0.0.1:9200', method: 'GET' });
+  console.log("req: " + req);
+  console.log("res: " + res);
+});`
+
+You could also wrap it into a conditional statement like:
+
+`if ( req.method == "POST" ) {
+   proxy.web ...
+}`
+
+https://github.com/nodejitsu/node-http-proxy/pull/1231
+
 ### Table of Contents
   * [Installation](#installation)
   * [Upgrading from 0.8.x ?](#upgrading-from-08x-)
