@@ -351,7 +351,8 @@ proxyServer.listen(8015);
      }
      ```
 *  **headers**: object with extra headers to be added to target requests.
-*  **proxyTimeout**: timeout (in millis) when proxy receives no response from target
+*  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
+*  **timeout**: timeout (in millis) for incoming requests
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
