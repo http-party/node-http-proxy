@@ -1,6 +1,6 @@
 {
   "name": "http-proxy",
-  "version": "1.16.2",
+  "version": "1.18.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/nodejitsu/node-http-proxy.git"
@@ -13,6 +13,7 @@
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "2.0.x",
+    "minimatch": "^3.0.3",
     "requires-port": "1.x.x"
   },
   "devDependencies": {
