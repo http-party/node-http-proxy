@@ -298,6 +298,17 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         .to.contain('hello; domain=my.domain; path=/');
     });
 
+    it('rewrites path', function() {
+      var options = {
+        cookiePathRewrite: '/dummyPath'
+      };
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie'])
+        .to.contain('hello; domain=my.domain; path=/dummyPath');
+    });
+
     it('rewrites domain', function() {
       var options = {
         cookieDomainRewrite: 'my.new.domain'
