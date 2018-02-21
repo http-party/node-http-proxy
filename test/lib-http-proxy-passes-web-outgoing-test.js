@@ -289,15 +289,6 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       expect(this.res.headers['set-cookie']).to.have.length(2);
     });
 
-    it('does not rewrite domain', function() {
-      var options = {};
-
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
-
-      expect(this.res.headers['set-cookie'])
-        .to.contain('hello; domain=my.domain; path=/');
-    });
-
     it('rewrites path', function() {
       var options = {
         cookiePathRewrite: '/dummyPath'
@@ -307,6 +298,35 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; domain=my.domain; path=/dummyPath');
+    });
+
+    it('does not rewrite path', function() {
+      var options = {};
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie'])
+        .to.contain('hello; domain=my.domain; path=/');
+    });
+
+    it('removes path', function() {
+      var options = {
+        cookiePathRewrite: ''
+      };
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie'])
+        .to.contain('hello; domain=my.domain');
+    });
+
+    it('does not rewrite domain', function() {
+      var options = {};
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie'])
+        .to.contain('hello; domain=my.domain; path=/');
     });
 
     it('rewrites domain', function() {
