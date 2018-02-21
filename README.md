@@ -342,6 +342,18 @@ proxyServer.listen(8015);
        "*": ""
      }
      ```
+*  **cookiePathRewrite**: rewrites path of `set-cookie` headers. Possible values:
+   * `false` (default): disable cookie rewriting
+   * String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
+   * Object: mapping of paths to new paths, use `"*"` to match all paths.  
+     For example keep one path unchanged, rewrite one path and remove other paths:
+     ```
+     cookiePathRewrite: {
+       "/unchanged.path/": "/unchanged.path/",
+       "/old.path/": "/new.path/",
+       "*": ""
+     }
+     ```
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) when proxy receives no response from target
 
