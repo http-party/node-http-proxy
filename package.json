@@ -2,14 +2,10 @@
   "name": "epic-http-proxy",
   "version": "1.16.3",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/nodejitsu/node-http-proxy.git"
+    "type": "git"
   },
   "description": "Fork of HTTP proxying for the masses",
-  "author": "Charlie Robbins <charlie.robbins@gmail.com>",
-  "maintainers": [
-    "jcrugzz <jcrugzz@gmail.com>"
-  ],
+  "author": "Ryan King <ryan.king@epicgames.com>",
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "2.0.x",
@@ -40,5 +36,8 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "http://nexus-server-01.ol.epicgames.net:8081/nexus/content/repositories/npm-internal/"
+  }
 }
