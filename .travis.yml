@@ -1,14 +1,8 @@
 sudo: false
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
-  - "4.2"
   - "6"
-
-before_install:
-  - travis_retry npm install -g npm@2.14.5
-  - travis_retry npm install
+  - "8"
 
 script:
   - npm test

@@ -483,6 +483,7 @@ describe('lib/http-proxy.js', function() {
       proxyServer.on('close', function() {
         proxyServer.close();
         server.close();
+        destiny.close();
         if (count == 1) { done(); }
       });
 
