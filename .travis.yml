@@ -3,10 +3,12 @@ language: node_js
 node_js:
   - "6"
   - "8"
-
 script:
   - npm test
-
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+matrix:
+  fast_finish: true
 notifications:
   email:
     - travis@nodejitsu.com

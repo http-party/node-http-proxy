@@ -5,12 +5,7 @@
 node-http-proxy
 =======
 
-<p align="left">
- <a href="https://travis-ci.org/nodejitsu/node-http-proxy" target="_blank">
-  <img src="https://travis-ci.org/nodejitsu/node-http-proxy.png"/></a>&nbsp;&nbsp;
- <a href="https://coveralls.io/r/nodejitsu/node-http-proxy" target="_blank">
-  <img src="https://coveralls.io/repos/nodejitsu/node-http-proxy/badge.png"/></a>
-</p>
+[![Build Status](https://travis-ci.org/nodejitsu/node-http-proxy.svg?branch=master)](https://travis-ci.org/nodejitsu/node-http-proxy)
 
 `node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as reverse
@@ -341,7 +336,7 @@ proxyServer.listen(8015);
 *  **cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
    * `false` (default): disable cookie rewriting
    * String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
-   * Object: mapping of domains to new domains, use `"*"` to match all domains.  
+   * Object: mapping of domains to new domains, use `"*"` to match all domains.
      For example keep one domain unchanged, rewrite one domain and remove other domains:
      ```
      cookieDomainRewrite: {
