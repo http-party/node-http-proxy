@@ -27,8 +27,8 @@
     "ws": "^0.8.0"
   },
   "scripts": {
-    "test": "mocha test/*-test.js",
-    "test-cov": "nyc npm test"
+    "mocha": "mocha test/*-test.js",
+    "test": "nyc --reporter=text --reporter=lcov npm run mocha"
   },
   "engines": {
     "node": ">=4.0.0"
