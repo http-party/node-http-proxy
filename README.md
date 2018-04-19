@@ -345,7 +345,7 @@ proxyServer.listen(8015);
 *  **cookiePathRewrite**: rewrites path of `set-cookie` headers. Possible values:
    * `false` (default): disable cookie rewriting
    * String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
-   * Object: mapping of paths to new paths, use `"*"` to match all paths.  
+   * Object: mapping of paths to new paths, use `"*"` to match all paths.
      For example keep one path unchanged, rewrite one path and remove other paths:
      ```
      cookiePathRewrite: {
@@ -357,6 +357,7 @@ proxyServer.listen(8015);
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
+*  **selfHandleRequest** true/false, if set to true, none of the webOutgoing passes are called and its your responsibility ro appropriately return the response by listening and acting on the `proxyRes` event
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
