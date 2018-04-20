@@ -1,6 +1,8 @@
 var webPasses = require('../lib/http-proxy/passes/web-incoming'),
     httpProxy = require('../lib/http-proxy'),
     expect    = require('expect.js'),
+    concat    = require('concat-stream'),
+    async     = require('async'),
     url       = require('url'),
     http      = require('http');
 
@@ -314,6 +316,44 @@ describe('#createProxyServer.web() using own http server', function () {
     proxyServer.listen('8086');
     source.listen('8080');
     http.request('http://127.0.0.1:8086', function() {}).end();
+  });
+
+  it('should proxy the request and provide and respond to manual user response when using modifyResponse', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      selfHandleResponse: true
+    });
+
+    function requestHandler(req, res) {
+      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+        proxyRes.pipe(concat(function (body) {
+          expect(body.toString('utf8')).eql('Response');
+          pRes.end(Buffer.from('my-custom-response'));
+        }))
+      });
+
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      res.end('Response');
+    });
+
+    async.parallel([
+      next => proxyServer.listen(8086, next),
+      next => source.listen(8080, next)
+    ], function (err) {
+      http.get('http://127.0.0.1:8086', function(res) {
+        res.pipe(concat(function(body) {
+          expect(body.toString('utf8')).eql('my-custom-response');
+          source.close();
+          proxyServer.close();
+          done();
+        }));
+      }).once('error', done);
+    })
   });
 
   it('should proxy the request and handle changeOrigin option', function (done) {
