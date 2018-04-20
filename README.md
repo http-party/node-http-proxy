@@ -364,7 +364,7 @@ proxyServer.listen(8015);
    * `false` (default): disable cookie rewriting
    * String: new path, for example `cookiePathRewrite: "/newPath/"`. To remove the path, use `cookiePathRewrite: ""`. To set path to root use `cookiePathRewrite: "/"`.
    * Object: mapping of paths to new paths, use `"*"` to match all paths.
-     For example keep one path unchanged, rewrite one path and remove other paths:
+     For example, to keep one path unchanged, rewrite one path and remove other paths:
      ```
      cookiePathRewrite: {
        "/unchanged.path/": "/unchanged.path/",
@@ -376,7 +376,7 @@ proxyServer.listen(8015);
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
 *  **followRedirects**: true/false, Default: false - specify whether you want to follow redirects
-*  **selfHandleRequest** true/false, if set to true, none of the webOutgoing passes are called and its your responsibility ro appropriately return the response by listening and acting on the `proxyRes` event
+*  **selfHandleResponse** true/false, if set to true, none of the webOutgoing passes are called and it's your responsibility to appropriately return the response by listening and acting on the `proxyRes` event
 *  **buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
     ```
@@ -486,12 +486,15 @@ proxy.close();
 
 ### Miscellaneous
 
-If you want to handle your own response after receiving the proxyRes, you can do
-so with `selfHandleResponse`
+If you want to handle your own response after receiving the `proxyRes`, you can do
+so with `selfHandleResponse`. As you can see below, if you use this option, you
+are able to intercept and read the `proxyRes` but you must also make sure to
+reply to the `res` itself otherwise the original client will never receive any
+data.
 
 ### Modify response
 
-```
+```js
 
     var option = {
       target: target,
