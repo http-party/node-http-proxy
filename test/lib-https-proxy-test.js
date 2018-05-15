@@ -10,7 +10,7 @@ var httpProxy = require('../lib/http-proxy'),
 // Expose a port number generator.
 // thanks to @3rd-Eden
 //
-var initialPort = 1024, gen = {};
+var initialPort = 11024, gen = {};
 Object.defineProperty(gen, 'port', {
   get: function get() {
     return initialPort++;
