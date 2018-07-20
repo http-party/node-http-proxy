@@ -325,8 +325,9 @@ describe('#createProxyServer.web() using own http server', function () {
     });
 
     function requestHandler(req, res) {
-      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+      proxy.once('proxyRes', function (proxyRes, pReq, pRes, options) {
         proxyRes.pipe(concat(function (body) {
+          expect(options.selfHandleResponse).to.equal(true);
           expect(body.toString('utf8')).eql('Response');
           pRes.end(Buffer.from('my-custom-response'));
         }))
