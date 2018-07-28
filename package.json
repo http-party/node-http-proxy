@@ -13,13 +13,13 @@
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "^3.0.0",
-    "requires-port": "^1.0.0",
-    "follow-redirects": "^1.0.0"
+    "requires-port": "^1.0.0"
   },
   "devDependencies": {
     "async": "^2.0.0",
     "concat-stream": "^1.6.2",
     "expect.js": "~0.3.1",
+    "follow-redirects": "^1.5.1",
     "mocha": "^3.5.3",
     "nyc": "^11.7.1",
     "semver": "^5.0.3",

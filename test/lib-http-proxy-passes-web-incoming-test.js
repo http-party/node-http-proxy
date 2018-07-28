@@ -4,7 +4,8 @@ var webPasses = require('../lib/http-proxy/passes/web-incoming'),
     concat    = require('concat-stream'),
     async     = require('async'),
     url       = require('url'),
-    http      = require('http');
+    http      = require('http'),
+    followRedirects = require('follow-redirects');
 
 describe('lib/http-proxy/passes/web.js', function() {
   describe('#deleteLength', function() {
@@ -455,11 +456,11 @@ describe('#createProxyServer.web() using own http server', function () {
   });
 });
 
-describe('#followRedirects', function () {
+describe('#followRedirects as httpAgents', function () {
   it('should proxy the request follow redirects', function (done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080',
-      followRedirects: true
+      httpAgents: followRedirects
     });
 
     function requestHandler(req, res) {
