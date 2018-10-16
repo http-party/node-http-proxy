@@ -63,6 +63,12 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
         expect(this.proxyRes.headers.location).to.eql('http://backend.com:8080/');
       });
+
+      it('handles protocol relative URLs', function() {
+        this.proxyRes.headers.location = '//backend.com';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('//ext-manual.com/');
+      });
     });
 
     context('rewrites location host with autoRewrite', function() {
@@ -128,16 +134,36 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
+      it('not when protocol relative URL is used', function() {
+        this.proxyRes.headers.location = '//backend.com';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('//backend.com/');
+      });
+
       it('works together with hostRewrite', function() {
         this.options.hostRewrite = 'ext-manual.com';
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
         expect(this.proxyRes.headers.location).to.eql('https://ext-manual.com/');
       });
 
+      it('not with hostRewrite when a protocol relative URL is used', function() {
+        this.options.hostRewrite = 'ext-manual.com';
+        this.proxyRes.headers.location = '//backend.com';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('//ext-manual.com/');
+      });
+
       it('works together with autoRewrite', function() {
         this.options.autoRewrite = true;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
         expect(this.proxyRes.headers.location).to.eql('https://ext-auto.com/');
+      });
+
+      it('not with autoRewrite when a protocol relative URL is used', function() {
+        this.options.autoRewrite = true;
+        this.proxyRes.headers.location = '//backend.com/';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('//ext-auto.com/');
       });
     });
   });
