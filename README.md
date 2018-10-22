@@ -501,12 +501,12 @@ data.
       selfHandleResponse : true
     };
     proxy.on('proxyRes', function (proxyRes, req, res) {
-        var body = new Buffer('');
-        proxyRes.on('data', function (data) {
-            body = Buffer.concat([body, data]);
+        var body = [];
+        proxyRes.on('data', function (chunk) {
+            body.push(chunk);
         });
         proxyRes.on('end', function () {
-            body = body.toString();
+            body = Buffer.concat(body).toString();
             console.log("res from proxied server:", body);
             res.end("my response to cli");
         });
