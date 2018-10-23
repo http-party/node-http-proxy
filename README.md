@@ -373,6 +373,8 @@ proxyServer.listen(8015);
      }
      ```
 *  **headers**: object with extra headers to be added to target requests.
+*  **createWsClientTransformStream**: if set, this function will be called with three arguments `req`, `proxyReq` and `proxyRes` and should return a Duplex stream, data from the client websocket will be piped through this stream before being piped to the server, allowing you to influence the request data.
+*  **createWsServerTransformStream**: if set, this function will be called with three arguments `req`, `proxyReq` and `proxyRes` and should return a Duplex stream, data from the server websocket will be piped through this stream before being piped to the client, allowing you to influence the response data.
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
 *  **followRedirects**: true/false, Default: false - specify whether you want to follow redirects
