@@ -24,9 +24,7 @@
 
 */
 
-var util = require('util'),
-    colors = require('colors'),
-    http = require('http'),
+var http = require('http'),
     httpProxy = require('../../lib/http-proxy');
 
 //
@@ -50,5 +48,5 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9002);
 
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxy.web() handler'.cyan.underline + ' and latency'.magenta);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9002 '.yellow);
+console.log('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxy.web() handler'.cyan.underline + ' and latency'.magenta);
+console.log('http server '.blue + 'started '.green.bold + 'on port '.blue + '9002 '.yellow);
