@@ -24,10 +24,8 @@
 
 */
 
-var util = require('util'),
-    http = require('http'),
-    colors = require('colors'),
-    httpProxy = require('../../lib/http-proxy');
+var http = require('http'),
+    httpProxy = require('../../lib/http-proxy.js');
 
 try {
   var io = require('socket.io'),

@@ -24,8 +24,7 @@
 
 */
 
-var http = require('http'),
-    httpProxy = require('../../lib/http-proxy');
+var httpProxy = require('../../lib/http-proxy.js');
 
 //
 // Http Proxy Server with bad target

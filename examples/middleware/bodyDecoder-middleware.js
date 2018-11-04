@@ -27,11 +27,9 @@
 var http = require('http'),
     connect = require('connect'),
     request = require('request'),
-    colors = require('colors'),
-    util = require('util'),
     queryString = require('querystring'),
     bodyParser = require('body-parser'),
-    httpProxy = require('../../lib/http-proxy'),
+    httpProxy = require('../../lib/http-proxy.js'),
     proxy = httpProxy.createProxyServer({});
 
 

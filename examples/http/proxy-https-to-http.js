@@ -24,13 +24,9 @@
 
 */
 
-var https = require('https'),
-    http  = require('http'),
-    util  = require('util'),
-    path  = require('path'),
+var path  = require('path'),
     fs    = require('fs'),
-    colors = require('colors'),
-    httpProxy = require('../../lib/http-proxy'),
+    httpProxy = require('../../lib/http-proxy.js'),
     fixturesDir = path.join(__dirname, '..', '..', 'test', 'fixtures');
 
 //

@@ -23,9 +23,8 @@
 
 var http = require('http'),
     net = require('net'),
-    httpProxy = require('http-proxy'),
-    url = require('url'),
-    util = require('util');
+    httpProxy = require('../../lib/http-proxy.js'),
+    url = require('url')
 
 var proxy = httpProxy.createServer();
 

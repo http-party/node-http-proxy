@@ -26,7 +26,7 @@
 
 var http = require('http'),
     connect = require('connect'),
-    httpProxy = require('../../lib/http-proxy');
+    httpProxy = require('../../lib/http-proxy.js');
 
 //
 // Basic Connect App

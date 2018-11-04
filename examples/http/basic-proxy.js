@@ -24,9 +24,8 @@
 
 */
 
-var colors = require('colors'),
-    http = require('http'),
-    httpProxy = require('../../lib/http-proxy');
+var http = require('http'),
+    httpProxy = require('../../lib/http-proxy.js');
 
 var welcome = [
   '#    # ##### ##### #####        #####  #####   ####  #    # #   #',
