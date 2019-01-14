@@ -261,6 +261,9 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
           // Header names are lower-cased
           this.headers[k.toLowerCase()] = v;
         },
+        getHeader: function (k) {
+          return this.headers[k.toLowerCase()]
+        },
         headers: {}
       };
     });
@@ -403,6 +406,19 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         .to.contain('hello-on-my.old.domain; domain=my.new.domain; path=/');
       expect(this.res.headers['set-cookie'])
         .to.contain('hello-on-my.special.domain; domain=my.special.domain; path=/');
+    });
+
+    it('appends set-cookies header to an existing one', function () {
+      var options = {
+        mergeCookies: true,
+      };
+
+      this.res.setHeader("set-cookie", ['hello; domain=my.domain; path=/']);
+
+      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+
+      expect(this.res.headers['set-cookie']).to.be.an(Array);
+      expect(this.res.headers['set-cookie']).to.have.length(3);
     });
   });
 
