@@ -372,6 +372,9 @@ proxyServer.listen(8015);
        "*": ""
      }
      ```
+*  **cookieSecureRemove**: remove secure of `set-cookie` headers. Possible values:
+   * `false` (default): do not remove cookie secure property
+   * `true` to remove secure from cookie's property    
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
