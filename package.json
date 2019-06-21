@@ -1,5 +1,5 @@
 {
-  "name": "http-proxy",
+  "name": "@gemini-testing/http-proxy",
   "version": "1.17.0",
   "repository": {
     "type": "git",
@@ -13,8 +13,9 @@
   "main": "index.js",
   "dependencies": {
     "eventemitter3": "^3.0.0",
+    "follow-redirects": "^1.0.0",
     "requires-port": "^1.0.0",
-    "follow-redirects": "^1.0.0"
+    "ws": "^0.8.1"
   },
   "devDependencies": {
     "async": "^2.0.0",
@@ -25,8 +26,7 @@
     "semver": "^5.0.3",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
-    "sse": "0.0.6",
-    "ws": "^0.8.0"
+    "sse": "0.0.6"
   },
   "scripts": {
     "mocha": "mocha test/*-test.js",
