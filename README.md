@@ -395,17 +395,7 @@ proxyServer.listen(8015);
 
     };
     ```
-*  **wsInterceptServerMsg**: Is a handler which is called when a websocket message is intercepted on its way to the server. It takes two arguments: `data` - is a websocket message and flags (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the target server.
-    ```
-      const proxy = new HttpProxy({
-        ...
-        wsInterceptServerMsg: (data, flags) {
-          return typeof data === 'string ? data.toUpperCase() : data;
-        }
-        ...
-      })
-    ```
-*  **wsInterceptClientMsg**: Is a handler which is called when a websocket message is intercepted on its way to the client. It takes two arguments: `data` - is a websocket message and flags (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the client.
+*  **wsInterceptClientMsg**: Is a handler which is called when a websocket message is intercepted on its way to the server from the client. It takes two arguments: `data` - is a websocket message and flags (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the client.
      ```
       const proxy = new HttpProxy({
         ...
@@ -415,6 +405,17 @@ proxyServer.listen(8015);
         ...
       })
     ```
+*  **wsInterceptServerMsg**: Is a handler which is called when a websocket message is intercepted on its way to the client from the server. It takes two arguments: `data` - is a websocket message and flags (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the target server.
+    ```
+      const proxy = new HttpProxy({
+        ...
+        wsInterceptServerMsg: (data, flags) {
+          return typeof data === 'string ? data.toUpperCase() : data;
+        }
+        ...
+      })
+    ```
+
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
@@ -434,8 +435,8 @@ If you are using the `proxyServer.listen` method, the following options are also
 * `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
 * `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
 * `proxyRes`: This event is emitted if the request to the target got a response.
-* `wsServerMsg`: This event is emitted after websocket message is sended to the server.
-* `wsClientMsg`: This event is emitted after webscoket mesage is sended to the client.
+* `wsClientMsg`: This event is emitted after webscoket mesage is sended from the client to the server.
+* `wsServerMsg`: This event is emitted after websocket message is sended from the server to the client.
 * `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.
 * (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
