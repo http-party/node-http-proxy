@@ -435,8 +435,6 @@ If you are using the `proxyServer.listen` method, the following options are also
 * `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
 * `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
 * `proxyRes`: This event is emitted if the request to the target got a response.
-* `wsClientMsg`: This event is emitted after webscoket mesage is sended from the client to the server.
-* `wsServerMsg`: This event is emitted after websocket message is sended from the server to the client.
 * `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.
 * (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
@@ -484,6 +482,39 @@ proxy.on('open', function (proxySocket) {
 proxy.on('close', function (res, socket, head) {
   // view disconnected websocket connections
   console.log('Client disconnected');
+});
+```
+
+**[Back to top](#table-of-contents)**
+
+### Listening for websocket proxy request events
+
+* `clientSenderInited`: This event is emitted after websocket sender from client to server is initialized.
+* `serverSenderInited`: This event is emitted after websocket sender from server to client is initialized.
+* `wsClientMsg`: This event is emitted after webscoket message is sended from the client to the server.
+* `wsServerMsg`: This event is emitted after websocket message is sended from the server to the client.
+
+```js
+httpProxy.createServer({
+  target: 'ws://localhost:9014',
+  ws: true
+}).listen(8014);
+
+proxyServer.on('upgrade', function (req, socket, head) {
+  proxy.ws(req, socket, head);
+});
+
+proxyServer.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+  proxyReq.on('clientSenderInited', (sender) => {
+    sender.send('hello from client');
+  });
+
+  proxyReq.on('serverSenderInited', (sender) => {
+    sender.send('hello from server');
+  });
+
+  proxyReq.on('wsClientMsg', console.log);
+  proxyReq.on('wsServerMsg', console.log);
 });
 ```
 
