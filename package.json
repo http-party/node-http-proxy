@@ -1,6 +1,6 @@
 {
   "name": "@gemini-testing/http-proxy",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/nodejitsu/node-http-proxy.git"
