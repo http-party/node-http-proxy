@@ -395,21 +395,21 @@ proxyServer.listen(8015);
 
     };
     ```
-*  **wsInterceptClientMsg**: Is a handler which is called when a websocket message is intercepted on its way to the server from the client. It takes two arguments: `data` - is a websocket message and flags (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the client.
+*  **wsInterceptClientMsg**: Is a handler which is called when a websocket message is intercepted on its way to the server from the client. It takes two arguments: `data` - is a websocket message and `options` in which exists field `req` - websocket request object and `flags` (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the client.
      ```
       const proxy = new HttpProxy({
         ...
-        wsInterceptClientMsg: (data, flags) {
+        wsInterceptClientMsg: (data, options) {
           return typeof data === 'string ? data.toUpperCase() : data;
         }
         ...
       })
     ```
-*  **wsInterceptServerMsg**: Is a handler which is called when a websocket message is intercepted on its way to the client from the server. It takes two arguments: `data` - is a websocket message and flags (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the target server.
+*  **wsInterceptServerMsg**: Is a handler which is called when a websocket message is intercepted on its way to the client from the server. It takes two arguments: `data` - is a websocket message and `options` in which exist fields `req` - websocket request object and `flags` (fin, mask, compress, binary). If falsy value is returned then nothing will be sended to the target server.
     ```
       const proxy = new HttpProxy({
         ...
-        wsInterceptServerMsg: (data, flags) {
+        wsInterceptServerMsg: (data, options) {
           return typeof data === 'string ? data.toUpperCase() : data;
         }
         ...
