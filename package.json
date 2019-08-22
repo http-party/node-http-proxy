@@ -12,7 +12,7 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "eventemitter3": "^3.0.0",
+    "eventemitter3": "^4.0.0",
     "requires-port": "^1.0.0",
     "follow-redirects": "^1.0.0"
   },
