@@ -21,11 +21,11 @@
     "concat-stream": "^2.0.0",
     "expect.js": "~0.3.1",
     "mocha": "^3.5.3",
-    "nyc": "^11.7.1",
+    "nyc": "^14.0.0",
     "semver": "^5.0.3",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
-    "sse": "0.0.6",
+    "sse": "0.0.8",
     "ws": "^3.0.0"
   },
   "scripts": {
