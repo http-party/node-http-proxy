@@ -562,8 +562,8 @@ describe('lib/http-proxy.js', function() {
         });
       });
 
-      destiny.on('connection', function (socket) {
-        expect(socket.upgradeReq.headers['x-special-proxy-header']).to.eql('foobar');
+      destiny.on('connection', function (socket, upgradeReq) {
+        expect(upgradeReq.headers['x-special-proxy-header']).to.eql('foobar');
 
         socket.on('message', function (msg) {
           expect(msg).to.be('hello there');
