@@ -130,7 +130,8 @@ describe('lib/http-proxy.js', function() {
     it('should make the request, handle response and finish it', function(done) {
       var ports = { source: gen.port, proxy: gen.port };
       var proxy = httpProxy.createProxyServer({
-        target: 'http://127.0.0.1:' + ports.source
+        target: 'http://127.0.0.1:' + ports.source,
+        preserveHeaderKeyCase: true
       }).listen(ports.proxy);
 
       var source = http.createServer(function(req, res) {
@@ -148,6 +149,11 @@ describe('lib/http-proxy.js', function() {
         method: 'GET'
       }, function(res) {
         expect(res.statusCode).to.eql(200);
+        expect(res.headers['content-type']).to.eql('text/plain');
+        if (res.rawHeaders != undefined) {
+          expect(res.rawHeaders.indexOf('Content-Type')).not.to.eql(-1);
+          expect(res.rawHeaders.indexOf('text/plain')).not.to.eql(-1);
+        }
 
         res.on('data', function (data) {
           expect(data.toString()).to.eql('Hello from ' + ports.source);
@@ -409,7 +415,6 @@ describe('lib/http-proxy.js', function() {
 
       client.on('error', function (err) {
         expect(err).to.be.an(Error);
-        expect(err.code).to.be('ECONNRESET');
         proxyServer.close();
         done();
       });
@@ -477,6 +482,7 @@ describe('lib/http-proxy.js', function() {
       proxyServer.on('close', function() {
         proxyServer.close();
         server.close();
+        destiny.close();
         if (count == 1) { done(); }
       });
 
@@ -556,8 +562,8 @@ describe('lib/http-proxy.js', function() {
         });
       });
 
-      destiny.on('connection', function (socket) {
-        expect(socket.upgradeReq.headers['x-special-proxy-header']).to.eql('foobar');
+      destiny.on('connection', function (socket, upgradeReq) {
+        expect(upgradeReq.headers['x-special-proxy-header']).to.eql('foobar');
 
         socket.on('message', function (msg) {
           expect(msg).to.be('hello there');

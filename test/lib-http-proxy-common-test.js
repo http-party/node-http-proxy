@@ -251,7 +251,7 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.path).to.eql('/' + google);
     });
-    
+
     it('should not replace :\ to :\\ when no http word before', function () {
       var outgoing = {};
       var google = 'http://google.com:/join/join.js'
@@ -262,7 +262,7 @@ describe('lib/http-proxy/common.js', function () {
 
       expect(outgoing.path).to.eql('/' + google);
     });
-    
+
     describe('when using ignorePath', function () {
       it('should ignore the path of the `req.url` passed in but use the target path', function () {
         var outgoing = {};
@@ -345,6 +345,16 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.ca).eql('my-ca');
       expect(outgoing.ciphers).eql('my-ciphers');
       expect(outgoing.secureProtocol).eql('my-secure-protocol');
+    });
+
+    it('should handle overriding the `method` of the http request', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: url.parse('https://whooooo.com'),
+        method: 'POST' ,
+      }, { method: 'GET', url: '' });
+
+      expect(outgoing.method).eql('POST');
     });
 
     // url.parse('').path => null

@@ -29,6 +29,7 @@ var http = require('http'),
     request = require('request'),
     colors = require('colors'),
     util = require('util'),
+    queryString = require('querystring'),
     bodyParser = require('body-parser'),
     httpProxy = require('../../lib/http-proxy'),
     proxy = httpProxy.createProxyServer({});
@@ -36,12 +37,23 @@ var http = require('http'),
 
 //restream parsed body before proxying
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
-  if(req.body) {
-    let bodyData = JSON.stringify(req.body);
-    // incase if content-type is application/x-www-form-urlencoded -> we need to change to application/json
-    proxyReq.setHeader('Content-Type','application/json');
+  if (!req.body || !Object.keys(req.body).length) {
+    return;
+  }
+
+  var contentType = proxyReq.getHeader('Content-Type');
+  var bodyData;
+
+  if (contentType === 'application/json') {
+    bodyData = JSON.stringify(req.body);
+  }
+
+  if (contentType === 'application/x-www-form-urlencoded') {
+    bodyData = queryString.stringify(req.body);
+  }
+
+  if (bodyData) {
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-    // stream the content
     proxyReq.write(bodyData);
   }
 });
@@ -94,5 +106,3 @@ http.createServer(app1).listen(9013, function(){
     console.log('return for urlencoded request:' ,err, data)
   })
 });
-
-
