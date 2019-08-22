@@ -3,7 +3,7 @@
   "description": "packages required to run the examples",
   "version": "0.0.0",
   "dependencies": {
-    "agentkeepalive": "^2.0.3",
+    "agentkeepalive": "^4.0.0",
     "colors": "~0.6.2",
     "connect": "~2.11.0",
     "connect-restreamer": "~1.0.0",
