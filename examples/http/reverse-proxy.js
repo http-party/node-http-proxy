@@ -32,7 +32,8 @@ var proxy = httpProxy.createServer();
 var server = http.createServer(function (req, res) {
   util.puts('Receiving reverse proxy request for:' + req.url);
 
-  proxy.web(req, res, {target: req.url, secure: false});
+  var destinationServer="http://"+req.headers.host;
+  proxy.web(req, res, {target: destinationServer, secure: false});
 }).listen(8213);
 
 server.on('connect', function (req, socket) {
