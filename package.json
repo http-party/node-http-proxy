@@ -26,7 +26,7 @@
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
     "sse": "0.0.6",
-    "ws": "^0.8.0"
+    "ws": "^3.0.0"
   },
   "scripts": {
     "mocha": "mocha test/*-test.js",
