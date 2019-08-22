@@ -1,16 +1,12 @@
 sudo: false
 language: node_js
 node_js:
-  - "4"
   - "6"
   - "8"
+  - "10"
 script:
   - npm test
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 matrix:
   fast_finish: true
-notifications:
-  email:
-    - travis@nodejitsu.com
-  irc: "irc.freenode.org#nodejitsu"
