@@ -413,7 +413,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         mergeCookies: true,
       };
 
-      this.res.setHeader("set-cookie", ['hello; domain=my.domain; path=/']);
+      this.res.setHeader('set-cookie', ['hello; domain=my.domain; path=/']);
 
       httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
 
@@ -428,7 +428,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
 
       this.proxyRes.headers = Object.assign({}, this.proxyRes.headers, {'set-cookie': 'hello1; domain=my.domain; path=/'});
 
-      this.res.setHeader("set-cookie", 'hello; domain=my.domain; path=/');
+      this.res.setHeader('set-cookie', 'hello; domain=my.domain; path=/');
 
       httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
 
