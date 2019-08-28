@@ -275,6 +275,30 @@ describe('lib/http-proxy/common.js', function () {
         expect(outgoing.path).to.eql('/some/crazy/path/whoooo');
       });
 
+      // Bugfix validation: 775, 959
+      it.only('should ignore the path of the `req.url` passed in but use the target path with two unencoded urls as query parameters', function () {
+        var outgoing = {};
+        var myEndpoint = 'https://whatever.com/some/crazy/path/whoooo?redirectTo=https://example.com&secondaryRedirect=https://test.com';
+        common.setupOutgoing(outgoing, {
+          target: url.parse(myEndpoint),
+          ignorePath: true
+        }, { url: '/more/crazy/pathness' });
+
+        expect(outgoing.path).to.eql('/some/crazy/path/whoooo?redirectTo=https://example.com&secondaryRedirect=https://test.com');
+      });
+
+      // Bugfix validation: 775, 959
+      it.only('should ignore the path of the `req.url` passed in but use the target path with two unencoded slashes in a query parameter', function () {
+        var outgoing = {};
+        var myEndpoint = 'https://whatever.com/some/crazy/path/whoooo?key=//myValue';
+        common.setupOutgoing(outgoing, {
+          target: url.parse(myEndpoint),
+          ignorePath: true
+        }, { url: '/more/crazy/pathness' });
+
+        expect(outgoing.path).to.eql('/some/crazy/path/whoooo?key=//myValue');
+      });
+
       it('and prependPath: false, it should ignore path of target and incoming request', function () {
          var outgoing = {};
         var myEndpoint = 'https://whatever.com/some/crazy/path/whoooo';
