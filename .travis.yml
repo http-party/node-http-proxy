@@ -9,7 +9,7 @@ node_js:
   - "8"
   - "10"
 script:
-  - npm test
+  #- npm test
   - sonar-scanner
 matrix:
   fast_finish: true
