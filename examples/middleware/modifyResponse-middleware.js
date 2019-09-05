@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
   var _write = res.write;
 
   res.write = function (data) {
-    _write.call(res, data.toString().replace("Ruby", "nodejitsu"));
+    _write.call(res, data.toString().replace("Ruby", "http-party"));
   }
   next();
 });
@@ -61,7 +61,7 @@ var proxy = httpProxy.createProxyServer({
 //
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, I know Ruby\n');
+  res.end('Hello, I love Ruby\n');
 }).listen(9013);
 
 util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8013'.yellow);
