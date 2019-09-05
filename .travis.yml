@@ -9,7 +9,6 @@ node_js:
   - "8"
   - "10"
 script:
-  - npm install
   - sonar-scanner
 matrix:
   fast_finish: true
