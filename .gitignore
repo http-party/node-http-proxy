@@ -8,3 +8,4 @@ tes.js
 npm-debug.log
 .nyc_output
 coverage
+.idea
