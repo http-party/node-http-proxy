@@ -96,6 +96,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('ws');
+      expect(stubRequest.headers['x-forwarded-host']).to.be('192.168.1.2:8080');
     });
 
     it('set the correct x-forwarded-* headers from req.socket', function () {
@@ -115,6 +116,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.3');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8181');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('wss');
+      expect(stubRequest.headers['x-forwarded-host']).to.be('192.168.1.3:8181');
     });
   });
 });
