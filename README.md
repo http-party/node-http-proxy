@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://raw.github.com/nodejitsu/node-http-proxy/master/doc/logo.png"/>
+  <img src="https://raw.github.com/http-party/node-http-proxy/master/doc/logo.png"/>
 </p>
 
-# node-http-proxy [![Build Status](https://travis-ci.org/nodejitsu/node-http-proxy.svg?branch=master)](https://travis-ci.org/nodejitsu/node-http-proxy) [![codecov](https://codecov.io/gh/nodejitsu/node-http-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/nodejitsu/node-http-proxy)
+# node-http-proxy [![Build Status](https://travis-ci.org/http-party/node-http-proxy.svg?branch=master)](https://travis-ci.org/http-party/node-http-proxy) [![codecov](https://codecov.io/gh/http-party/node-http-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/http-party/node-http-proxy)
 
 `node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as reverse
@@ -588,7 +588,7 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 
 ### Contributing and Issues
 
-* Read carefully our [Code Of Conduct](https://github.com/nodejitsu/node-http-proxy/blob/master/CODE_OF_CONDUCT.md)
+* Read carefully our [Code Of Conduct](https://github.com/http-party/node-http-proxy/blob/master/CODE_OF_CONDUCT.md)
 * Search on Google/Github
 * If you can't find anything, open an issue
 * If you feel comfortable about fixing the issue, fork the repo
