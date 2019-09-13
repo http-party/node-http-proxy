@@ -2,6 +2,8 @@ test
 examples
 doc
 benchmark
+coverage
+.nyc_output
 .travis.yml
 CHANGELOG.md
 UPGRADING.md
