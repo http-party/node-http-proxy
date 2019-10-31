@@ -304,25 +304,26 @@ Also you can proxy the websocket requests just calling the `ws(req, socket, head
 //
 // Setup our server to proxy standard HTTP requests
 //
-var proxy = new httpProxy.createProxyServer({
+var proxyServer = new httpProxy.createProxyServer({
   target: {
     host: 'localhost',
     port: 9015
   }
 });
-var proxyServer = http.createServer(function (req, res) {
-  proxy.web(req, res);
+
+var server = http.createServer(function (req, res) {
+  proxyServer.web(req, res);
 });
 
 //
 // Listen to the `upgrade` event and proxy the
 // WebSocket requests as well.
 //
-proxyServer.on('upgrade', function (req, socket, head) {
-  proxy.ws(req, socket, head);
+server.on('upgrade', function (req, socket, head) {
+  proxyServer.ws(req, socket, head);
 });
 
-proxyServer.listen(8015);
+server.listen(8015);
 ```
 
 **[Back to top](#table-of-contents)**
