@@ -408,16 +408,48 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
 
 
   describe('#removeChunked', function() {
-    var proxyRes = {
-      headers: {
-        'transfer-encoding': 'hello'
-      }
-    };
+
+    it('removes "transfer-encoding" response header on httpVersion 1.0', function() {
+      var proxyRes = {
+        headers: {
+          'transfer-encoding': 'hello'
+        }
+      };
 
 
-    httpProxy.removeChunked({ httpVersion: '1.0' }, {}, proxyRes);
+      httpProxy.removeChunked({ httpVersion: '1.0' }, {}, proxyRes);
 
-    expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
+      expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
+    });
+
+    it('removes "transfer-encoding" response header on 204 response codes', function() {
+      var proxyRes = {
+        headers: {
+          'transfer-encoding': 'hello'
+        },
+        statusCode: 204
+      };
+
+
+      httpProxy.removeChunked({ httpVersion: '1.1' }, {}, proxyRes);
+
+      expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
+    });
+
+    it('removes "transfer-encoding" response header on 304 response codes', function() {
+      var proxyRes = {
+        headers: {
+          'transfer-encoding': 'hello'
+        },
+        statusCode: 304
+      };
+
+
+      httpProxy.removeChunked({ httpVersion: '1.1' }, {}, proxyRes);
+
+      expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
+    });
+
   });
 
 });
