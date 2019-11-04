@@ -289,6 +289,26 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       expect(this.res.headers['set-cookie']).to.have.length(2);
     });
 
+    it('skips invalid headers', function() {
+      var options = {};
+      var invalidRawHeaders = [
+        ...this.rawProxyRes.rawHeaders,
+        'Set-Cookie', 'invalid\\u0001header; domain=my.domain; path=/'
+      ];
+      var invalidRawProxyRes = { 
+        ...this.rawProxyRes, 
+        rawHeaders: invalidRawHeaders 
+      };
+      httpProxy.writeHeaders({}, this.res, invalidRawProxyRes, options);
+
+      expect(this.res.headers.hey).to.eql('hello');
+      expect(this.res.headers.how).to.eql('are you?');
+
+      expect(this.res.headers).to.have.key('set-cookie');
+      expect(this.res.headers['set-cookie']).to.be.an(Array);
+      expect(this.res.headers['set-cookie']).to.have.length(2);
+    });
+
     it('rewrites path', function() {
       var options = {
         cookiePathRewrite: '/dummyPath'
