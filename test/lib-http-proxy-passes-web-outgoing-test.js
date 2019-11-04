@@ -291,15 +291,10 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
 
     it('skips invalid headers', function() {
       var options = {};
-      var invalidRawHeaders = [
-        ...this.rawProxyRes.rawHeaders,
+      this.rawProxyRes.rawHeaders = this.rawProxyRes.rawHeaders.concat([
         'Set-Cookie', 'invalid\\u0001header; domain=my.domain; path=/'
-      ];
-      var invalidRawProxyRes = { 
-        ...this.rawProxyRes, 
-        rawHeaders: invalidRawHeaders 
-      };
-      httpProxy.writeHeaders({}, this.res, invalidRawProxyRes, options);
+      ])
+      httpProxy.writeHeaders({}, this.res, this.rawProxyRes, options);
 
       expect(this.res.headers.hey).to.eql('hello');
       expect(this.res.headers.how).to.eql('are you?');
