@@ -572,6 +572,51 @@ describe('lib/http-proxy.js', function() {
       });
     });
 
+    it('should detect a proxyReq event and modify headers with async handler', function (done) {
+      var ports = { source: gen.port, proxy: gen.port },
+        proxy,
+        proxyServer,
+        destiny;
+
+      proxy = httpProxy.createProxyServer({
+        target: 'ws://127.0.0.1:' + ports.source,
+        ws: true
+      });
+
+      proxy.on('proxyReqWs', function(proxyReq, req, socket, options, head, asyncContext) {
+        asyncContext(async function() {
+          proxyReq.setHeader('X-Special-Proxy-Header', 'async-foobar');
+        });
+      });
+
+      proxyServer = proxy.listen(ports.proxy);
+
+      destiny = new ws.Server({ port: ports.source }, function () {
+        var client = new ws('ws://127.0.0.1:' + ports.proxy);
+
+        client.on('open', function () {
+          client.send('hello there');
+        });
+
+        client.on('message', function (msg) {
+          expect(msg).to.be('Hello over websockets');
+          client.close();
+          proxyServer.close();
+          destiny.close();
+          done();
+        });
+      });
+
+      destiny.on('connection', function (socket, upgradeReq) {
+        expect(upgradeReq.headers['x-special-proxy-header']).to.eql('async-foobar');
+
+        socket.on('message', function (msg) {
+          expect(msg).to.be('hello there');
+          socket.send('Hello over websockets');
+        });
+      });
+    });
+
     it('should forward frames with single frame payload (including on node 4.x)', function (done) {
       var payload = Array(65529).join('0');
       var ports = { source: gen.port, proxy: gen.port };
