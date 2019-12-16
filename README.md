@@ -516,7 +516,7 @@ data.
 ```
 
 
-### Modify websockets' proxy request with asynchronous handler
+#### Modify websockets' proxy request with asynchronous handler
 
 If you want to modify a websockets request with asynchronous hadnler, `proxyReqWs` provides special callback argument named `asyncContext` which gets a single async callback that can return a promise.
 The request would be proxied once the promise is resolved.
