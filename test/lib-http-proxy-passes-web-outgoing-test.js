@@ -32,6 +32,16 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         });
       });
 
+      it('when target is a URL object instead of a string', function() {
+        this.options.target = {
+          host: 'backend.com',
+          hostname: 'backend.com:80',
+          protocol: 'http'
+        }
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://ext-manual.com/');
+      });
+
       it('not on 200', function() {
         this.proxyRes.statusCode = 200;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
@@ -63,6 +73,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
         expect(this.proxyRes.headers.location).to.eql('http://backend.com:8080/');
       });
+
     });
 
     context('rewrites location host with autoRewrite', function() {
