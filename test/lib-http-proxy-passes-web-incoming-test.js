@@ -151,7 +151,7 @@ describe('#createProxyServer.web() using own http server', function () {
     proxyServer.listen('8081');
     source.listen('8080');
 
-    const postData = ''.padStart(10025, 'x');
+    const postData = ''.padStart(1025, 'x');
 
     const postOptions = {
       hostname: '127.0.0.1',
