@@ -395,6 +395,20 @@ proxyServer.listen(8015);
 
     };
     ```
+* **mergeCookies**: true/false, merges `set-cookie` header from a request passed to `httpProxy.web` and from response.
+  E.g.:
+  ```
+  const http = require("http");
+  const httpProxy = require("http-proxy");
+  const proxy = httpProxy.createProxyServer({});
+  
+  const gateway = http.createServer((req, res) => {
+    res.setHeader('set-cookie', ["gateway=true; Path=/"]);
+    proxy.web(req, res, {target: "http://localhost:3002"});
+  });
+  
+  gateway.listen(3003);
+  ```
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
