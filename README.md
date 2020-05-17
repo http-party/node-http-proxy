@@ -276,8 +276,10 @@ httpProxy.createProxyServer({
     protocol: 'https:',
     host: 'my-domain-name',
     port: 443,
-    pfx: fs.readFileSync('path/to/certificate.p12'),
-    passphrase: 'password',
+    ssl: {
+      pfx: fs.readFileSync('path/to/certificate.p12'),
+      passphrase: 'password',
+    },
   },
   changeOrigin: true,
 }).listen(8000);
