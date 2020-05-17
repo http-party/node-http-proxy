@@ -345,9 +345,9 @@ proxyServer.listen(8015);
 *  **changeOrigin**: true/false, Default: false - changes the origin of the host header to the target URL
 *  **preserveHeaderKeyCase**: true/false, Default: false - specify whether you want to keep letter case of response header key
 *  **auth**: Basic authentication i.e. 'user:password' to compute an Authorization header.
-*  **hostRewrite**: rewrites the location hostname on (201/301/302/307/308) redirects.
-*  **autoRewrite**: rewrites the location host/port on (201/301/302/307/308) redirects based on requested host/port. Default: false.
-*  **protocolRewrite**: rewrites the location protocol on (201/301/302/307/308) redirects to 'http' or 'https'. Default: null.
+*  **hostRewrite**: rewrites the location hostname on (201/301/302/303/307/308) redirects.
+*  **autoRewrite**: rewrites the location host/port on (201/301/302/303/307/308) redirects based on requested host/port. Default: false.
+*  **protocolRewrite**: rewrites the location protocol on (201/301/302/303/307/308) redirects to 'http' or 'https'. Default: null.
 *  **cookieDomainRewrite**: rewrites domain of `set-cookie` headers. Possible values:
    * `false` (default): disable cookie rewriting
    * String: new domain, for example `cookieDomainRewrite: "new.domain"`. To remove the domain, use `cookieDomainRewrite: ""`.
