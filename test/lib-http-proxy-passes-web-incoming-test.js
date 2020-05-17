@@ -68,6 +68,7 @@ describe('lib/http-proxy/passes/web.js', function() {
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('http');
+      expect(stubRequest.headers['x-forwarded-host']).to.be('192.168.1.2:8080');
     });
   });
 });
