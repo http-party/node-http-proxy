@@ -16,7 +16,7 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         }
       };
       this.options = {
-        target: 'http://backend.com'
+        target: new URL('http://backend.com')
       };
     });
 
