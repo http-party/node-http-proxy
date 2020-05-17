@@ -367,6 +367,14 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.be('');
     });
 
+    it('should not modify the path when the path contains multiple slashes', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: url.parse('https://one.com')
+      }, { url: 'https://two.com//////six-slashes-please' });
+
+      expect(outgoing.path).to.eql('//////six-slashes-please');
+    });
   });
 
   describe('#setupSocket', function () {
