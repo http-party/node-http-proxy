@@ -27,22 +27,23 @@
 var colors = require('colors'),
     http = require('http'),
     connect = require('connect'),
+    compression = require('compression'),
     httpProxy = require('../../lib/http-proxy');
 
 //
 // Basic Connect App
 //
-connect.createServer(
-  connect.compress({
-    // Pass to connect.compress() the options
+connect()
+  .use(compression({
+    // Pass to compression() the options
     // that you need, just for show the example
-    // we use threshold to 1
-    threshold: 1
-  }),
-  function (req, res) {
+    // we use level to 1
+    level: 1
+  }))
+  .use(function (req, res) {
     proxy.web(req, res);
-  }
-).listen(8012);
+  })
+  .listen(8012);
 
 //
 // Basic Http Proxy Server
