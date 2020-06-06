@@ -24,8 +24,7 @@
 
 */
 
-var util = require('util'),
-    colors = require('colors'),
+var colors = require('colors'),
     http = require('http'),
     connect = require('connect'),
     app = connect(),
@@ -64,6 +63,6 @@ http.createServer(function (req, res) {
   res.end('Hello, I love Ruby\n');
 }).listen(9013);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8013'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9013 '.yellow);
+console.log('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8013'.yellow);
+console.log('http server '.blue + 'started '.green.bold + 'on port '.blue + '9013 '.yellow);
 
