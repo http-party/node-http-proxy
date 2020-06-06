@@ -24,8 +24,7 @@
 
 */
 
-var util = require('util'),
-    http = require('http'),
+var http = require('http'),
     colors = require('colors'),
     httpProxy = require('../../lib/http-proxy');
 
@@ -45,10 +44,10 @@ catch (ex) {
 //
 var server = io.listen(9016);
 server.sockets.on('connection', function (client) {
-  util.debug('Got websocket connection');
+  console.debug('Got websocket connection');
 
   client.on('message', function (msg) {
-    util.debug('Got message from client: ' + msg);
+    console.debug('Got message from client: ' + msg);
   });
 
   client.send('from server');
@@ -86,6 +85,6 @@ proxyServer.listen(8016);
 var ws = client.connect('ws://localhost:8016');
 
 ws.on('message', function (msg) {
-  util.debug('Got message: ' + msg);
+  console.debug('Got message: ' + msg);
   ws.send('I am the client');
 });
