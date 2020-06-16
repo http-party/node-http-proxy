@@ -331,7 +331,7 @@ describe('#createProxyServer.web() using own http server', function () {
       expect(new Date().getTime() - started).to.be.greaterThan(99);
       doneOne();
     });
-    req.end();
+    req.abort();
   });
 
   it('should proxy the request and provide a proxyRes event with the request and response parameters', function(done) {
