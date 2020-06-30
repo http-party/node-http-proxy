@@ -400,7 +400,80 @@ describe('#createProxyServer.web() using own http server', function () {
     })
   });
 
-  it.only('should proxy the request and provide and respond to manual user response when using modifyResponse after calling the passes', function(done) {
+  it('selfHandleResponse as a function when true is returned should not pipe response', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      selfHandleResponse: (proxyRes, req, res) => {
+        return true;
+      }
+    });
+
+    function requestHandler(req, res) {
+      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+        proxyRes.pipe(concat(function (body) {
+          expect(body.toString('utf8')).eql('Response');
+          pRes.end(Buffer.from('my-custom-response'));
+        }))
+      });
+
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      res.end('Response');
+    });
+
+    async.parallel([
+      next => proxyServer.listen(8086, next),
+      next => source.listen(8080, next)
+    ], function (err) {
+      http.get('http://127.0.0.1:8086', function(res) {
+        res.pipe(concat(function(body) {
+          expect(body.toString('utf8')).eql('my-custom-response');
+          source.close();
+          proxyServer.close();
+          done();
+        }));
+      }).once('error', done);
+    })
+  });
+
+  it('selfHandleResponse as a function when false is returned should not pipe response', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      selfHandleResponse: (proxyRes, req, res) => {
+        return false;
+      }
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      res.end('Response');
+    });
+
+    async.parallel([
+      next => proxyServer.listen(8086, next),
+      next => source.listen(8080, next)
+    ], function (err) {
+      http.get('http://127.0.0.1:8086', function(res) {
+        res.pipe(concat(function(body) {
+          expect(body.toString('utf8')).eql('Response');
+          source.close();
+          proxyServer.close();
+          done();
+        }));
+      }).once('error', done);
+    })
+  });
+
+  it('should proxy the request and provide and respond to manual user response when using modifyResponse after calling the passes', function(done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080',
       selfHandleResponse: true,
