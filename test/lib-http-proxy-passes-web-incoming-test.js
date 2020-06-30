@@ -400,6 +400,47 @@ describe('#createProxyServer.web() using own http server', function () {
     })
   });
 
+  it.only('should proxy the request and provide and respond to manual user response when using modifyResponse after calling the passes', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      selfHandleResponse: true,
+      autoRewrite: true,
+      forcePasses: true
+    });
+
+    function requestHandler(req, res) {
+      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+        proxyRes.pipe(pRes);
+      });
+
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      res.setHeader('location', 'http://127.0.0.1:8080/banana');
+      res.statusCode = 301;
+      res.end();
+    });
+
+    async.parallel([
+      next => proxyServer.listen(8086, next),
+      next => source.listen(8080, next)
+    ], function (err) {
+      http.get('http://127.0.0.1:8086', function(res) {
+        expect(res.statusCode).eql(301);
+        expect(res.headers.location).eql('http://127.0.0.1:8086/banana');
+
+        res.pipe(concat(function(body) {
+          source.close();
+          proxyServer.close();
+          done();
+        }));
+      }).once('error', done);
+    })
+  });
+
   it('should proxy the request and handle changeOrigin option', function (done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080',
