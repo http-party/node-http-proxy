@@ -8,4 +8,5 @@ coverage
 .travis.yml
 CHANGELOG.md
 CODE_OF_CONDUCT.md
+codecov.yml
 UPGRADING.md
