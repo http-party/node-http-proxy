@@ -3,6 +3,7 @@ examples
 doc
 benchmark
 coverage
+.auto-changelog
 .nyc_output
 .travis.yml
 CHANGELOG.md
