@@ -28,24 +28,26 @@ var util = require('util'),
     colors = require('colors'),
     http = require('http'),
     connect = require('connect'),
+    app = connect(),
     httpProxy = require('../../lib/http-proxy');
 
 //
 // Basic Connect App
 //
-connect.createServer(
-  function (req, res, next) {
-    var _write = res.write;
+app.use(function (req, res, next) {
+  var _write = res.write;
 
-    res.write = function (data) {
-      _write.call(res, data.toString().replace("Ruby", "nodejitsu"));
-    }
-    next();
-  },
-  function (req, res) {
-    proxy.web(req, res);
+  res.write = function (data) {
+    _write.call(res, data.toString().replace("Ruby", "http-party"));
   }
-).listen(8013);
+  next();
+});
+
+app.use(function (req, res) {
+  proxy.web(req, res)
+});
+
+http.createServer(app).listen(8013);
 
 //
 // Basic Http Proxy Server
@@ -59,7 +61,7 @@ var proxy = httpProxy.createProxyServer({
 //
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, I know Ruby\n');
+  res.end('Hello, I love Ruby\n');
 }).listen(9013);
 
 util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8013'.yellow);

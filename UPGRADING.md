@@ -12,11 +12,11 @@ httpProxy.createServer({
 }).listen(8003);
 ```
 
-Check the [README.md](https://github.com/nodejitsu/node-http-proxy/blob/caronte/README.md) for a more detailed explanation of the parameters.
+Check the [README.md](https://github.com/http-party/node-http-proxy/blob/caronte/README.md) for a more detailed explanation of the parameters.
 
 ## Proxying
 
-Web proxying is done by calling the `.web()` method on a Proxy instance. You can check among some use cases in the [examples folder](https://github.com/nodejitsu/node-http-proxy/tree/caronte/examples/http)
+Web proxying is done by calling the `.web()` method on a Proxy instance. You can check among some use cases in the [examples folder](https://github.com/http-party/node-http-proxy/tree/caronte/examples/http)
 
 ```javascript
 //
@@ -32,7 +32,7 @@ httpProxy.createProxyServer({
 
 ```
 
-Websockets are proxied by the `.ws()` method. The [examples folder](https://github.com/nodejitsu/node-http-proxy/tree/caronte/examples/websocket) again provides a lot of useful snippets!
+Websockets are proxied by the `.ws()` method. The [examples folder](https://github.com/http-party/node-http-proxy/tree/caronte/examples/websocket) again provides a lot of useful snippets!
 
 ```javascript
 var proxy = new httpProxy.createProxyServer({
@@ -90,7 +90,7 @@ which were in the core and delegate them to eventual "userland" modules.
 
 ### Middleware API
 
-The new API makes it really easy to implement code that behaves like the old Middleware API. You can check some examples [here](https://github.com/nodejitsu/node-http-proxy/tree/caronte/examples/middleware)
+The new API makes it really easy to implement code that behaves like the old Middleware API. You can check some examples [here](https://github.com/http-party/node-http-proxy/tree/caronte/examples/middleware)
 
 ### ProxyTable API
 
