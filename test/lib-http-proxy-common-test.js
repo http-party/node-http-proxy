@@ -227,6 +227,15 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.eql('/forward/?foo=bar//&target=http://foobar.com/?a=1%26b=2&other=2');
     })
 
+    it('should replace multiple http:/ with http://', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: { path: '/' },
+      }, { url: '/xyz/http://foobar.com/http://foobar.com/https://foobar.com' });
+
+      expect(outgoing.path).to.eql('/xyz/http://foobar.com/http://foobar.com/https://foobar.com');
+    })
+
     //
     // This is the proper failing test case for the common.join problem
     //
