@@ -513,8 +513,26 @@ data.
     });
     proxy.web(req, res, option);
 
+```
+
+
+#### Modify websockets' proxy request with asynchronous handler
+
+If you want to modify a websockets request with asynchronous hadnler, `proxyReqWs` provides special callback argument named `asyncContext` which gets a single async callback that can return a promise.
+The request would be proxied once the promise is resolved.
+
+```js 
+
+onProxyReqWs: (proxyReq, req, socket, options, head, asyncContext) =>
+      asyncContext(async () => {
+        // code ...
+        const result = await anyAsyncOperation()
+        // code ...
+        proxyReq.setHeader('key', result)
+      }),
 
 ```
+ 
 
 #### ProxyTable API
 
