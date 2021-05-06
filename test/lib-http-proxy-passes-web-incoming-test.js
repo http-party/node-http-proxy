@@ -126,6 +126,50 @@ describe('#createProxyServer.web() using own http server', function () {
     http.request('http://127.0.0.1:8081', function() {}).end();
   });
 
+  it('should skip proxyReq event when handling a request with header "expect: 100-continue" [https://www.npmjs.com/advisories/1486]', function (done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+    });
+
+    proxy.on('proxyReq', function(proxyReq, req, res, options) {
+      proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+      source.close();
+      proxyServer.close();
+      expect(req.headers['x-special-proxy-header']).to.not.eql('foobar');
+      done();
+    });
+
+    proxyServer.listen('8081');
+    source.listen('8080');
+
+    const postData = ''.padStart(1025, 'x');
+
+    const postOptions = {
+      hostname: '127.0.0.1',
+      port: 8081,
+      path: '/',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+        'expect': '100-continue'
+      }
+    };
+
+    const req = http.request(postOptions, function() {});
+    req.write(postData);
+    req.end();
+  });
+
   it('should proxy the request and handle error via callback', function(done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080'
