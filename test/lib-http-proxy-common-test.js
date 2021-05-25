@@ -367,6 +367,44 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.be('');
     });
 
+    describe("when using followRedirects", function () {
+      it ('should pass all options', function () {
+        var outgoing = {};
+        common.setupOutgoing(outgoing,
+        {
+          agent     : '?',
+          target: {
+            host      : 'how',
+            hostname  : 'are',
+            socketPath: 'you',
+            protocol: 'https:'
+          },
+          followRedirects: {
+            maxRedirects: 5,
+            maxBodyLength: 10000000,
+            agents: { http: 'http', https: 'https' },
+            beforeRedirect: function (options, headers) {
+              options.agent = '??';
+            },
+            trackRedirects: true,
+          }
+        },
+        {
+          method    : 'i',
+          url      : 'am'
+        });
+
+        expect(outgoing.maxRedirects).to.eql(5);
+        expect(outgoing.maxBodyLength).to.eql(10000000);
+        expect(outgoing.agents.http).to.eql('http');
+        expect(outgoing.agents.https).to.eql('https');
+        var options = { agent: '?' };
+        var headers = {};
+        outgoing.beforeRedirect(options, headers);
+        expect(options.agent).to.eql('??');
+        expect(outgoing.trackRedirects).to.eql(true);
+      });
+    });
   });
 
   describe('#setupSocket', function () {
