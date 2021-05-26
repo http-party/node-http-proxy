@@ -533,4 +533,55 @@ describe('#followRedirects', function () {
       done();
     }).end();
   });
+
+  it('should proxy the request follow redirects with object option', function (done) {
+    var beforeRedirectCalled = false;
+    var proxyResCalled = false;
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:8080',
+      followRedirects: {
+        trackRedirects: true,
+        beforeRedirect: function (options) {
+          beforeRedirectCalled = true;
+          expect(options.path).to.eql("/redirect");
+        }
+      }
+    });
+
+    proxy.on("proxyRes", function (proxyRes, req, res) {
+      proxyResCalled = true;
+      expect(proxyRes.redirects.length).to.eql(2);
+      expect(proxyRes.redirects[0].url).to.eql('http://127.0.0.1:8080/');
+      expect(proxyRes.redirects[1].url).to.eql('http://127.0.0.1:8080/redirect');
+    });
+
+    function requestHandler(req, res) {
+      proxy.web(req, res);
+    }
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var source = http.createServer(function(req, res) {
+
+      if (url.parse(req.url).pathname === '/redirect') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('ok');
+      }
+
+      res.writeHead(301, { 'Location': '/redirect' });
+      res.end();
+    });
+
+    proxyServer.listen('8081');
+    source.listen('8080');
+
+    http.request('http://127.0.0.1:8081', function(res) {
+      source.close();
+      proxyServer.close();
+      expect(res.statusCode).to.eql(200);
+      expect(beforeRedirectCalled).to.eql(true);
+      expect(proxyResCalled).to.eql(true);
+      done();
+    }).end();
+  });
 });
