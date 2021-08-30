@@ -7,7 +7,8 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       this.req = {
         headers: {
           host: 'ext-auto.com'
-        }
+        },
+        socket: {}
       };
       this.proxyRes = {
         statusCode: 301,
@@ -65,15 +66,16 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
       });
     });
 
-    context('rewrites location host with autoRewrite', function() {
+    context('rewrites location host and protocol with autoRewrite', function() {
       beforeEach(function() {
         this.options.autoRewrite = true;
+        this.req.socket.encrypted: true;
       });
       [201, 301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
           this.proxyRes.statusCode = code;
           httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('http://ext-auto.com/');
+          expect(this.proxyRes.headers.location).to.eql('https://ext-auto.com/');
         });
       });
 
@@ -128,16 +130,24 @@ describe('lib/http-proxy/passes/web-outgoing.js', function () {
         expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
       });
 
-      it('works together with hostRewrite', function() {
+      it('works together with host from hostRewrite', function() {
         this.options.hostRewrite = 'ext-manual.com';
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
         expect(this.proxyRes.headers.location).to.eql('https://ext-manual.com/');
       });
 
-      it('works together with autoRewrite', function() {
+      it('works together with host from autoRewrite', function() {
         this.options.autoRewrite = true;
         httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
         expect(this.proxyRes.headers.location).to.eql('https://ext-auto.com/');
+      });
+
+      it('takes precedence over autoRewrite', function() {
+        this.options.autoRewrite = true;
+        this.options.protocolRewrite = 'http';
+        this.req.socket.encrypted = true;
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
+        expect(this.proxyRes.headers.location).to.eql('http://ext-auto.com/');
       });
     });
   });
