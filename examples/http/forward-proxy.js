@@ -24,8 +24,7 @@
 
 */
 
-var util = require('util'),
-    colors = require('colors'),
+var colors = require('colors'),
     http = require('http'),
     httpProxy = require('../../lib/http-proxy');
 
@@ -43,11 +42,11 @@ httpProxy.createServer({
 // Target Http Forwarding Server
 //
 http.createServer(function (req, res) {
-  util.puts('Receiving forward for: ' + req.url);
+  console.log('Receiving forward for: ' + req.url);
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('request successfully forwarded to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
 }).listen(9019);
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8019 '.yellow + 'with forward proxy'.magenta.underline);
-util.puts('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9019 '.yellow);
+console.log('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8019 '.yellow + 'with forward proxy'.magenta.underline);
+console.log('http forward server '.blue + 'started '.green.bold + 'on port '.blue + '9019 '.yellow);

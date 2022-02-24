@@ -26,7 +26,6 @@
 
 var https = require('https'),
     http = require('http'),
-    util = require('util'),
     fs   = require('fs'),
     path = require('path'),
     colors = require('colors'),
@@ -55,5 +54,5 @@ httpProxy.createServer({
   secure: false
 }).listen(8010);
 
-util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8010'.yellow);
-util.puts('https server '.blue + 'started '.green.bold + 'on port '.blue + '9010 '.yellow);
+console.log('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8010'.yellow);
+console.log('https server '.blue + 'started '.green.bold + 'on port '.blue + '9010 '.yellow);
