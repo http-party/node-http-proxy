@@ -367,6 +367,17 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.be('');
     });
 
+    it('should pass through lookup', function() {
+      var outgoing = {};
+      function lookup(hostname, options, callback) {
+        callback('This is just a test');
+      }
+      common.setupOutgoing(outgoing, {
+        target: 'http://example.com',
+        lookup: lookup,
+      }, { url: '' });
+      expect(outgoing.lookup).to.be(lookup);
+    });
   });
 
   describe('#setupSocket', function () {
