@@ -26,7 +26,6 @@
 
 var https = require('https'),
     http = require('http'),
-    util = require('util'),
     fs   = require('fs'),
     path = require('path'),
     colors = require('colors'),

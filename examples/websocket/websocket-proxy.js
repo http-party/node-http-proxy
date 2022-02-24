@@ -24,8 +24,7 @@
 
 */
 
-var util = require('util'),
-    http = require('http'),
+var http = require('http'),
     colors = require('colors'),
     httpProxy = require('../../lib/http-proxy');
 
