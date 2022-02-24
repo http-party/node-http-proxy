@@ -50,5 +50,5 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9008);
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8008 '.yellow + 'with latency'.magenta.underline);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9008 '.yellow);
+console.log('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8008 '.yellow + 'with latency'.magenta.underline);
+console.log('http server '.blue + 'started '.green.bold + 'on port '.blue + '9008 '.yellow);

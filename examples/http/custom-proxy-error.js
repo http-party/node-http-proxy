@@ -52,4 +52,4 @@ proxy.on('error', function (err, req, res) {
 });
 
 
-util.puts('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8005 '.yellow + 'with custom error message'.magenta.underline);
+console.log('http proxy server '.blue + 'started '.green.bold + 'on port '.blue + '8005 '.yellow + 'with custom error message'.magenta.underline);

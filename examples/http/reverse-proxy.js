@@ -30,14 +30,14 @@ var http = require('http'),
 var proxy = httpProxy.createServer();
 
 var server = http.createServer(function (req, res) {
-  util.puts('Receiving reverse proxy request for:' + req.url);
+  console.log('Receiving reverse proxy request for:' + req.url);
   var parsedUrl = url.parse(req.url);
   var target = parsedUrl.protocol + '//' + parsedUrl.hostname;
   proxy.web(req, res, {target: target, secure: false});
 }).listen(8213);
 
 server.on('connect', function (req, socket) {
-  util.puts('Receiving reverse proxy request for:' + req.url);
+  console.log('Receiving reverse proxy request for:' + req.url);
 
   var serverUrl = url.parse('https://' + req.url);
 

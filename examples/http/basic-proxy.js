@@ -38,7 +38,7 @@ var welcome = [
   '#    #   #     #   #            #      #    #  ####  #    #   #  '
 ].join('\n');
 
-util.puts(welcome.rainbow.bold);
+console.log(welcome.rainbow.bold);
 
 //
 // Basic Http Proxy Server
@@ -56,5 +56,5 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(9003);
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8003'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9003 '.yellow);
+console.log('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8003'.yellow);
+console.log('http server '.blue + 'started '.green.bold + 'on port '.blue + '9003 '.yellow);

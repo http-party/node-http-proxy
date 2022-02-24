@@ -56,5 +56,5 @@ httpProxy.createServer({
   }
 }).listen(8009);
 
-util.puts('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8009'.yellow);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9009 '.yellow);
+console.log('https proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8009'.yellow);
+console.log('http server '.blue + 'started '.green.bold + 'on port '.blue + '9009 '.yellow);
