@@ -395,6 +395,22 @@ proxyServer.listen(8015);
 
     };
     ```
+*  **lookup**: define a custom dns [lookup](https://nodejs.org/docs/latest-v12.x/api/dns.html#dns_dns_lookup_hostname_options_callback) function to use when resolving target/forward hostnames. 
+
+   Example: add dns caching
+
+   ```js
+    const dlc = require('dns-lookup-cache');
+
+    module.exports = (req, res, next) => {
+
+      proxy.web(req, res, {
+        target: 'http://example.com',
+        lookup: dlc.lookup,
+      }, next);
+
+    };
+  ```
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
