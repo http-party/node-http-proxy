@@ -45,10 +45,10 @@ catch (ex) {
 //
 var server = io.listen(9014);
 server.sockets.on('connection', function (client) {
-  util.debug('Got websocket connection');
+  console.error('Got websocket connection');
 
   client.on('message', function (msg) {
-    util.debug('Got message from client: ' + msg);
+    console.error('Got message from client: ' + msg);
   });
 
   client.send('from server');
@@ -65,6 +65,6 @@ httpProxy.createServer({ target: 'ws://localhost:9014', ws: true }).listen(8014)
 var ws = client.connect('ws://localhost:8014');
 
 ws.on('message', function (msg) {
-  util.debug('Got message: ' + msg);
+  console.error('Got message: ' + msg);
   ws.send('I am the client');
 });
