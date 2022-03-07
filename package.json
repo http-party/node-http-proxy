@@ -22,7 +22,7 @@
     "concat-stream": "^2.0.0",
     "expect.js": "~0.3.1",
     "mocha": "^3.5.3",
-    "nyc": "^14.0.0",
+    "nyc": "^15.0.0",
     "semver": "^5.0.3",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
