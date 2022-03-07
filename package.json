@@ -23,7 +23,7 @@
     "expect.js": "~0.3.1",
     "mocha": "^3.5.3",
     "nyc": "^14.0.0",
-    "semver": "^5.0.3",
+    "semver": "^7.0.0",
     "socket.io": "^2.1.0",
     "socket.io-client": "^2.1.0",
     "sse": "0.0.8",
