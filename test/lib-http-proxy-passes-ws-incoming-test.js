@@ -9,7 +9,7 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
         method: 'DELETE',
         headers: {}
       },
-      stubSocket = { 
+      stubSocket = {
         destroy: function () {
           // Simulate Socket.destroy() method when call
           destroyCalled = true;
@@ -115,6 +115,28 @@ describe('lib/http-proxy/passes/ws-incoming.js', function () {
       expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.3');
       expect(stubRequest.headers['x-forwarded-port']).to.be('8181');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('wss');
+    });
+
+    it('do not change the x-forwarded-* header values if already exist on req.headers', function () {
+      var stubRequest = {
+        socket: {
+          remoteAddress: '192.168.1.3',
+          remotePort: '8181'
+        },
+        connection: {
+          pair: true
+        },
+        headers: {
+          host: '192.168.1.3:8181',
+          'x-forwarded-for': '192.168.1.2',
+          'x-forwarded-port': '8182',
+          'x-forwarded-proto': 'ws'
+        }
+      };
+      httpProxy.XHeaders(stubRequest, {}, { xfwd: true });
+      expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.2');
+      expect(stubRequest.headers['x-forwarded-port']).to.be('8182');
+      expect(stubRequest.headers['x-forwarded-proto']).to.be('ws');
     });
   });
 });
