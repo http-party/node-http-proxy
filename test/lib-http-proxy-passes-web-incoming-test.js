@@ -69,6 +69,27 @@ describe('lib/http-proxy/passes/web.js', function() {
       expect(stubRequest.headers['x-forwarded-port']).to.be('8080');
       expect(stubRequest.headers['x-forwarded-proto']).to.be('http');
     });
+
+    it('do not change the x-forwarded-* header values if already exist on req.headers', function () {
+      var stubRequest = {
+        connection: {
+          remoteAddress: '192.168.1.2',
+          remotePort: '8080'
+        },
+        headers: {
+          host: '192.168.1.2:8080',
+          'x-forwarded-host': '192.168.1.3:8081',
+          'x-forwarded-for': '192.168.1.3',
+          'x-forwarded-port': '8081',
+          'x-forwarded-proto': 'https'
+        }
+      };
+      webPasses.XHeaders(stubRequest, {}, { xfwd: true });
+      expect(stubRequest.headers['x-forwarded-for']).to.be('192.168.1.3');
+      expect(stubRequest.headers['x-forwarded-port']).to.be('8081');
+      expect(stubRequest.headers['x-forwarded-proto']).to.be('https');
+      expect(stubRequest.headers['x-forwarded-host']).to.be('192.168.1.3:8081');
+    });
   });
 });
 
