@@ -228,6 +228,42 @@ http.createServer(function (req, res) {
 
 **[Back to top](#table-of-contents)**
 
+#### Forward POST requests with a json body
+
+```ts
+const proxy = httpProxy.createProxyServer({
+  target: `http://localhost:3002`
+})
+
+proxy.on('proxyReq', (proxyReq, req, res, options) => {
+  // @ts-expect-error
+  if (req.body) {
+    // @ts-expect-error
+    let bodyData = req.rawBody
+    proxyReq.setHeader('Content-Type', 'application/json')
+    // proxyReq.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+
+    proxyReq.write(bodyData)
+  }
+})
+
+
+```
+then somewhere in your HTTP handler 
+```ts
+proxy.web(
+  req,
+  res,
+  {
+    timeout: 1000 * 60 * 5 // 5 minutes
+  },
+  next
+)
+```
+
+**[Back to top](#table-of-contents)**
+
 #### Using HTTPS
 You can activate the validation of a secure SSL certificate to the target connection (avoid self-signed certs), just set `secure: true` in the options.
 
