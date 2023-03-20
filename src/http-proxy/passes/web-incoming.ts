@@ -1,11 +1,11 @@
-var httpNative   = require('http'),
-    httpsNative  = require('https'),
-    web_o  = require('./web-outgoing'),
-    common = require('../common'),
-    followRedirects = require('follow-redirects');
+import httpNative from 'http';
+import httpsNative from 'https';
+import web_o_i  from './web-outgoing';
+import {getPort, hasEncryptedConnection, setupOutgoing} from '../common';
+import followRedirects from 'follow-redirects';
 
-web_o = Object.keys(web_o).map(function(pass) {
-  return web_o[pass];
+const web_o = Object.keys(web_o_i).map(function(pass) {
+  return web_o_i[pass];
 });
 
 var nativeAgents = { http: httpNative, https: httpsNative };
@@ -68,10 +68,10 @@ module.exports = {
   XHeaders: function XHeaders(req, res, options) {
     if(!options.xfwd) return;
 
-    var encrypted = req.isSpdy || common.hasEncryptedConnection(req);
+    var encrypted = req.isSpdy || hasEncryptedConnection(req);
     var values = {
       for  : req.connection.remoteAddress || req.socket.remoteAddress,
-      port : common.getPort(req),
+      port : getPort(req),
       proto: encrypted ? 'https' : 'http'
     };
 
@@ -109,7 +109,7 @@ module.exports = {
     if(options.forward) {
       // If forward enable, so just pipe the request
       var forwardReq = (options.forward.protocol === 'https:' ? https : http).request(
-        common.setupOutgoing(options.ssl || {}, options, req, 'forward')
+        setupOutgoing(options.ssl || {}, options, req, 'forward')
       );
 
       // error handler (e.g. ECONNRESET, ECONNREFUSED)
@@ -124,7 +124,7 @@ module.exports = {
 
     // Request initalization
     var proxyReq = (options.target.protocol === 'https:' ? https : http).request(
-      common.setupOutgoing(options.ssl || {}, options, req)
+      setupOutgoing(options.ssl || {}, options, req)
     );
 
     // Enable developers to modify the proxyReq before headers are sent

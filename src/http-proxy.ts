@@ -1,21 +1,7 @@
 import { ProxyServer } from "./http-proxy/index";
 
-/**
- * Creates the proxy server.
- *
- * Examples:
- *
- *    httpProxy.createProxyServer({ .. }, 8000)
- *    // => '{ web: [Function], ws: [Function] ... }'
- *
- * @param {Object} Options Config object passed to the proxy
- *
- * @return {Object} Proxy Proxy object with handlers for `ws` and `web` requests
- *
- * @api public
- */
 
-export function createProxyServer(options: {
+export type proxyOptions = {
   target?: string;
   forward?: string;
   agent?: any;
@@ -33,7 +19,24 @@ export function createProxyServer(options: {
   hostRewrite?: any;
   autoRewrite?: boolean;
   protocolRewrite?: any;
-}) {
+}
+
+/**
+ * Creates the proxy server.
+ *
+ * Examples:
+ *
+ *    httpProxy.createProxyServer({ .. }, 8000)
+ *    // => '{ web: [Function], ws: [Function] ... }'
+ *
+ * @param {Object} Options Config object passed to the proxy
+ *
+ * @return {Object} Proxy Proxy object with handlers for `ws` and `web` requests
+ *
+ * @api public
+ */
+
+export function createProxyServer(options: proxyOptions) {
   /*
    *  `options` is needed and it must have the following layout:
    *

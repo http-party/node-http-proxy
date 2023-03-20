@@ -1,16 +1,16 @@
+import url from "url";
+// @ts-ignore
+import { _extend as extend } from "util";
+import required from "requires-port";
 
-var common   = exports,
-    url      = require('url'),
-    extend   = require('util')._extend,
-    required = require('requires-port');
+var upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i;
 
-var upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i,
-    isSSL = /^https|wss/;
+export const isSSL = /^https|wss/;
 
 /**
  * Simple Regex for testing if protocol is https
  */
-common.isSSL = isSSL;
+
 /**
  * Copies the right headers from `options` and `req` to
  * `outgoing` which is then used to fire the proxied
@@ -25,40 +25,51 @@ common.isSSL = isSSL;
  * @param {Object} Options Config object passed to the proxy
  * @param {ClientRequest} Req Request Object
  * @param {String} Forward String to select forward or target
- * 
+ *
  * @return {Object} Outgoing Object with all required properties set
  *
  * @api private
  */
 
-common.setupOutgoing = function(outgoing, options, req, forward) {
-  outgoing.port = options[forward || 'target'].port ||
-                  (isSSL.test(options[forward || 'target'].protocol) ? 443 : 80);
+export const setupOutgoing = function (outgoing, options, req, forward?) {
+  outgoing.port =
+    options[forward || "target"].port ||
+    (isSSL.test(options[forward || "target"].protocol) ? 443 : 80);
 
-  ['host', 'hostname', 'socketPath', 'pfx', 'key',
-    'passphrase', 'cert', 'ca', 'ciphers', 'secureProtocol'].forEach(
-    function(e) { outgoing[e] = options[forward || 'target'][e]; }
-  );
+  [
+    "host",
+    "hostname",
+    "socketPath",
+    "pfx",
+    "key",
+    "passphrase",
+    "cert",
+    "ca",
+    "ciphers",
+    "secureProtocol",
+  ].forEach(function (e) {
+    outgoing[e] = options[forward || "target"][e];
+  });
 
   outgoing.method = options.method || req.method;
   outgoing.headers = extend({}, req.headers);
 
-  if (options.headers){
+  if (options.headers) {
     extend(outgoing.headers, options.headers);
   }
 
   if (options.auth) {
     outgoing.auth = options.auth;
   }
-  
+
   if (options.ca) {
-      outgoing.ca = options.ca;
+    outgoing.ca = options.ca;
   }
 
-  if (isSSL.test(options[forward || 'target'].protocol)) {
-    outgoing.rejectUnauthorized = (typeof options.secure === "undefined") ? true : options.secure;
+  if (isSSL.test(options[forward || "target"].protocol)) {
+    outgoing.rejectUnauthorized =
+      typeof options.secure === "undefined" ? true : options.secure;
   }
-
 
   outgoing.agent = options.agent || false;
   outgoing.localAddress = options.localAddress;
@@ -69,38 +80,38 @@ common.setupOutgoing = function(outgoing, options, req, forward) {
   //
   if (!outgoing.agent) {
     outgoing.headers = outgoing.headers || {};
-    if (typeof outgoing.headers.connection !== 'string'
-        || !upgradeHeader.test(outgoing.headers.connection)
-       ) { outgoing.headers.connection = 'close'; }
+    if (
+      typeof outgoing.headers.connection !== "string" ||
+      !upgradeHeader.test(outgoing.headers.connection)
+    ) {
+      outgoing.headers.connection = "close";
+    }
   }
 
-
   // the final path is target path + relative path requested by user:
-  var target = options[forward || 'target'];
-  var targetPath = target && options.prependPath !== false
-    ? (target.path || '')
-    : '';
+  var target = options[forward || "target"];
+  var targetPath =
+    target && options.prependPath !== false ? target.path || "" : "";
 
   //
   // Remark: Can we somehow not use url.parse as a perf optimization?
   //
-  var outgoingPath = !options.toProxy
-    ? (url.parse(req.url).path || '')
-    : req.url;
+  var outgoingPath = !options.toProxy ? url.parse(req.url).path || "" : req.url;
 
   //
   // Remark: ignorePath will just straight up ignore whatever the request's
   // path is. This can be labeled as FOOT-GUN material if you do not know what
   // you are doing and are using conflicting options.
   //
-  outgoingPath = !options.ignorePath ? outgoingPath : '';
+  outgoingPath = !options.ignorePath ? outgoingPath : "";
 
-  outgoing.path = common.urlJoin(targetPath, outgoingPath);
+  outgoing.path = urlJoin(targetPath, outgoingPath);
 
   if (options.changeOrigin) {
     outgoing.headers.host =
-      required(outgoing.port, options[forward || 'target'].protocol) && !hasPort(outgoing.host)
-        ? outgoing.host + ':' + outgoing.port
+      required(outgoing.port, options[forward || "target"].protocol) &&
+      !hasPort(outgoing.host)
+        ? outgoing.host + ":" + outgoing.port
         : outgoing.host;
   }
   return outgoing;
@@ -117,13 +128,13 @@ common.setupOutgoing = function(outgoing, options, req, forward) {
  *    // => Socket
  *
  * @param {Socket} Socket instance to setup
- * 
+ *
  * @return {Socket} Return the configured socket.
  *
  * @api private
  */
 
-common.setupSocket = function(socket) {
+export const setupSocket = function (socket) {
   socket.setTimeout(0);
   socket.setNoDelay(true);
 
@@ -141,12 +152,10 @@ common.setupSocket = function(socket) {
  *
  * @api private
  */
-common.getPort = function(req) {
-  var res = req.headers.host ? req.headers.host.match(/:(\d+)/) : '';
+export const getPort = function (req) {
+  var res = req.headers.host ? req.headers.host.match(/:(\d+)/) : "";
 
-  return res ?
-    res[1] :
-    common.hasEncryptedConnection(req) ? '443' : '80';
+  return res ? res[1] : hasEncryptedConnection(req) ? "443" : "80";
 };
 
 /**
@@ -158,7 +167,7 @@ common.getPort = function(req) {
  *
  * @api private
  */
-common.hasEncryptedConnection = function(req) {
+export const hasEncryptedConnection = function (req) {
   return Boolean(req.connection.encrypted || req.connection.pair);
 };
 
@@ -170,15 +179,15 @@ common.hasEncryptedConnection = function(req) {
  * @api private
  */
 
-common.urlJoin = function() {
-    //
-    // We do not want to mess with the query string. All we want to touch is the path.
-    //
-  var args = Array.prototype.slice.call(arguments),
-      lastIndex = args.length - 1,
-      last = args[lastIndex],
-      lastSegs = last.split('?'),
-      retSegs;
+export const urlJoin = function (...arg) {
+  //
+  // We do not want to mess with the query string. All we want to touch is the path.
+  //
+  var args = Array.prototype.slice.call(arg),
+    lastIndex = args.length - 1,
+    last = args[lastIndex],
+    lastSegs = last.split("?"),
+    retSegs;
 
   args[lastIndex] = lastSegs.shift();
 
@@ -187,10 +196,12 @@ common.urlJoin = function() {
   // joining e.g. ['', 'am']
   //
   retSegs = [
-    args.filter(Boolean).join('/')
-        .replace(/\/+/g, '/')
-        .replace('http:/', 'http://')
-        .replace('https:/', 'https://')
+    args
+      .filter(Boolean)
+      .join("/")
+      .replace(/\/+/g, "/")
+      .replace("http:/", "http://")
+      .replace("https:/", "https://"),
   ];
 
   // Only join the query string if it exists so we don't have trailing a '?'
@@ -199,7 +210,7 @@ common.urlJoin = function() {
   // Handle case where there could be multiple ? in the URL.
   retSegs.push.apply(retSegs, lastSegs);
 
-  return retSegs.join('?')
+  return retSegs.join("?");
 };
 
 /**
@@ -211,30 +222,37 @@ common.urlJoin = function() {
  *
  * @api private
  */
-common.rewriteCookieProperty = function rewriteCookieProperty(header, config, property) {
+export const rewriteCookieProperty = function rewriteCookieProperty(
+  header,
+  config,
+  property
+) {
   if (Array.isArray(header)) {
     return header.map(function (headerElement) {
       return rewriteCookieProperty(headerElement, config, property);
     });
   }
-  return header.replace(new RegExp("(;\\s*" + property + "=)([^;]+)", 'i'), function(match, prefix, previousValue) {
-    var newValue;
-    if (previousValue in config) {
-      newValue = config[previousValue];
-    } else if ('*' in config) {
-      newValue = config['*'];
-    } else {
-      //no match, return previous value
-      return match;
+  return header.replace(
+    new RegExp("(;\\s*" + property + "=)([^;]+)", "i"),
+    function (match, prefix, previousValue) {
+      var newValue;
+      if (previousValue in config) {
+        newValue = config[previousValue];
+      } else if ("*" in config) {
+        newValue = config["*"];
+      } else {
+        //no match, return previous value
+        return match;
+      }
+      if (newValue) {
+        //replace value
+        return prefix + newValue;
+      } else {
+        //remove value
+        return "";
+      }
     }
-    if (newValue) {
-      //replace value
-      return prefix + newValue;
-    } else {
-      //remove value
-      return '';
-    }
-  });
+  );
 };
 
 /**
@@ -245,5 +263,5 @@ common.rewriteCookieProperty = function rewriteCookieProperty(header, config, pr
  * @api private
  */
 function hasPort(host) {
-  return !!~host.indexOf(':');
-};
+  return !!~host.indexOf(":");
+}

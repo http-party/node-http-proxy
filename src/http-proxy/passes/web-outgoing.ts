@@ -1,5 +1,5 @@
-var url    = require('url'),
-    common = require('../common');
+import url from 'url';
+import { rewriteCookieProperty } from '../common';
 
 
 var redirectRegex = /^201|30(1|2|7|8)$/;
@@ -12,7 +12,7 @@ var redirectRegex = /^201|30(1|2|7|8)$/;
  * flexible.
  */
 
-module.exports = { // <--
+export default { // <--
 
   /**
    * If is a HTTP 1.0 request, remove chunk headers
@@ -67,7 +67,7 @@ module.exports = { // <--
       if (options.protocolRewrite) {
         u.protocol = options.protocolRewrite;
       }
-
+      // @ts-ignore
       proxyRes.headers['location'] = u.format();
     }
   },
@@ -90,10 +90,10 @@ module.exports = { // <--
         setHeader = function(key, header) {
           if (header == undefined) return;
           if (rewriteCookieDomainConfig && key.toLowerCase() === 'set-cookie') {
-            header = common.rewriteCookieProperty(header, rewriteCookieDomainConfig, 'domain');
+            header = rewriteCookieProperty(header, rewriteCookieDomainConfig, 'domain');
           }
           if (rewriteCookiePathConfig && key.toLowerCase() === 'set-cookie') {
-            header = common.rewriteCookieProperty(header, rewriteCookiePathConfig, 'path');
+            header = rewriteCookieProperty(header, rewriteCookiePathConfig, 'path');
           }
           res.setHeader(String(key).trim(), header);
         };
