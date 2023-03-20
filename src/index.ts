@@ -1,1 +1,1 @@
-export * from './http-proxy'
+export * from "./http-proxy";

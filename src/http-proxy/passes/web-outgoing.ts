@@ -1,6 +1,5 @@
-import url from 'url';
-import { rewriteCookieProperty } from '../common';
-
+import url from "url";
+import { rewriteCookieProperty } from "../common";
 
 var redirectRegex = /^201|30(1|2|7|8)$/;
 
@@ -12,7 +11,8 @@ var redirectRegex = /^201|30(1|2|7|8)$/;
  * flexible.
  */
 
-export default { // <--
+export default {
+  // <--
 
   /**
    * If is a HTTP 1.0 request, remove chunk headers
@@ -24,8 +24,8 @@ export default { // <--
    * @api private
    */
   removeChunked: function removeChunked(req, res, proxyRes) {
-    if (req.httpVersion === '1.0') {
-      delete proxyRes.headers['transfer-encoding'];
+    if (req.httpVersion === "1.0") {
+      delete proxyRes.headers["transfer-encoding"];
     }
   },
 
@@ -40,19 +40,26 @@ export default { // <--
    * @api private
    */
   setConnection: function setConnection(req, res, proxyRes) {
-    if (req.httpVersion === '1.0') {
-      proxyRes.headers.connection = req.headers.connection || 'close';
-    } else if (req.httpVersion !== '2.0' && !proxyRes.headers.connection) {
-      proxyRes.headers.connection = req.headers.connection || 'keep-alive';
+    if (req.httpVersion === "1.0") {
+      proxyRes.headers.connection = req.headers.connection || "close";
+    } else if (req.httpVersion !== "2.0" && !proxyRes.headers.connection) {
+      proxyRes.headers.connection = req.headers.connection || "keep-alive";
     }
   },
 
-  setRedirectHostRewrite: function setRedirectHostRewrite(req, res, proxyRes, options) {
-    if ((options.hostRewrite || options.autoRewrite || options.protocolRewrite)
-        && proxyRes.headers['location']
-        && redirectRegex.test(proxyRes.statusCode)) {
+  setRedirectHostRewrite: function setRedirectHostRewrite(
+    req,
+    res,
+    proxyRes,
+    options
+  ) {
+    if (
+      (options.hostRewrite || options.autoRewrite || options.protocolRewrite) &&
+      proxyRes.headers["location"] &&
+      redirectRegex.test(proxyRes.statusCode)
+    ) {
       var target = url.parse(options.target);
-      var u = url.parse(proxyRes.headers['location']);
+      var u = url.parse(proxyRes.headers["location"]);
 
       // make sure the redirected host matches the target host before rewriting
       if (target.host != u.host) {
@@ -62,13 +69,13 @@ export default { // <--
       if (options.hostRewrite) {
         u.host = options.hostRewrite;
       } else if (options.autoRewrite) {
-        u.host = req.headers['host'];
+        u.host = req.headers["host"];
       }
       if (options.protocolRewrite) {
         u.protocol = options.protocolRewrite;
       }
       // @ts-ignore
-      proxyRes.headers['location'] = u.format();
+      proxyRes.headers["location"] = u.format();
     }
   },
   /**
@@ -84,26 +91,36 @@ export default { // <--
    */
   writeHeaders: function writeHeaders(req, res, proxyRes, options) {
     var rewriteCookieDomainConfig = options.cookieDomainRewrite,
-        rewriteCookiePathConfig = options.cookiePathRewrite,
-        preserveHeaderKeyCase = options.preserveHeaderKeyCase,
-        rawHeaderKeyMap,
-        setHeader = function(key, header) {
-          if (header == undefined) return;
-          if (rewriteCookieDomainConfig && key.toLowerCase() === 'set-cookie') {
-            header = rewriteCookieProperty(header, rewriteCookieDomainConfig, 'domain');
-          }
-          if (rewriteCookiePathConfig && key.toLowerCase() === 'set-cookie') {
-            header = rewriteCookieProperty(header, rewriteCookiePathConfig, 'path');
-          }
-          res.setHeader(String(key).trim(), header);
-        };
+      rewriteCookiePathConfig = options.cookiePathRewrite,
+      preserveHeaderKeyCase = options.preserveHeaderKeyCase,
+      rawHeaderKeyMap,
+      setHeader = function (key, header) {
+        if (header == undefined) return;
+        if (rewriteCookieDomainConfig && key.toLowerCase() === "set-cookie") {
+          header = rewriteCookieProperty(
+            header,
+            rewriteCookieDomainConfig,
+            "domain"
+          );
+        }
+        if (rewriteCookiePathConfig && key.toLowerCase() === "set-cookie") {
+          header = rewriteCookieProperty(
+            header,
+            rewriteCookiePathConfig,
+            "path"
+          );
+        }
+        res.setHeader(String(key).trim(), header);
+      };
 
-    if (typeof rewriteCookieDomainConfig === 'string') { //also test for ''
-      rewriteCookieDomainConfig = { '*': rewriteCookieDomainConfig };
+    if (typeof rewriteCookieDomainConfig === "string") {
+      //also test for ''
+      rewriteCookieDomainConfig = { "*": rewriteCookieDomainConfig };
     }
 
-    if (typeof rewriteCookiePathConfig === 'string') { //also test for ''
-      rewriteCookiePathConfig = { '*': rewriteCookiePathConfig };
+    if (typeof rewriteCookiePathConfig === "string") {
+      //also test for ''
+      rewriteCookiePathConfig = { "*": rewriteCookiePathConfig };
     }
 
     // message.rawHeaders is added in: v0.11.6
@@ -116,7 +133,7 @@ export default { // <--
       }
     }
 
-    Object.keys(proxyRes.headers).forEach(function(key) {
+    Object.keys(proxyRes.headers).forEach(function (key) {
       var header = proxyRes.headers[key];
       if (preserveHeaderKeyCase && rawHeaderKeyMap) {
         key = rawHeaderKeyMap[key] || key;
@@ -136,12 +153,11 @@ export default { // <--
    */
   writeStatusCode: function writeStatusCode(req, res, proxyRes) {
     // From Node.js docs: response.writeHead(statusCode[, statusMessage][, headers])
-    if(proxyRes.statusMessage) {
+    if (proxyRes.statusMessage) {
       res.statusCode = proxyRes.statusCode;
       res.statusMessage = proxyRes.statusMessage;
     } else {
       res.statusCode = proxyRes.statusCode;
     }
-  }
-
+  },
 };

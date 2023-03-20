@@ -1,6 +1,12 @@
-import  http from 'http';
-import  https from 'https';
-import { getPort, hasEncryptedConnection, isSSL, setupOutgoing, setupSocket } from '../common';
+import http from "http";
+import https from "https";
+import {
+  getPort,
+  hasEncryptedConnection,
+  isSSL,
+  setupOutgoing,
+  setupSocket,
+} from "../common";
 /*!
  * Array of passes.
  *
@@ -14,7 +20,6 @@ import { getPort, hasEncryptedConnection, isSSL, setupOutgoing, setupSocket } fr
  *
  */
 
-
 export default {
   /**
    * WebSocket requests must have the `GET` method and
@@ -26,13 +31,13 @@ export default {
    * @api private
    */
 
-  checkMethodAndHeader : function checkMethodAndHeader(req, socket) {
-    if (req.method !== 'GET' || !req.headers.upgrade) {
+  checkMethodAndHeader: function checkMethodAndHeader(req, socket) {
+    if (req.method !== "GET" || !req.headers.upgrade) {
       socket.destroy();
       return true;
     }
 
-    if (req.headers.upgrade.toLowerCase() !== 'websocket') {
+    if (req.headers.upgrade.toLowerCase() !== "websocket") {
       socket.destroy();
       return true;
     }
@@ -48,19 +53,19 @@ export default {
    * @api private
    */
 
-  XHeaders : function XHeaders(req, socket, options) {
-    if(!options.xfwd) return;
+  XHeaders: function XHeaders(req, socket, options) {
+    if (!options.xfwd) return;
 
     var values = {
-      for  : req.connection.remoteAddress || req.socket.remoteAddress,
-      port : getPort(req),
-      proto: hasEncryptedConnection(req) ? 'wss' : 'ws'
+      for: req.connection.remoteAddress || req.socket.remoteAddress,
+      port: getPort(req),
+      proto: hasEncryptedConnection(req) ? "wss" : "ws",
     };
 
-    ['for', 'port', 'proto'].forEach(function(header) {
-      req.headers['x-forwarded-' + header] =
-        (req.headers['x-forwarded-' + header] || '') +
-        (req.headers['x-forwarded-' + header] ? ',' : '') +
+    ["for", "port", "proto"].forEach(function (header) {
+      req.headers["x-forwarded-" + header] =
+        (req.headers["x-forwarded-" + header] || "") +
+        (req.headers["x-forwarded-" + header] ? "," : "") +
         values[header];
     });
   },
@@ -75,60 +80,76 @@ export default {
    *
    * @api private
    */
-  stream : function stream(req, socket, options, head, server, clb) {
+  stream: function stream(req, socket, options, head, server, clb) {
+    var createHttpHeader = function (line, headers) {
+      return (
+        Object.keys(headers)
+          .reduce(
+            function (head, key) {
+              var value = headers[key];
 
-    var createHttpHeader = function(line, headers) {
-      return Object.keys(headers).reduce(function (head, key) {
-        var value = headers[key];
+              if (!Array.isArray(value)) {
+                head.push(key + ": " + value);
+                return head;
+              }
 
-        if (!Array.isArray(value)) {
-          head.push(key + ': ' + value);
-          return head;
-        }
-
-        for (var i = 0; i < value.length; i++) {
-          head.push(key + ': ' + value[i]);
-        }
-        return head;
-      }, [line])
-      .join('\r\n') + '\r\n\r\n';
-    }
+              for (var i = 0; i < value.length; i++) {
+                head.push(key + ": " + value[i]);
+              }
+              return head;
+            },
+            [line]
+          )
+          .join("\r\n") + "\r\n\r\n"
+      );
+    };
 
     setupSocket(socket);
 
     if (head && head.length) socket.unshift(head);
-
 
     var proxyReq = (isSSL.test(options.target.protocol) ? https : http).request(
       setupOutgoing(options.ssl || {}, options, req)
     );
 
     // Enable developers to modify the proxyReq before headers are sent
-    if (server) { server.emit('proxyReqWs', proxyReq, req, socket, options, head); }
+    if (server) {
+      server.emit("proxyReqWs", proxyReq, req, socket, options, head);
+    }
 
     // Error Handler
-    proxyReq.on('error', onOutgoingError);
-    proxyReq.on('response', function (res) {
+    proxyReq.on("error", onOutgoingError);
+    proxyReq.on("response", function (res) {
       // if upgrade event isn't going to happen, close the socket
       // @ts-ignore
       if (!res.upgrade) {
-        socket.write(createHttpHeader('HTTP/' + res.httpVersion + ' ' + res.statusCode + ' ' + res.statusMessage, res.headers));
+        socket.write(
+          createHttpHeader(
+            "HTTP/" +
+              res.httpVersion +
+              " " +
+              res.statusCode +
+              " " +
+              res.statusMessage,
+            res.headers
+          )
+        );
         res.pipe(socket);
       }
     });
 
-    proxyReq.on('upgrade', function(proxyRes, proxySocket, proxyHead) {
-      proxySocket.on('error', onOutgoingError);
+    proxyReq.on("upgrade", function (proxyRes, proxySocket, proxyHead) {
+      proxySocket.on("error", onOutgoingError);
 
       // Allow us to listen when the websocket has completed
-      proxySocket.on('end', function () {
-        server.emit('close', proxyRes, proxySocket, proxyHead);
+      proxySocket.on("end", function () {
+        server.emit("close", proxyRes, proxySocket, proxyHead);
       });
 
       // The pipe below will end proxySocket if socket closes cleanly, but not
       // if it errors (eg, vanishes from the net and starts returning
       // EHOSTUNREACH). We need to do that explicitly.
-      socket.on('error', function () {
+      socket.on("error", function () {
         proxySocket.end();
       });
 
@@ -140,12 +161,14 @@ export default {
       // Remark: Handle writing the headers to the socket when switching protocols
       // Also handles when a header is an array
       //
-      socket.write(createHttpHeader('HTTP/1.1 101 Switching Protocols', proxyRes.headers));
+      socket.write(
+        createHttpHeader("HTTP/1.1 101 Switching Protocols", proxyRes.headers)
+      );
 
       proxySocket.pipe(socket).pipe(proxySocket);
 
-      server.emit('open', proxySocket);
-      server.emit('proxySocket', proxySocket);  //DEPRECATED.
+      server.emit("open", proxySocket);
+      server.emit("proxySocket", proxySocket); //DEPRECATED.
     });
 
     return proxyReq.end(); // XXX: CHECK IF THIS IS THIS CORRECT
@@ -154,9 +177,9 @@ export default {
       if (clb) {
         clb(err, req, socket);
       } else {
-        server.emit('error', err, req, socket);
+        server.emit("error", err, req, socket);
       }
       socket.end();
     }
-  }
+  },
 };

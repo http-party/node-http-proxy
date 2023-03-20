@@ -4,7 +4,7 @@ import { RequestOptions } from "http";
 
 export type proxyOptions = {
   target?: string | UrlWithStringQuery;
-  requestOptions?: RequestOptions 
+  requestOptions?: RequestOptions;
   forward?: any;
   headers?: any;
   proxyTimeout?: number;
@@ -26,7 +26,7 @@ export type proxyOptions = {
   autoRewrite?: boolean;
   protocolRewrite?: any;
   followRedirects?: boolean;
-}
+};
 
 /**
  * Creates the proxy server.

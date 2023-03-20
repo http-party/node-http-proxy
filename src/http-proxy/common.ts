@@ -32,7 +32,12 @@ export const isSSL = /^https|wss/;
  * @api private
  */
 
-export const setupOutgoing = function (outgoing: http.RequestOptions, options, req, forward?): http.RequestOptions {
+export const setupOutgoing = function (
+  outgoing: http.RequestOptions,
+  options,
+  req,
+  forward?
+): http.RequestOptions {
   outgoing.port =
     options[forward || "target"].port ||
     (isSSL.test(options[forward || "target"].protocol) ? 443 : 80);
@@ -116,7 +121,7 @@ export const setupOutgoing = function (outgoing: http.RequestOptions, options, r
       !hasPort(outgoing.host)
         ? outgoing.host + ":" + outgoing.port
         : outgoing.host;
-  }  
+  }
   return outgoing;
 };
 

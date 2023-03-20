@@ -2,8 +2,8 @@
 import { _extend as extend } from "util";
 import { parse as parse_url } from "url";
 import { EventEmitter as EE3 } from "eventemitter3";
-import  http from "http";
-import  https from "https";
+import http from "http";
+import https from "https";
 import web from "./passes/web-incoming";
 import ws from "./passes/ws-incoming";
 import { proxyOptions } from "../http-proxy";

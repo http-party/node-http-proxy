@@ -6,8 +6,6 @@ import { getPort, hasEncryptedConnection, setupOutgoing } from "../common";
 import followRedirects from "follow-redirects";
 import { proxyOptions } from "../../http-proxy";
 
-
-
 const web_o = Object.keys(web_o_i).map(function (pass) {
   return web_o_i[pass];
 });
@@ -110,10 +108,13 @@ export default {
       http: typeof httpNative;
       https: typeof httpsNative;
     } = options.followRedirects ? followRedirects : nativeAgents;
-  
+
     const http = agents.http;
     const https = agents.https;
-    const requestOptions ={...(options.ssl || {}), ...options.requestOptions}
+    const requestOptions = {
+      ...(options.ssl || {}),
+      ...options.requestOptions,
+    };
     if (options.forward) {
       // If forward enable, so just pipe the request
       var forwardReq = (
