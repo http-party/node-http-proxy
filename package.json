@@ -1,6 +1,6 @@
 {
   "name": "@tw/http-proxy",
-  "version": "1.18.9",
+  "version": "1.19.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/http-party/node-http-proxy.git"
@@ -12,7 +12,6 @@
   ],
   "main": "module/index.js",
   "dependencies": {
-    "@tw/cacheable-lookup": "^1.0.2",
     "eventemitter3": "^5.0.0",
     "follow-redirects": "^1.15.2",
     "requires-port": "^1.0.0"

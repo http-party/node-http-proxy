@@ -5,9 +5,7 @@ import { UrlWithStringQuery } from "url";
 import { getPort, hasEncryptedConnection, setupOutgoing } from "../common";
 import followRedirects from "follow-redirects";
 import { proxyOptions } from "../../http-proxy";
-import CacheableLookup from '@tw/cacheable-lookup';
 
-let cacheable: CacheableLookup;
 
 
 const web_o = Object.keys(web_o_i).map(function (pass) {
@@ -106,7 +104,6 @@ export default {
 
   stream: function stream(req, res, options: proxyOptions, _, server, clb) {
     // And we begin!
-  if (!cacheable) cacheable = new CacheableLookup();
     server.emit("start", req, res, options.target || options.forward);
 
     var agents: {
@@ -116,12 +113,12 @@ export default {
   
     const http = agents.http;
     const https = agents.https;
-
+    const requestOptions ={...(options.ssl || {}), ...options.requestOptions}
     if (options.forward) {
       // If forward enable, so just pipe the request
       var forwardReq = (
         options.forward.protocol === "https:" ? https : http
-      ).request(setupOutgoing({...(options.ssl || {}), "lookup": cacheable.lookup}, options, req, "forward"));
+      ).request(setupOutgoing(requestOptions, options, req, "forward"));
 
       // error handler (e.g. ECONNRESET, ECONNREFUSED)
       // Handle errors on incoming request as well as it makes sense to
@@ -140,7 +137,7 @@ export default {
       (options.target as UrlWithStringQuery).protocol === "https:"
         ? https
         : http
-    ).request(setupOutgoing(options.ssl || {}, options, req));
+    ).request(setupOutgoing(requestOptions, options, req));
 
     // Enable developers to modify the proxyReq before headers are sent
     proxyReq.on("socket", function (socket) {

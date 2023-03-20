@@ -1,9 +1,10 @@
 import { ProxyServer } from "./http-proxy/index";
 import { UrlWithStringQuery } from "url";
-
+import { RequestOptions } from "http";
 
 export type proxyOptions = {
   target?: string | UrlWithStringQuery;
+  requestOptions?: RequestOptions 
   forward?: any;
   headers?: any;
   proxyTimeout?: number;

@@ -116,7 +116,7 @@ export const setupOutgoing = function (outgoing: http.RequestOptions, options, r
       !hasPort(outgoing.host)
         ? outgoing.host + ":" + outgoing.port
         : outgoing.host;
-  }
+  }  
   return outgoing;
 };
 
