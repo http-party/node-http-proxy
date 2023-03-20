@@ -2,6 +2,7 @@ import url from "url";
 // @ts-ignore
 import { _extend as extend } from "util";
 import required from "requires-port";
+import http from "http";
 
 var upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i;
 
@@ -31,7 +32,7 @@ export const isSSL = /^https|wss/;
  * @api private
  */
 
-export const setupOutgoing = function (outgoing, options, req, forward?) {
+export const setupOutgoing = function (outgoing: http.RequestOptions, options, req, forward?): http.RequestOptions {
   outgoing.port =
     options[forward || "target"].port ||
     (isSSL.test(options[forward || "target"].protocol) ? 443 : 80);
@@ -63,10 +64,12 @@ export const setupOutgoing = function (outgoing, options, req, forward?) {
   }
 
   if (options.ca) {
+    // @ts-ignore
     outgoing.ca = options.ca;
   }
 
   if (isSSL.test(options[forward || "target"].protocol)) {
+    // @ts-ignore
     outgoing.rejectUnauthorized =
       typeof options.secure === "undefined" ? true : options.secure;
   }

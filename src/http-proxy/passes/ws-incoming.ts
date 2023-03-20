@@ -1,7 +1,6 @@
-var http   = require('http'),
-    https  = require('https'),
-    common = require('../common');
-
+import  http from 'http';
+import  https from 'https';
+import { getPort, hasEncryptedConnection, isSSL, setupOutgoing, setupSocket } from '../common';
 /*!
  * Array of passes.
  *
@@ -16,7 +15,7 @@ var http   = require('http'),
  */
 
 
-module.exports = {
+export default {
   /**
    * WebSocket requests must have the `GET` method and
    * the `upgrade:websocket` header
@@ -54,8 +53,8 @@ module.exports = {
 
     var values = {
       for  : req.connection.remoteAddress || req.socket.remoteAddress,
-      port : common.getPort(req),
-      proto: common.hasEncryptedConnection(req) ? 'wss' : 'ws'
+      port : getPort(req),
+      proto: hasEncryptedConnection(req) ? 'wss' : 'ws'
     };
 
     ['for', 'port', 'proto'].forEach(function(header) {
@@ -95,13 +94,13 @@ module.exports = {
       .join('\r\n') + '\r\n\r\n';
     }
 
-    common.setupSocket(socket);
+    setupSocket(socket);
 
     if (head && head.length) socket.unshift(head);
 
 
-    var proxyReq = (common.isSSL.test(options.target.protocol) ? https : http).request(
-      common.setupOutgoing(options.ssl || {}, options, req)
+    var proxyReq = (isSSL.test(options.target.protocol) ? https : http).request(
+      setupOutgoing(options.ssl || {}, options, req)
     );
 
     // Enable developers to modify the proxyReq before headers are sent
@@ -111,6 +110,7 @@ module.exports = {
     proxyReq.on('error', onOutgoingError);
     proxyReq.on('response', function (res) {
       // if upgrade event isn't going to happen, close the socket
+      // @ts-ignore
       if (!res.upgrade) {
         socket.write(createHttpHeader('HTTP/' + res.httpVersion + ' ' + res.statusCode + ' ' + res.statusMessage, res.headers));
         res.pipe(socket);
@@ -132,7 +132,7 @@ module.exports = {
         proxySocket.end();
       });
 
-      common.setupSocket(proxySocket);
+      setupSocket(proxySocket);
 
       if (proxyHead && proxyHead.length) proxySocket.unshift(proxyHead);
 

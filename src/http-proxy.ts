@@ -1,10 +1,15 @@
 import { ProxyServer } from "./http-proxy/index";
+import { UrlWithStringQuery } from "url";
 
 
 export type proxyOptions = {
-  target?: string;
-  forward?: string;
+  target?: string | UrlWithStringQuery;
+  forward?: any;
+  headers?: any;
+  proxyTimeout?: number;
   agent?: any;
+  buffer?: any;
+  selfHandleResponse?: boolean;
   ssl?: any;
   ws?: boolean;
   xfwd?: boolean;
@@ -19,6 +24,7 @@ export type proxyOptions = {
   hostRewrite?: any;
   autoRewrite?: boolean;
   protocolRewrite?: any;
+  followRedirects?: boolean;
 }
 
 /**
