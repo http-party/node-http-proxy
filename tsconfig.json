@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "CommonJS",
+    "outDir": "./module/",
+    "moduleResolution": "Node",
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    // "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declarationMap": true
+  },
+  "include": ["src/", "package.json", ".npmrc"]
+}

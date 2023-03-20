@@ -87,7 +87,7 @@ function createRightProxy(type) {
 }
 httpProxy.createRightProxy = createRightProxy;
 
-function ProxyServer(options) {
+export function ProxyServer(options) {
   EE3.call(this);
 
   options = options || {};
@@ -183,3 +183,4 @@ ProxyServer.prototype.after = function(type, passName, callback) {
 
   passes.splice(i++, 0, callback);
 };
+

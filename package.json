@@ -1,6 +1,6 @@
 {
-  "name": "http-proxy",
-  "version": "1.18.1",
+  "name": "@tw/http-proxy",
+  "version": "1.18.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/http-party/node-http-proxy.git"
@@ -10,29 +10,31 @@
   "maintainers": [
     "jcrugzz <jcrugzz@gmail.com>"
   ],
-  "main": "index.js",
+  "main": "module/index.js",
   "dependencies": {
-    "eventemitter3": "^4.0.0",
+    "eventemitter3": "^5.0.0",
     "requires-port": "^1.0.0",
-    "follow-redirects": "^1.0.0"
+    "follow-redirects": "^1.15.2"
   },
   "devDependencies": {
-    "async": "^3.0.0",
-    "auto-changelog": "^1.15.0",
+    "async": "^3.2.4",
+    "auto-changelog": "^2.4.0",
     "concat-stream": "^2.0.0",
     "expect.js": "~0.3.1",
-    "mocha": "^3.5.3",
-    "nyc": "^14.0.0",
-    "semver": "^5.0.3",
-    "socket.io": "^2.1.0",
-    "socket.io-client": "^2.1.0",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "semver": "^7.3.8",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1",
     "sse": "0.0.8",
-    "ws": "^3.0.0"
+    "ws": "^8.13.0"
   },
   "scripts": {
     "mocha": "mocha test/*-test.js",
     "test": "nyc --reporter=text --reporter=lcov npm run mocha",
-    "version": "auto-changelog -p && git add CHANGELOG.md"
+    "version": "auto-changelog -p && git add CHANGELOG.md",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "build": "npm i && tsc"
   },
   "engines": {
     "node": ">=8.0.0"
