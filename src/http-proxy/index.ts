@@ -64,7 +64,9 @@ export function createRightProxy(type) {
       if (!requestOptions.target && !requestOptions.forward) {
         return this.emit(
           "error",
-          new Error("Must provide a proper URL as target")
+          new Error("Must provide a proper URL as target"),
+          req,
+          res
         );
       }
 

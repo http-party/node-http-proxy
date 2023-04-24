@@ -1,6 +1,10 @@
 {
   "name": "@tw/http-proxy",
-  "version": "1.19.3",
+  "version": "1.20.0",
+  "scripts": {
+    "dev": "tsc --watch --preserveWatchOutput",
+    "build": "npm i && tsc"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/http-party/node-http-proxy.git"
@@ -8,7 +12,7 @@
   "description": "HTTP proxying for the masses",
   "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "maintainers": [
-    "jcrugzz <jcrugzz@gmail.com>"
+    "dermasmid <twerskycheskel@gmail.com>"
   ],
   "main": "module/index.js",
   "dependencies": {
@@ -28,16 +32,6 @@
     "socket.io-client": "^4.6.1",
     "sse": "0.0.8",
     "ws": "^8.13.0"
-  },
-  "scripts": {
-    "mocha": "mocha test/*-test.js",
-    "test": "nyc --reporter=text --reporter=lcov npm run mocha",
-    "version": "auto-changelog -p && git add CHANGELOG.md",
-    "dev": "tsc --watch --preserveWatchOutput",
-    "build": "npm i && tsc"
-  },
-  "engines": {
-    "node": ">=8.0.0"
   },
   "license": "MIT",
   "tw": {"color": "blue"}
