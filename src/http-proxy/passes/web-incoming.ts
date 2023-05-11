@@ -1,10 +1,10 @@
-import httpNative from "http";
+import httpNative, { IncomingMessage } from "http";
 import httpsNative from "https";
 import web_o_i from "./web-outgoing";
 import { UrlWithStringQuery } from "url";
 import { getPort, hasEncryptedConnection, setupOutgoing } from "../common";
 import followRedirects from "follow-redirects";
-import { proxyOptions } from "../../http-proxy";
+import { proxyOptions } from "../../index";
 
 const web_o = Object.keys(web_o_i).map(function (pass) {
   return web_o_i[pass];
@@ -31,7 +31,7 @@ export default {
    * @api private
    */
 
-  deleteLength: function deleteLength(req, res, options) {
+  deleteLength: function deleteLength(req: IncomingMessage, res, options) {
     if (
       (req.method === "DELETE" || req.method === "OPTIONS") &&
       !req.headers["content-length"]
@@ -51,7 +51,7 @@ export default {
    * @api private
    */
 
-  timeout: function timeout(req, res, options) {
+  timeout: function timeout(req: IncomingMessage, res, options) {
     if (options.timeout) {
       req.socket.setTimeout(options.timeout);
     }
@@ -100,7 +100,14 @@ export default {
    * @api private
    */
 
-  stream: function stream(req, res, options: proxyOptions, _, server, clb) {
+  stream: function stream(
+    req: IncomingMessage,
+    res,
+    options: proxyOptions,
+    _,
+    server,
+    clb
+  ) {
     // And we begin!
     server.emit("start", req, res, options.target || options.forward);
 
@@ -151,13 +158,13 @@ export default {
     // show an error page at the initial request
     if (options.proxyTimeout) {
       proxyReq.setTimeout(options.proxyTimeout, function () {
-        proxyReq.abort();
+        proxyReq.destroy();
       });
     }
 
-    // Ensure we abort proxy if request is aborted
+    // Ensure we destroy proxy if request is aborted
     req.on("aborted", function () {
-      proxyReq.abort();
+      proxyReq.destroy();
     });
 
     // handle errors in proxy and incoming request, just like for forward proxy
@@ -165,11 +172,11 @@ export default {
     req.on("error", proxyError);
     proxyReq.on("error", proxyError);
 
-    function createErrorHandler(proxyReq, url) {
+    function createErrorHandler(proxyReq: httpNative.ClientRequest, url) {
       return function proxyError(err) {
         if (req.socket.destroyed && err.code === "ECONNRESET") {
           server.emit("econnreset", err, req, res, url);
-          return proxyReq.abort();
+          return proxyReq.destroy();
         }
 
         if (clb) {

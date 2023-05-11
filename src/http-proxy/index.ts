@@ -6,7 +6,7 @@ import http from "http";
 import https from "https";
 import web from "./passes/web-incoming";
 import ws from "./passes/ws-incoming";
-import { proxyOptions } from "../http-proxy";
+import { proxyOptions } from "../index";
 
 /**
  * Returns a function that creates the loader for
