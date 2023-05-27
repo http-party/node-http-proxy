@@ -535,25 +535,28 @@ describe('#followRedirects', function () {
   });
 });
 
-describe.only('#handleAbort', function () {
+describe('#handleAbort', function () {
   it('should proxy the request and handle client disconnect error', function(done) {
     var proxy = httpProxy.createProxyServer({
-      target: 'http://127.0.0.1:45002',
+      target: 'http://127.0.0.1:8080',
     });
-
-    require('net').createServer().listen(45002);
-
-    var proxyServer = http.createServer(requestHandler);
 
     var cnt = 0;
     var doneOne = function() {
-      console.log('doneOne', cnt);
       cnt += 1;
-      if(cnt === 2) done();
+      if(cnt === 3) done();
     }
 
+    var source = http.createServer(function(req, res) {
+      req.on('close', () => {
+        expect(req.destroyed).to.eql(true);
+        expect(req.aborted).to.eql(true);
+        doneOne();
+      });
+    });
+
     var started = new Date().getTime();
-    function requestHandler(req, res) {
+    var proxyServer = http.createServer(function (req, res) {
       proxy.once('econnreset', function (err, errReq, errRes) {
         proxyServer.close();
         expect(err).to.be.an(Error);
@@ -564,9 +567,10 @@ describe.only('#handleAbort', function () {
       });
 
       proxy.web(req, res);
-    }
+    });
 
     proxyServer.listen('8086');
+    source.listen('8080');
 
     var req = http.request({
       hostname: '127.0.0.1',
