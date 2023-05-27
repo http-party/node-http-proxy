@@ -534,3 +534,56 @@ describe('#followRedirects', function () {
     }).end();
   });
 });
+
+describe.only('#handleAbort', function () {
+  it('should proxy the request and handle client disconnect error', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:45002',
+    });
+
+    require('net').createServer().listen(45002);
+
+    var proxyServer = http.createServer(requestHandler);
+
+    var cnt = 0;
+    var doneOne = function() {
+      console.log('doneOne', cnt);
+      cnt += 1;
+      if(cnt === 2) done();
+    }
+
+    var started = new Date().getTime();
+    function requestHandler(req, res) {
+      proxy.once('econnreset', function (err, errReq, errRes) {
+        proxyServer.close();
+        expect(err).to.be.an(Error);
+        expect(errReq).to.be.equal(req);
+        expect(errRes).to.be.equal(res);
+        expect(err.code).to.be('ECONNRESET');
+        doneOne();
+      });
+
+      proxy.web(req, res);
+    }
+
+    proxyServer.listen('8086');
+
+    var req = http.request({
+      hostname: '127.0.0.1',
+      port: '8086',
+      method: 'GET',
+    }, function() {});
+
+    req.on('error', function(err) {
+      expect(err).to.be.an(Error);
+      expect(err.code).to.be('ECONNRESET');
+      expect(new Date().getTime() - started).to.be.greaterThan(99);
+      doneOne();
+    });
+    req.end();
+
+    setTimeout(function () {
+      req.destroy();
+    }, 100);
+  });
+});
