@@ -87,6 +87,7 @@ describe('#createProxyServer.web() using own http server', function () {
     var source = http.createServer(function(req, res) {
       source.close();
       proxyServer.close();
+      res.end();
       expect(req.method).to.eql('GET');
       expect(req.headers.host.split(':')[1]).to.eql('8081');
       done();
@@ -114,6 +115,7 @@ describe('#createProxyServer.web() using own http server', function () {
     var proxyServer = http.createServer(requestHandler);
 
     var source = http.createServer(function(req, res) {
+      res.end();
       source.close();
       proxyServer.close();
       expect(req.headers['x-special-proxy-header']).to.eql('foobar');
@@ -142,6 +144,7 @@ describe('#createProxyServer.web() using own http server', function () {
     var proxyServer = http.createServer(requestHandler);
 
     var source = http.createServer(function(req, res) {
+      res.end();
       source.close();
       proxyServer.close();
       expect(req.headers['x-special-proxy-header']).to.not.eql('foobar');
@@ -259,7 +262,7 @@ describe('#createProxyServer.web() using own http server', function () {
       proxyTimeout: 100
     });
 
-    require('net').createServer().listen(45000);
+    const source = require('net').createServer().listen(45000);
 
     var proxyServer = http.createServer(requestHandler);
 
@@ -267,6 +270,7 @@ describe('#createProxyServer.web() using own http server', function () {
     function requestHandler(req, res) {
       proxy.once('error', function (err, errReq, errRes) {
         proxyServer.close();
+        source.close();
         expect(err).to.be.an(Error);
         expect(errReq).to.be.equal(req);
         expect(errRes).to.be.equal(res);
@@ -293,7 +297,7 @@ describe('#createProxyServer.web() using own http server', function () {
       timeout: 100
     });
 
-    require('net').createServer().listen(45001);
+    const source = require('net').createServer().listen(45001);
 
     var proxyServer = http.createServer(requestHandler);
 
@@ -307,6 +311,7 @@ describe('#createProxyServer.web() using own http server', function () {
     function requestHandler(req, res) {
       proxy.once('econnreset', function (err, errReq, errRes) {
         proxyServer.close();
+        source.close();
         expect(err).to.be.an(Error);
         expect(errReq).to.be.equal(req);
         expect(errRes).to.be.equal(res);
