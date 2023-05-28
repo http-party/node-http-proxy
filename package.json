@@ -1,6 +1,6 @@
 {
-  "name": "@blocklet/http-proxy",
-  "version": "1.18.1",
+  "name": "@arcblock/http-proxy",
+  "version": "1.19.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/arcblock/node-http-proxy.git"
@@ -11,6 +11,10 @@
     "jcrugzz <jcrugzz@gmail.com>"
   ],
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["lib"],
   "dependencies": {
     "eventemitter3": "^5.0.1",
     "requires-port": "^1.0.0",
@@ -30,12 +34,12 @@
     "ws": "^8.13.0"
   },
   "scripts": {
-    "mocha": "mocha test/*-test.js",
+    "mocha": "mocha test/*-test.js --exit",
     "test": "nyc --reporter=text --reporter=lcov npm run mocha",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=14.0.0"
   },
   "license": "MIT"
 }

@@ -1,34 +1,41 @@
-<p align="center">
-  <img src="https://raw.github.com/http-party/node-http-proxy/master/doc/logo.png"/>
-</p>
+# ArcBlock Fork of
 
-# node-http-proxy [![Build Status](https://travis-ci.org/http-party/node-http-proxy.svg?branch=master)](https://travis-ci.org/http-party/node-http-proxy) [![codecov](https://codecov.io/gh/http-party/node-http-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/http-party/node-http-proxy)
+https://github.com/http-party/node-http-proxy
+
+# node-http-proxy
 
 `node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as reverse
 proxies and load balancers.
 
 ### Table of Contents
-  * [Installation](#installation)
-  * [Upgrading from 0.8.x ?](#upgrading-from-08x-)
-  * [Core Concept](#core-concept)
-  * [Use Cases](#use-cases)
-    * [Setup a basic stand-alone proxy server](#setup-a-basic-stand-alone-proxy-server)
-    * [Setup a stand-alone proxy server with custom server logic](#setup-a-stand-alone-proxy-server-with-custom-server-logic)
-    * [Setup a stand-alone proxy server with proxy request header re-writing](#setup-a-stand-alone-proxy-server-with-proxy-request-header-re-writing)
-    * [Modify a response from a proxied server](#modify-a-response-from-a-proxied-server)
-    * [Setup a stand-alone proxy server with latency](#setup-a-stand-alone-proxy-server-with-latency)
-    * [Using HTTPS](#using-https)
-    * [Proxying WebSockets](#proxying-websockets)
-  * [Options](#options)
-  * [Listening for proxy events](#listening-for-proxy-events)
-  * [Shutdown](#shutdown)
-  * [Miscellaneous](#miscellaneous)
-    * [Test](#test)
-    * [ProxyTable API](#proxytable-api)
-    * [Logo](#logo)
-  * [Contributing and Issues](#contributing-and-issues)
-  * [License](#license)
+- [ArcBlock Fork of](#arcblock-fork-of)
+- [node-http-proxy](#node-http-proxy)
+    - [Table of Contents](#table-of-contents)
+    - [Installation](#installation)
+    - [Upgrading from 0.8.x ?](#upgrading-from-08x-)
+    - [Core Concept](#core-concept)
+    - [Use Cases](#use-cases)
+      - [Setup a basic stand-alone proxy server](#setup-a-basic-stand-alone-proxy-server)
+      - [Setup a stand-alone proxy server with custom server logic](#setup-a-stand-alone-proxy-server-with-custom-server-logic)
+      - [Setup a stand-alone proxy server with proxy request header re-writing](#setup-a-stand-alone-proxy-server-with-proxy-request-header-re-writing)
+      - [Modify a response from a proxied server](#modify-a-response-from-a-proxied-server)
+      - [Setup a stand-alone proxy server with latency](#setup-a-stand-alone-proxy-server-with-latency)
+      - [Using HTTPS](#using-https)
+        - [HTTPS -\> HTTP](#https---http)
+        - [HTTPS -\> HTTPS](#https---https)
+        - [HTTP -\> HTTPS (using a PKCS12 client certificate)](#http---https-using-a-pkcs12-client-certificate)
+      - [Proxying WebSockets](#proxying-websockets)
+    - [Options](#options)
+    - [Listening for proxy events](#listening-for-proxy-events)
+    - [Shutdown](#shutdown)
+    - [Miscellaneous](#miscellaneous)
+    - [Modify response](#modify-response)
+      - [ProxyTable API](#proxytable-api)
+      - [Test](#test)
+      - [Logo](#logo)
+    - [Contributing and Issues](#contributing-and-issues)
+    - [License](#license)
 
 ### Installation
 
