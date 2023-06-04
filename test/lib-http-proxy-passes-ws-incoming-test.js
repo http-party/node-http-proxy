@@ -1,4 +1,4 @@
-var httpProxy = require('../lib/http-proxy/passes/ws-incoming'),
+var httpProxy = require('../module/http-proxy/passes/ws-incoming').default,
     expect = require('expect.js');
 
 describe('lib/http-proxy/passes/ws-incoming.js', function () {

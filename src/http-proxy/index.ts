@@ -63,6 +63,7 @@ export class ProxyServer extends EE3 {
     }
 
     this._server.listen(port, hostname);
+    return this;
   }
 
   close(callback) {

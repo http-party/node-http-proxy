@@ -1,4 +1,4 @@
-var httpProxy = require('../lib/http-proxy'),
+var httpProxy = require('../module'),
     semver    = require('semver'),
     expect    = require('expect.js'),
     http      = require('http')
@@ -10,7 +10,7 @@ var httpProxy = require('../lib/http-proxy'),
 // Expose a port number generator.
 // thanks to @3rd-Eden
 //
-var initialPort = 1024, gen = {};
+var initialPort = 4000, gen = {};
 Object.defineProperty(gen, 'port', {
   get: function get() {
     return initialPort++;
@@ -194,7 +194,7 @@ describe('lib/http-proxy.js', function() {
 
         source.listen(ports.source);
 
-        var proxy = httpProxy.createServer({
+        var proxy = httpProxy.createProxyServer({
           agent: new http.Agent({ maxSockets: 2 })
         });
 

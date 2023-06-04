@@ -3,7 +3,9 @@
   "version": "1.20.3",
   "scripts": {
     "dev": "tsc --watch --preserveWatchOutput",
-    "build": "npm i && tsc"
+    "build": "npm i && tsc",
+    "test": "npm run build && npm run mocha",
+    "mocha": "mocha test/*-test.js --exit"
   },
   "repository": {
     "type": "git",
@@ -34,5 +36,7 @@
     "ws": "^8.13.0"
   },
   "license": "MIT",
-  "tw": {"color": "blue"}
+  "tw": {
+    "color": "blue"
+  }
 }

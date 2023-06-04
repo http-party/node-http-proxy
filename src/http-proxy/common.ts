@@ -42,7 +42,7 @@ export const setupOutgoing = function (
 ): http.RequestOptions {
   outgoing.port =
     options[forward || "target"].port ||
-    (isSSL.test(options[forward || "target"].protocol) ? 443 : 80);
+    (isSSL.test(options[forward || "target"]?.protocol) ? 443 : 80);
 
   [
     "host",
@@ -77,13 +77,13 @@ export const setupOutgoing = function (
     outgoing.ca = options.ca;
   }
 
-  if (isSSL.test(options[forward || "target"].protocol)) {
+  if (isSSL.test(options[forward || "target"]?.protocol)) {
     // @ts-ignore
     outgoing.rejectUnauthorized =
       typeof options.secure === "undefined" ? true : options.secure;
   }
 
-  outgoing.agent = ((options.target as UrlWithStringQuery).protocol === "https:") ? options.agents.https : options.agents.http || false;
+  outgoing.agent = options.agent || false;
   outgoing.localAddress = options.localAddress;
 
   //
@@ -121,7 +121,7 @@ export const setupOutgoing = function (
 
   if (options.changeOrigin) {
     outgoing.headers.host =
-      required(outgoing.port, options[forward || "target"].protocol) &&
+      required(outgoing.port, options[forward || "target"]?.protocol) &&
       !hasPort(outgoing.host)
         ? outgoing.host + ":" + outgoing.port
         : outgoing.host;

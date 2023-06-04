@@ -51,8 +51,8 @@ export default {
    * @api private
    */
 
-  timeout: function timeout(req: IncomingMessage, res, options) {
-    if (options.timeout) {
+  timeout: function timeout(req: IncomingMessage, res, options: proxyOptions) {
+    if (options.timeout) {      
       req.socket.setTimeout(options.timeout);
     }
   },

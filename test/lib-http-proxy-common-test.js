@@ -1,8 +1,8 @@
-var common = require('../lib/http-proxy/common'),
+var common = require('../module/http-proxy/common'),
     url = require('url'),
     expect = require('expect.js');
 
-describe('lib/http-proxy/common.js', function () {
+describe('module/http-proxy/common.js', function () {
   describe('#setupOutgoing', function () {
     it('should setup the correct headers', function () {
       var outgoing = {};
@@ -138,7 +138,7 @@ describe('lib/http-proxy/common.js', function () {
       var outgoing = {};
       common.setupOutgoing(outgoing,
       {
-        agent     : '?',
+        agent   :'?',
         target: {
           host      : 'how',
           hostname  : 'are',

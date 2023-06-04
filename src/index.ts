@@ -1,7 +1,6 @@
 import { ProxyServer } from "./http-proxy/index";
 import { UrlWithStringQuery } from "url";
 import { RequestOptions} from "http";
-import { Agent as HttpsAgent } from "https";
 import { Agent } from "http";
 
 export type proxyOptions = {
@@ -10,10 +9,8 @@ export type proxyOptions = {
   forward?: any;
   headers?: any;
   proxyTimeout?: number;
-  agents?: {
-    http?: Agent;
-    https?: HttpsAgent;
-  };
+  timeout?: number;
+  agent?:  Agent;
   buffer?: any;
   selfHandleResponse?: boolean;
   ssl?: any;
@@ -77,6 +74,6 @@ export function createProxyServer(options: proxyOptions): ProxyServer {
    *    both missing
    *  }
    */
-
+  if (!options) throw new Error("options are required!");
   return new ProxyServer(options);
 }
