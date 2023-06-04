@@ -6,7 +6,7 @@ import { getPort, hasEncryptedConnection, setupOutgoing } from "../common";
 import followRedirects from "follow-redirects";
 import { proxyOptions } from "../../index";
 
-const web_o = Object.keys(web_o_i).map(function (pass) {
+const web_o = Object.keys(web_o_i).map((pass) => {
   return web_o_i[pass];
 });
 

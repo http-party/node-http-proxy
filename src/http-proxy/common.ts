@@ -4,7 +4,7 @@ import { _extend as extend } from "util";
 import required from "requires-port";
 import http from "http";
 
-var upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i;
+const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i;
 
 export const isSSL = /^https|wss/;
 

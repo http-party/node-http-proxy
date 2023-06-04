@@ -56,7 +56,7 @@ export function createRightProxy(type) {
 
       /* optional args parse end */
 
-      ["target", "forward"].forEach(function (e) {
+      ["target", "forward"].forEach((e) => {
         if (typeof requestOptions[e] === "string")
           requestOptions[e] = parse_url(requestOptions[e]);
       });
