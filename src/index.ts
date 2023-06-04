@@ -48,7 +48,7 @@ export type proxyOptions = {
  * @api public
  */
 
-export function createProxyServer(options: proxyOptions): typeof ProxyServer {
+export function createProxyServer(options: proxyOptions): ProxyServer {
   /*
    *  `options` is needed and it must have the following layout:
    *
