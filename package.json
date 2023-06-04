@@ -18,7 +18,7 @@
   ],
   "main": "module/index.js",
   "dependencies": {
-    "eventemitter3": "^5.0.0",
+    "eventemitter3": "^5.0.1",
     "follow-redirects": "^1.15.2",
     "requires-port": "^1.0.0"
   },
@@ -29,9 +29,9 @@
     "expect.js": "~0.3.1",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "semver": "^7.3.8",
-    "socket.io": "^4.6.1",
-    "socket.io-client": "^4.6.1",
+    "semver": "^7.5.1",
+    "socket.io": "^4.6.2",
+    "socket.io-client": "^4.6.2",
     "sse": "0.0.8",
     "ws": "^8.13.0"
   },
