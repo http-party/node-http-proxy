@@ -1,6 +1,8 @@
 import { ProxyServer } from "./http-proxy/index";
 import { UrlWithStringQuery } from "url";
-import { RequestOptions } from "http";
+import { RequestOptions} from "http";
+import { Agent as HttpsAgent } from "https";
+import { Agent } from "http";
 
 export type proxyOptions = {
   target?: string | UrlWithStringQuery;
@@ -8,7 +10,10 @@ export type proxyOptions = {
   forward?: any;
   headers?: any;
   proxyTimeout?: number;
-  agent?: any;
+  agents?: {
+    http?: Agent;
+    https?: HttpsAgent;
+  };
   buffer?: any;
   selfHandleResponse?: boolean;
   ssl?: any;

@@ -2,7 +2,9 @@ import url from "url";
 // @ts-ignore
 import { _extend as extend } from "util";
 import required from "requires-port";
+import { UrlWithStringQuery } from "url";
 import http from "http";
+import { proxyOptions } from "..";
 
 const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i;
 
@@ -34,7 +36,7 @@ export const isSSL = /^https|wss/;
 
 export const setupOutgoing = function (
   outgoing: http.RequestOptions,
-  options,
+  options: proxyOptions,
   req,
   forward?
 ): http.RequestOptions {
@@ -57,6 +59,7 @@ export const setupOutgoing = function (
     outgoing[e] = options[forward || "target"][e];
   });
 
+  // @ts-ignore
   outgoing.method = options.method || req.method;
   outgoing.headers = extend({}, req.headers);
 
@@ -68,6 +71,7 @@ export const setupOutgoing = function (
     outgoing.auth = options.auth;
   }
 
+  // @ts-ignore
   if (options.ca) {
     // @ts-ignore
     outgoing.ca = options.ca;
@@ -79,7 +83,7 @@ export const setupOutgoing = function (
       typeof options.secure === "undefined" ? true : options.secure;
   }
 
-  outgoing.agent = options.agent || false;
+  outgoing.agent = ((options.target as UrlWithStringQuery).protocol === "https:") ? options.agents.https : options.agents.http || false;
   outgoing.localAddress = options.localAddress;
 
   //
