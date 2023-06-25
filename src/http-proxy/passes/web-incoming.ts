@@ -52,7 +52,7 @@ export default {
    */
 
   timeout: function timeout(req: IncomingMessage, res, options: proxyOptions) {
-    if (options.timeout) {      
+    if (options.timeout) {
       req.socket.setTimeout(options.timeout);
     }
   },

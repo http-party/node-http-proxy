@@ -1,6 +1,6 @@
 import { ProxyServer } from "./http-proxy/index";
 import { UrlWithStringQuery } from "url";
-import { RequestOptions} from "http";
+import { RequestOptions } from "http";
 import { Agent } from "http";
 
 export type proxyOptions = {
@@ -10,7 +10,7 @@ export type proxyOptions = {
   headers?: any;
   proxyTimeout?: number;
   timeout?: number;
-  agent?:  Agent;
+  agent?: Agent;
   buffer?: any;
   selfHandleResponse?: boolean;
   ssl?: any;

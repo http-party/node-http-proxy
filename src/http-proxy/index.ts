@@ -8,55 +8,59 @@ import web from "./passes/web-incoming";
 import ws from "./passes/ws-incoming";
 import { proxyOptions } from "../index";
 
-type callProxy = (req: http.IncomingMessage, res: http.ServerResponse, options?: proxyOptions) => void;
+type callProxy = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  options?: proxyOptions
+) => void;
 
 export class ProxyServer extends EE3 {
-  web: callProxy
-  ws: callProxy
-  proxyRequest: callProxy
-  proxyWebsocketRequest: callProxy
-  options: proxyOptions
-  webPasses
-  wsPasses
-  _server: https.Server | http.Server
+  web: callProxy;
+  ws: callProxy;
+  proxyRequest: callProxy;
+  proxyWebsocketRequest: callProxy;
+  options: proxyOptions;
+  webPasses;
+  wsPasses;
+  _server: https.Server | http.Server;
   constructor(options: proxyOptions) {
     super();
     options = options || {};
     options.prependPath = options.prependPath === false ? false : true;
 
-    this.web = this.proxyRequest = this.createRightProxy('web');
-    this.ws = this.proxyWebsocketRequest = this.createRightProxy('ws')
+    this.web = this.proxyRequest = this.createRightProxy("web");
+    this.ws = this.proxyWebsocketRequest = this.createRightProxy("ws");
     this.options = options;
 
-    this.webPasses = Object.keys(web).map(function(pass) {
+    this.webPasses = Object.keys(web).map(function (pass) {
       return web[pass];
     });
 
-    this.wsPasses = Object.keys(ws).map(function(pass) {
+    this.wsPasses = Object.keys(ws).map(function (pass) {
       return ws[pass];
     });
 
-    this.on('error', this.onError, this);
+    this.on("error", this.onError, this);
   }
 
   onError(err) {
-    if (this.listeners('error').length === 1) {
+    if (this.listeners("error").length === 1) {
       throw err;
     }
   }
 
   listen(port, hostname) {
     const self = this;
-    const closure = function(req, res) {
+    const closure = function (req, res) {
       self.web(req, res);
     };
 
     this._server = this.options.ssl
-      ? https.createServer(this.options.ssl , closure)
+      ? https.createServer(this.options.ssl, closure)
       : http.createServer(closure);
 
     if (this.options.ws) {
-      this._server.on('upgrade', function(req, socket, head) {
+      this._server.on("upgrade", function (req, socket, head) {
         // @ts-ignore
         self.ws(req, socket, head);
       });
@@ -81,39 +85,39 @@ export class ProxyServer extends EE3 {
   }
 
   before(type, passName, callback) {
-    if (type !== 'ws' && type !== 'web') {
-      throw new Error('type must be `web` or `ws`');
+    if (type !== "ws" && type !== "web") {
+      throw new Error("type must be `web` or `ws`");
     }
-    const passes = type === 'ws' ? this.wsPasses : this.webPasses;
+    const passes = type === "ws" ? this.wsPasses : this.webPasses;
     let i = false;
 
-    passes.forEach(function(v, idx) {
+    passes.forEach(function (v, idx) {
       if (v.name === passName) i = idx;
     });
 
-    if (i === false) throw new Error('No such pass');
+    if (i === false) throw new Error("No such pass");
 
     passes.splice(i, 0, callback);
   }
 
   after(type, passName, callback) {
-    if (type !== 'ws' && type !== 'web') {
-      throw new Error('type must be `web` or `ws`');
+    if (type !== "ws" && type !== "web") {
+      throw new Error("type must be `web` or `ws`");
     }
-    const passes = type === 'ws' ? this.wsPasses : this.webPasses;
+    const passes = type === "ws" ? this.wsPasses : this.webPasses;
     let i = false;
 
-    passes.forEach(function(v, idx) {
+    passes.forEach(function (v, idx) {
       if (v.name === passName) i = idx;
     });
 
-    if (i === false) throw new Error('No such pass');
+    if (i === false) throw new Error("No such pass");
 
     passes.splice(i++, 0, callback);
   }
 
   createRightProxy(type) {
-    return function processRequest (req, res ) {
+    return function processRequest(req, res) {
       var passes = type === "ws" ? this.wsPasses : this.webPasses,
         args = [].slice.call(arguments),
         cntr = args.length - 1,
@@ -157,6 +161,7 @@ export class ProxyServer extends EE3 {
         );
       }
 
+      const promises = [];
       for (var i = 0; i < passes.length; i++) {
         /**
          * Call of passes functions
@@ -166,11 +171,14 @@ export class ProxyServer extends EE3 {
          * refer to the connection socket
          * pass(req, socket, options, head)
          */
-        if (passes[i](req, res, requestOptions, head, this, cbl)) {
+        const passRes = passes[i](req, res, requestOptions, head, this, cbl);
+        promises.push(passRes);
+        if (passRes) {
           // passes can return a truthy value to halt the loop
           break;
         }
       }
+      return Promise.all(promises);
     };
-  };
+  }
 }

@@ -181,5 +181,6 @@ export default {
       }
       socket.end();
     }
+  return proxyReq;
   },
 };
