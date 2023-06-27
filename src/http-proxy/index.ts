@@ -1,6 +1,6 @@
 // @ts-ignore
 import { _extend as extend } from "util";
-import { parse as parse_url } from "url";
+import url from "url";
 import { EventEmitter as EE3 } from "eventemitter3";
 import http from "http";
 import https from "https";
@@ -149,7 +149,7 @@ export class ProxyServer extends EE3 {
 
       ["target", "forward"].forEach((e) => {
         if (typeof requestOptions[e] === "string")
-          requestOptions[e] = parse_url(requestOptions[e]);
+          requestOptions[e] = url.parse(requestOptions[e]);
       });
 
       if (!requestOptions.target && !requestOptions.forward) {

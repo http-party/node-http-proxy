@@ -2,7 +2,6 @@ import url from "url";
 // @ts-ignore
 import { _extend as extend } from "util";
 import required from "requires-port";
-import { UrlWithStringQuery } from "url";
 import http from "http";
 import { proxyOptions } from "..";
 
