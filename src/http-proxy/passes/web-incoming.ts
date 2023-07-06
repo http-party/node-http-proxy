@@ -163,8 +163,11 @@ export default {
     }
 
     // Ensure we destroy proxy if request is aborted
-    req.on("aborted", function () {
-      proxyReq.destroy();
+    res.on('close', function () {
+      var aborted = !res.writableFinished;
+      if (aborted) {
+        proxyReq.destroy();
+      }
     });
 
     // handle errors in proxy and incoming request, just like for forward proxy

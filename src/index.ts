@@ -77,7 +77,7 @@ export function createProxyServer(options: proxyOptions): ProxyServer {
    */
   if (!options) throw new Error("options are required!");
   const proxy = new ProxyServer(options);
-  if (options.handleErrors !== false) {
+  if (options.handleErrors) {
     proxy.on('error', (err, _req, res) => {
       console.error(err);
       if (!res.headersSent) {
