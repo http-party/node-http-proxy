@@ -1,4 +1,5 @@
 import url from "url";
+import type { IncomingMessage, ServerResponse } from "http";
 import { rewriteCookieProperty } from "../common";
 
 var redirectRegex = /^201|30(1|2|7|8)$/;
@@ -23,7 +24,11 @@ export default {
    *
    * @api private
    */
-  removeChunked: function removeChunked(req, res, proxyRes) {
+  removeChunked: function removeChunked(
+    req: IncomingMessage,
+    res: ServerResponse,
+    proxyRes: IncomingMessage
+  ) {
     if (req.httpVersion === "1.0") {
       delete proxyRes.headers["transfer-encoding"];
     }
@@ -39,7 +44,11 @@ export default {
    *
    * @api private
    */
-  setConnection: function setConnection(req, res, proxyRes) {
+  setConnection: function setConnection(
+    req: IncomingMessage,
+    res: ServerResponse,
+    proxyRes: IncomingMessage
+  ) {
     if (req.httpVersion === "1.0") {
       proxyRes.headers.connection = req.headers.connection || "close";
     } else if (req.httpVersion !== "2.0" && !proxyRes.headers.connection) {
@@ -48,18 +57,18 @@ export default {
   },
 
   setRedirectHostRewrite: function setRedirectHostRewrite(
-    req,
-    res,
-    proxyRes,
-    options
+    req: IncomingMessage,
+    res: ServerResponse,
+    proxyRes: IncomingMessage,
+    options: any
   ) {
     if (
       (options.hostRewrite || options.autoRewrite || options.protocolRewrite) &&
       proxyRes.headers["location"] &&
-      redirectRegex.test(proxyRes.statusCode)
+      redirectRegex.test(proxyRes.statusCode as any)
     ) {
-      var target = url.parse(options.target);
-      var u = url.parse(proxyRes.headers["location"]);
+      const target = url.parse(options.target);
+      const u = url.parse(proxyRes.headers["location"]);
 
       // make sure the redirected host matches the target host before rewriting
       if (target.host != u.host) {
@@ -69,7 +78,7 @@ export default {
       if (options.hostRewrite) {
         u.host = options.hostRewrite;
       } else if (options.autoRewrite) {
-        u.host = req.headers["host"];
+        u.host = req.headers["host"] as string;
       }
       if (options.protocolRewrite) {
         u.protocol = options.protocolRewrite;
@@ -89,29 +98,30 @@ export default {
    *
    * @api private
    */
-  writeHeaders: function writeHeaders(req, res, proxyRes, options) {
-    var rewriteCookieDomainConfig = options.cookieDomainRewrite,
-      rewriteCookiePathConfig = options.cookiePathRewrite,
-      preserveHeaderKeyCase = options.preserveHeaderKeyCase,
-      rawHeaderKeyMap,
-      setHeader = function (key, header) {
-        if (header == undefined) return;
-        if (rewriteCookieDomainConfig && key.toLowerCase() === "set-cookie") {
-          header = rewriteCookieProperty(
-            header,
-            rewriteCookieDomainConfig,
-            "domain"
-          );
-        }
-        if (rewriteCookiePathConfig && key.toLowerCase() === "set-cookie") {
-          header = rewriteCookieProperty(
-            header,
-            rewriteCookiePathConfig,
-            "path"
-          );
-        }
-        res.setHeader(String(key).trim(), header);
-      };
+  writeHeaders: function writeHeaders(
+    req: IncomingMessage,
+    res: ServerResponse,
+    proxyRes: IncomingMessage,
+    options: any
+  ) {
+    let rewriteCookieDomainConfig = options.cookieDomainRewrite;
+    let rewriteCookiePathConfig = options.cookiePathRewrite;
+    const preserveHeaderKeyCase = options.preserveHeaderKeyCase;
+    let rawHeaderKeyMap: any;
+    function setHeader(key: string, header: string | string[] | undefined) {
+      if (header == undefined) return;
+      if (rewriteCookieDomainConfig && key.toLowerCase() === "set-cookie") {
+        header = rewriteCookieProperty(
+          header,
+          rewriteCookieDomainConfig,
+          "domain"
+        );
+      }
+      if (rewriteCookiePathConfig && key.toLowerCase() === "set-cookie") {
+        header = rewriteCookieProperty(header, rewriteCookiePathConfig, "path");
+      }
+      res.setHeader(String(key).trim(), header);
+    }
 
     if (typeof rewriteCookieDomainConfig === "string") {
       //also test for ''
@@ -151,13 +161,15 @@ export default {
    *
    * @api private
    */
-  writeStatusCode: function writeStatusCode(req, res, proxyRes) {
+  writeStatusCode: function writeStatusCode(
+    req: IncomingMessage,
+    res: ServerResponse,
+    proxyRes: IncomingMessage
+  ) {
     // From Node.js docs: response.writeHead(statusCode[, statusMessage][, headers])
+    res.statusCode = proxyRes.statusCode as number;
     if (proxyRes.statusMessage) {
-      res.statusCode = proxyRes.statusCode;
       res.statusMessage = proxyRes.statusMessage;
-    } else {
-      res.statusCode = proxyRes.statusCode;
     }
   },
 };

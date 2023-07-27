@@ -1,8 +1,6 @@
 import url from "url";
-// @ts-ignore
-import { _extend as extend } from "util";
 import required from "requires-port";
-import http from "http";
+import http, { IncomingMessage } from "http";
 import { proxyOptions } from "..";
 
 const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i;
@@ -33,10 +31,10 @@ export const isSSL = /^https|wss/;
  * @api private
  */
 
-export const setupOutgoing = function (
+export function setupOutgoing(
   outgoing: http.RequestOptions,
   options: proxyOptions,
-  req,
+  req: IncomingMessage,
   forward?
 ): http.RequestOptions {
   outgoing.port =
@@ -60,10 +58,10 @@ export const setupOutgoing = function (
 
   // @ts-ignore
   outgoing.method = options.method || req.method;
-  outgoing.headers = extend({}, req.headers);
+  outgoing.headers = Object.assign({}, req.headers);
 
   if (options.headers) {
-    extend(outgoing.headers, options.headers);
+    Object.assign(outgoing.headers, options.headers);
   }
 
   if (options.auth) {
@@ -126,7 +124,7 @@ export const setupOutgoing = function (
         : outgoing.host;
   }
   return outgoing;
-};
+}
 
 /**
  * Set the proper configuration for sockets,
@@ -163,7 +161,7 @@ export const setupSocket = function (socket) {
  *
  * @api private
  */
-export const getPort = function (req) {
+export const getPort = function (req: IncomingMessage) {
   var res = req.headers.host ? req.headers.host.match(/:(\d+)/) : "";
 
   return res ? res[1] : hasEncryptedConnection(req) ? "443" : "80";
@@ -178,8 +176,9 @@ export const getPort = function (req) {
  *
  * @api private
  */
-export const hasEncryptedConnection = function (req) {
-  return Boolean(req.connection.encrypted || req.connection.pair);
+export const hasEncryptedConnection = function (req: IncomingMessage) {
+  // @ts-ignore
+  return Boolean(req.connection?.encrypted || req.connection?.pair);
 };
 
 /**

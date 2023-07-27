@@ -1,11 +1,9 @@
-// @ts-ignore
-import { _extend as extend } from "util";
 import url from "url";
 import { EventEmitter as EE3 } from "eventemitter3";
 import http from "http";
 import https from "https";
-import web from "./passes/web-incoming";
-import ws from "./passes/ws-incoming";
+import webPasses from "./passes/web-incoming";
+import wsPasses from "./passes/ws-incoming";
 import { proxyOptions } from "../index";
 
 type callProxy = (
@@ -32,13 +30,8 @@ export class ProxyServer extends EE3 {
     this.ws = this.proxyWebsocketRequest = this.createRightProxy("ws");
     this.options = options;
 
-    this.webPasses = Object.keys(web).map(function (pass) {
-      return web[pass];
-    });
-
-    this.wsPasses = Object.keys(ws).map(function (pass) {
-      return ws[pass];
-    });
+    this.webPasses = Object.values(webPasses);
+    this.wsPasses = Object.values(wsPasses);
 
     this.on("error", this.onError, this);
   }
@@ -49,7 +42,7 @@ export class ProxyServer extends EE3 {
     }
   }
 
-  listen(port, hostname) {
+  listen(port: number, hostname: string) {
     const self = this;
     const closure = function (req, res) {
       self.web(req, res);
@@ -116,7 +109,7 @@ export class ProxyServer extends EE3 {
     passes.splice(i++, 0, callback);
   }
 
-  createRightProxy(type) {
+  createRightProxy(type: "ws" | "web") {
     return function processRequest(req, res) {
       var passes = type === "ws" ? this.wsPasses : this.webPasses,
         args = [].slice.call(arguments),
@@ -134,10 +127,9 @@ export class ProxyServer extends EE3 {
       var requestOptions = this.options;
       if (!(args[cntr] instanceof Buffer) && args[cntr] !== res) {
         //Copy global options
-        requestOptions = extend({}, this.options);
+        requestOptions = Object.assign({}, this.options);
         //Overwrite with request options
-        extend(requestOptions, args[cntr]);
-
+        Object.assign(requestOptions, args[cntr]);
         cntr--;
       }
 

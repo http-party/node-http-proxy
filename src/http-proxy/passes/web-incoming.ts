@@ -1,14 +1,12 @@
-import httpNative, { IncomingMessage } from "http";
+import httpNative, { IncomingMessage, ServerResponse } from "http";
 import httpsNative from "https";
-import web_o_i from "./web-outgoing";
+import webOutgoing from "./web-outgoing";
 import { UrlWithStringQuery } from "url";
 import { getPort, hasEncryptedConnection, setupOutgoing } from "../common";
 import followRedirects from "follow-redirects";
 import { proxyOptions } from "../../index";
 
-const web_o = Object.keys(web_o_i).map((pass) => {
-  return web_o_i[pass];
-});
+const webOutgoingPasses = Object.values(webOutgoing);
 
 const nativeAgents = { http: httpNative, https: httpsNative };
 
@@ -31,7 +29,11 @@ export default {
    * @api private
    */
 
-  deleteLength: function deleteLength(req: IncomingMessage, res, options) {
+  deleteLength: function deleteLength(
+    req: IncomingMessage,
+    res: ServerResponse,
+    options: any
+  ) {
     if (
       (req.method === "DELETE" || req.method === "OPTIONS") &&
       !req.headers["content-length"]
@@ -51,7 +53,11 @@ export default {
    * @api private
    */
 
-  timeout: function timeout(req: IncomingMessage, res, options: proxyOptions) {
+  timeout: function timeout(
+    req: IncomingMessage,
+    res: ServerResponse,
+    options: proxyOptions
+  ) {
     if (options.timeout) {
       req.socket.setTimeout(options.timeout);
     }
@@ -67,17 +73,21 @@ export default {
    * @api private
    */
 
-  XHeaders: function XHeaders(req, res, options) {
+  XHeaders: function XHeaders(
+    req: IncomingMessage,
+    res: ServerResponse,
+    options: any
+  ) {
     if (!options.xfwd) return;
-
-    var encrypted = req.isSpdy || hasEncryptedConnection(req);
-    var values = {
-      for: req.connection.remoteAddress || req.socket.remoteAddress,
+    // @ts-ignore
+    const encrypted = req.isSpdy || hasEncryptedConnection(req);
+    const values: Record<string, any> = {
+      for: req.socket.remoteAddress || req.socket.remoteAddress,
       port: getPort(req),
       proto: encrypted ? "https" : "http",
     };
 
-    ["for", "port", "proto"].forEach(function (header) {
+    Object.keys(values).forEach((header) => {
       req.headers["x-forwarded-" + header] =
         (req.headers["x-forwarded-" + header] || "") +
         (req.headers["x-forwarded-" + header] ? "," : "") +
@@ -102,7 +112,7 @@ export default {
 
   stream: function stream(
     req: IncomingMessage,
-    res,
+    res: ServerResponse,
     options: proxyOptions,
     _,
     server,
@@ -111,7 +121,8 @@ export default {
     // And we begin!
     server.emit("start", req, res, options.target || options.forward);
 
-    var agents: {
+    // @ts-ignore
+    const agents: {
       http: typeof httpNative;
       https: typeof httpsNative;
     } = options.followRedirects ? followRedirects : nativeAgents;
@@ -162,8 +173,8 @@ export default {
       });
     }
 
-    // Ensure we destroy proxy if request is aborted
-    res.on('close', function () {
+    // ensure we destroy proxy if request is aborted
+    res.on("close", function () {
       var aborted = !res.writableFinished;
       if (aborted) {
         proxyReq.destroy();
@@ -192,20 +203,21 @@ export default {
 
     (options.buffer || req).pipe(proxyReq);
 
-    proxyReq.on("response", function (proxyRes) {
+    proxyReq.on("response", function forwardResponse(proxyRes) {
       if (server) {
         server.emit("proxyRes", proxyRes, req, res);
       }
 
       if (!res.headersSent && !options.selfHandleResponse) {
-        for (var i = 0; i < web_o.length; i++) {
-          if (web_o[i](req, res, proxyRes, options)) {
+        for (var i = 0; i < webOutgoingPasses.length; i++) {
+          // @ts-ignore - can return boolean
+          if (webOutgoingPasses[i](req, res, proxyRes, options)) {
             break;
           }
         }
       }
 
-      if (!res.finished) {
+      if (!res.writableEnded) {
         // Allow us to listen when the proxy has completed
         proxyRes.on("end", function () {
           if (server) server.emit("end", req, res, proxyRes);

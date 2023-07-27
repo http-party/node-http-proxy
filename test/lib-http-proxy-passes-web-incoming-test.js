@@ -54,7 +54,7 @@ describe('module/http-proxy/passes/web.js', function() {
 
   describe('#XHeaders', function () {
     var stubRequest = {
-      connection: {
+      socket: {
         remoteAddress: '192.168.1.2',
         remotePort: '8080'
       },
