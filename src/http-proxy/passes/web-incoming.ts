@@ -141,9 +141,8 @@ export default {
 
       // error handler (e.g. ECONNRESET, ECONNREFUSED)
       // Handle errors on incoming request as well as it makes sense to
-      var forwardError = createErrorHandler(forwardReq, options.forward);
-      req.on("error", forwardError);
-      forwardReq.on("error", forwardError);
+      req.on("error", proxyError);
+      forwardReq.on("error", proxyError);
 
       (options.buffer || req).pipe(forwardReq);
       if (!options.target) {
@@ -181,24 +180,34 @@ export default {
       }
     });
 
+    // proxyReq.on("close", function () {
+    //   var aborted = !proxyReq.writableFinished;
+    //   if (aborted) {
+    //     res.destroy();
+    //   }
+    // });
+
     // handle errors in proxy and incoming request, just like for forward proxy
-    var proxyError = createErrorHandler(proxyReq, options.target);
     req.on("error", proxyError);
     proxyReq.on("error", proxyError);
 
-    function createErrorHandler(proxyReq: httpNative.ClientRequest, url) {
-      return function proxyError(err) {
-        if (req.socket.destroyed && err.code === "ECONNRESET") {
-          server.emit("econnreset", err, req, res, url);
-          return proxyReq.destroy();
-        }
+    function proxyError(err) {
+      const url = options.target || options.forward;
+      if (req.socket.destroyed && err.code === "ECONNRESET") {
+        server.emit("econnreset", err, req, res, url);
+        return proxyReq.destroy();
+      }
 
-        if (clb) {
-          clb(err, req, res, url);
-        } else {
-          server.emit("error", err, req, res, url);
-        }
-      };
+      // if (proxyReq.socket.destroyed && err.code === "ECONNRESET") {
+      //   server.emit("econnreset", err, req, res, url);
+      //   return req.destroy();
+      // }
+
+      if (clb) {
+        clb(err, req, res, url);
+      } else {
+        server.emit("error", err, req, res, url);
+      }
     }
 
     (options.buffer || req).pipe(proxyReq);
@@ -223,6 +232,7 @@ export default {
           if (server) server.emit("end", req, res, proxyRes);
         });
         // We pipe to the response unless its expected to be handled by the user
+        // https://nodejs.org/api/stream.html#readablepipedestination-options
         if (!options.selfHandleResponse) proxyRes.pipe(res);
       } else {
         if (server) server.emit("end", req, res, proxyRes);
