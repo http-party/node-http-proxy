@@ -180,13 +180,6 @@ export default {
       }
     });
 
-    // proxyReq.on("close", function () {
-    //   var aborted = !proxyReq.writableFinished;
-    //   if (aborted) {
-    //     res.destroy();
-    //   }
-    // });
-
     // handle errors in proxy and incoming request, just like for forward proxy
     req.on("error", proxyError);
     proxyReq.on("error", proxyError);
@@ -235,6 +228,7 @@ export default {
         // https://nodejs.org/api/stream.html#readablepipedestination-options
         if (!options.selfHandleResponse) proxyRes.pipe(res);
       } else {
+        proxyRes.resume();
         if (server) server.emit("end", req, res, proxyRes);
       }
     });

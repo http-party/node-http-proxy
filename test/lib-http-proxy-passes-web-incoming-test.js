@@ -353,9 +353,9 @@ describe('#createProxyServer.web() using own http server', function () {
       res.end('Response');
     });
 
-    proxyServer.listen('8086');
+    proxyServer.listen('8036');
     source.listen('8080');
-    http.request('http://127.0.0.1:8086', function() {}).end();
+    http.request('http://127.0.0.1:8036', function() {}).end();
   });
 
   it('should proxy the request and provide and respond to manual user response when using modifyResponse', function(done) {
@@ -382,10 +382,10 @@ describe('#createProxyServer.web() using own http server', function () {
     });
 
     async.parallel([
-      next => proxyServer.listen(8086, next),
+      next => proxyServer.listen(8036, next),
       next => source.listen(8080, next)
     ], function (err) {
-      http.get('http://127.0.0.1:8086', function(res) {
+      http.get('http://127.0.0.1:8036', function(res) {
         res.pipe(concat(function(body) {
           expect(body.toString('utf8')).eql('my-custom-response');
           source.close();
@@ -437,7 +437,7 @@ describe('#createProxyServer.web() using own http server', function () {
     var source = http.createServer(function(req, res) {
       source.close();
       proxyServer.close();
-      var auth = new Buffer(req.headers.authorization.split(' ')[1], 'base64');
+      var auth = Buffer.from(req.headers.authorization.split(' ')[1], 'base64');
       expect(req.method).to.eql('GET');
       expect(auth.toString()).to.eql('user:pass');
       done();
