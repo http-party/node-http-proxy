@@ -10,6 +10,8 @@ const webOutgoingPasses = Object.values(webOutgoing);
 
 const nativeAgents = { http: httpNative, https: httpsNative };
 
+// https://nodejs.org/dist/latest-v18.x/docs/api/http.html#:~:text=In%20a%20successful%20request%2C%20the%20following%20events%20will%20be%20emitted%20in%20the%20following%20order%3A
+
 /*!
  * Array of passes.
  *
@@ -111,15 +113,15 @@ export default {
    */
 
   stream: function stream(
-    req: IncomingMessage,
-    res: ServerResponse,
+    downstreamReq: IncomingMessage,
+    downstreamRes: ServerResponse,
     options: proxyOptions,
     _,
     server,
     clb
   ) {
     // And we begin!
-    server.emit("start", req, res, options.target || options.forward);
+    server.emit("start", downstreamReq, downstreamRes, options.target || options.forward);
 
     // @ts-ignore
     const agents: {
@@ -137,99 +139,95 @@ export default {
       // If forward enable, so just pipe the request
       var forwardReq = (
         options.forward.protocol === "https:" ? https : http
-      ).request(setupOutgoing(requestOptions, options, req, "forward"));
+      ).request(setupOutgoing(requestOptions, options, downstreamReq, "forward"));
 
       // error handler (e.g. ECONNRESET, ECONNREFUSED)
       // Handle errors on incoming request as well as it makes sense to
-      req.on("error", proxyError);
+      downstreamReq.on("error", proxyError);
       forwardReq.on("error", proxyError);
 
-      (options.buffer || req).pipe(forwardReq);
+      (options.buffer || downstreamReq).pipe(forwardReq);
       if (!options.target) {
-        return res.end();
+        return downstreamRes.end();
       }
     }
 
     // Request initalization
-    var proxyReq = (
+    var upstreamReq = (
       (options.target as UrlWithStringQuery).protocol === "https:"
         ? https
         : http
-    ).request(setupOutgoing(requestOptions, options, req));
+    ).request(setupOutgoing(requestOptions, options, downstreamReq));
 
-    // Enable developers to modify the proxyReq before headers are sent
-    proxyReq.on("socket", function (socket) {
-      if (server && !proxyReq.getHeader("expect")) {
-        server.emit("proxyReq", proxyReq, req, res, options);
+    // Enable developers to modify the upstreamReq before headers are sent
+    upstreamReq.on("socket", function (socket) {
+      if (server && !upstreamReq.getHeader("expect")) {
+        server.emit("upstreamReq", upstreamReq, downstreamReq, downstreamRes, options);
       }
     });
 
     // allow outgoing socket to timeout so that we could
     // show an error page at the initial request
     if (options.proxyTimeout) {
-      proxyReq.setTimeout(options.proxyTimeout, function () {
-        proxyReq.destroy();
+      upstreamReq.setTimeout(options.proxyTimeout, function () {
+        upstreamReq.destroy();
       });
     }
 
     // ensure we destroy proxy if request is aborted
-    res.on("close", function () {
-      var aborted = !res.writableFinished;
+    downstreamRes.on("close", function () {
+      var aborted = !downstreamRes.writableFinished;
       if (aborted) {
-        proxyReq.destroy();
+        upstreamReq.destroy();
       }
     });
 
     // handle errors in proxy and incoming request, just like for forward proxy
-    req.on("error", proxyError);
-    proxyReq.on("error", proxyError);
+    downstreamReq.on("error", proxyError);
+    upstreamReq.on("error", proxyError);
 
-    function proxyError(err) {
+    function proxyError(err) {      
       const url = options.target || options.forward;
-      if (req.socket.destroyed && err.code === "ECONNRESET") {
-        server.emit("econnreset", err, req, res, url);
-        return proxyReq.destroy();
+      // incoming request was already destroyed.
+      if (downstreamReq.socket.destroyed && err.code === "ECONNRESET") {
+        server.emit("econnreset", err, downstreamReq, downstreamRes, url);
+        return upstreamReq.destroy();
       }
 
-      // if (proxyReq.socket.destroyed && err.code === "ECONNRESET") {
-      //   server.emit("econnreset", err, req, res, url);
-      //   return req.destroy();
-      // }
-
       if (clb) {
-        clb(err, req, res, url);
+        clb(err, downstreamReq, downstreamRes, url);
       } else {
-        server.emit("error", err, req, res, url);
+        server.emit("error", err, downstreamReq, downstreamRes, url);
       }
     }
 
-    (options.buffer || req).pipe(proxyReq);
+    (options.buffer || downstreamReq).pipe(upstreamReq);
 
-    proxyReq.on("response", function forwardResponse(proxyRes) {
+    upstreamReq.on("response", function forwardResponse(upstreamRes) {
       if (server) {
-        server.emit("proxyRes", proxyRes, req, res);
+        server.emit("upstreamRes", upstreamRes, downstreamReq, downstreamRes);
       }
 
-      if (!res.headersSent && !options.selfHandleResponse) {
+      if (!downstreamRes.headersSent && !options.selfHandleResponse) {
         for (var i = 0; i < webOutgoingPasses.length; i++) {
           // @ts-ignore - can return boolean
-          if (webOutgoingPasses[i](req, res, proxyRes, options)) {
+          if (webOutgoingPasses[i](downstreamReq, downstreamRes, upstreamRes, options)) {
             break;
           }
         }
       }
 
-      if (!res.writableEnded) {
+      if (!downstreamRes.writableEnded) {
         // Allow us to listen when the proxy has completed
-        proxyRes.on("end", function () {
-          if (server) server.emit("end", req, res, proxyRes);
+        upstreamRes.on("end", function () {
+          if (server) server.emit("end", downstreamReq, downstreamRes, upstreamRes);
         });
         // We pipe to the response unless its expected to be handled by the user
         // https://nodejs.org/api/stream.html#readablepipedestination-options
-        if (!options.selfHandleResponse) proxyRes.pipe(res);
+        if (!options.selfHandleResponse) upstreamRes.pipe(downstreamRes);
       } else {
-        proxyRes.resume();
-        if (server) server.emit("end", req, res, proxyRes);
+        upstreamRes.resume();
+        if (server) server.emit("end", downstreamReq, downstreamRes, upstreamRes);
       }
     });
   },

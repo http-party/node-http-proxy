@@ -547,7 +547,7 @@ describe('lib/http-proxy.js', function() {
     //   );
     // });
 
-    it('should detect a proxyReq event and modify headers', function (done) {
+    it('should detect a upstreamReq event and modify headers', function (done) {
       var ports = { source: gen.port, proxy: gen.port },
           proxy,
           proxyServer,
@@ -558,8 +558,8 @@ describe('lib/http-proxy.js', function() {
         ws: true
       });
 
-      proxy.on('proxyReqWs', function(proxyReq, req, socket, options, head) {
-        proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+      proxy.on('proxyReqWs', function(upstreamReq, req, socket, options, head) {
+        upstreamReq.setHeader('X-Special-Proxy-Header', 'foobar');
       });
 
       proxyServer = proxy.listen(ports.proxy);

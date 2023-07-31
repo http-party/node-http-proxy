@@ -108,18 +108,18 @@ export default {
 
     if (head && head.length) socket.unshift(head);
 
-    var proxyReq = (isSSL.test(options.target.protocol) ? https : http).request(
+    var upstreamReq = (isSSL.test(options.target.protocol) ? https : http).request(
       setupOutgoing(options.ssl || {}, options, req)
     );
 
-    // Enable developers to modify the proxyReq before headers are sent
+    // Enable developers to modify the upstreamReq before headers are sent
     if (server) {
-      server.emit("proxyReqWs", proxyReq, req, socket, options, head);
+      server.emit("proxyReqWs", upstreamReq, req, socket, options, head);
     }
 
     // Error Handler
-    proxyReq.on("error", onOutgoingError);
-    proxyReq.on("response", function (res) {
+    upstreamReq.on("error", onOutgoingError);
+    upstreamReq.on("response", function (res) {
       // if upgrade event isn't going to happen, close the socket
       // @ts-ignore
       if (!res.upgrade) {
@@ -138,12 +138,12 @@ export default {
       }
     });
 
-    proxyReq.on("upgrade", function (proxyRes, proxySocket, proxyHead) {
+    upstreamReq.on("upgrade", function (upstreamRes, proxySocket, proxyHead) {
       proxySocket.on("error", onOutgoingError);
 
       // Allow us to listen when the websocket has completed
       proxySocket.on("end", function () {
-        server.emit("close", proxyRes, proxySocket, proxyHead);
+        server.emit("close", upstreamRes, proxySocket, proxyHead);
       });
 
       // The pipe below will end proxySocket if socket closes cleanly, but not
@@ -162,7 +162,7 @@ export default {
       // Also handles when a header is an array
       //
       socket.write(
-        createHttpHeader("HTTP/1.1 101 Switching Protocols", proxyRes.headers)
+        createHttpHeader("HTTP/1.1 101 Switching Protocols", upstreamRes.headers)
       );
 
       proxySocket.pipe(socket).pipe(proxySocket);
@@ -171,7 +171,7 @@ export default {
       server.emit("proxySocket", proxySocket); //DEPRECATED.
     });
 
-    return proxyReq.end(); // XXX: CHECK IF THIS IS THIS CORRECT
+    return upstreamReq.end(); // XXX: CHECK IF THIS IS THIS CORRECT
 
     function onOutgoingError(err) {
       if (clb) {
@@ -181,6 +181,6 @@ export default {
       }
       socket.end();
     }
-  return proxyReq;
+  return upstreamReq;
   },
 };

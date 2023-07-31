@@ -160,15 +160,15 @@ var http = require('http'),
 var proxy = httpProxy.createProxyServer({});
 
 // To modify the proxy connection before data is sent, you can listen
-// for the 'proxyReq' event. When the event is fired, you will receive
+// for the 'upstreamReq' event. When the event is fired, you will receive
 // the following arguments:
-// (http.ClientRequest proxyReq, http.IncomingMessage req,
+// (http.ClientRequest upstreamReq, http.IncomingMessage req,
 //  http.ServerResponse res, Object options). This mechanism is useful when
 // you need to modify the proxy request before the proxy connection
 // is made to the target.
 //
-proxy.on('proxyReq', function(proxyReq, req, res, options) {
-  proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+proxy.on('upstreamReq', function(upstreamReq, req, res, options) {
+  upstreamReq.setHeader('X-Special-Proxy-Header', 'foobar');
 });
 
 var server = http.createServer(function(req, res) {
@@ -376,7 +376,7 @@ proxyServer.listen(8015);
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
 *  **timeout**: timeout (in millis) for incoming requests
 *  **followRedirects**: true/false, Default: false - specify whether you want to follow redirects
-*  **selfHandleResponse** true/false, if set to true, none of the webOutgoing passes are called and it's your responsibility to appropriately return the response by listening and acting on the `proxyRes` event
+*  **selfHandleResponse** true/false, if set to true, none of the webOutgoing passes are called and it's your responsibility to appropriately return the response by listening and acting on the `upstreamRes` event
 *  **buffer**: stream of data to send as the request body.  Maybe you have some middleware that consumes the request stream before proxying it on e.g.  If you read the body of a request into a field called 'req.rawbody' you could restream this field in the buffer option:
 
     ```
@@ -411,9 +411,9 @@ If you are using the `proxyServer.listen` method, the following options are also
 ### Listening for proxy events
 
 * `error`: The error event is emitted if the request to the target fail. **We do not do any error handling of messages passed between client and proxy, and messages passed between proxy and target, so it is recommended that you listen on errors and handle them.**
-* `proxyReq`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "web" connections
-* `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the proxyReq request object. Applies to "websocket" connections
-* `proxyRes`: This event is emitted if the request to the target got a response.
+* `upstreamReq`: This event is emitted before the data is sent. It gives you a chance to alter the upstreamReq request object. Applies to "web" connections
+* `proxyReqWs`: This event is emitted before the data is sent. It gives you a chance to alter the upstreamReq request object. Applies to "websocket" connections
+* `upstreamRes`: This event is emitted if the request to the target got a response.
 * `open`: This event is emitted once the proxy websocket was created and piped into the target websocket.
 * `close`: This event is emitted once the proxy websocket was closed.
 * (DEPRECATED) `proxySocket`: Deprecated in favor of `open`.
@@ -441,10 +441,10 @@ proxy.on('error', function (err, req, res) {
 });
 
 //
-// Listen for the `proxyRes` event on `proxy`.
+// Listen for the `upstreamRes` event on `proxy`.
 //
-proxy.on('proxyRes', function (proxyRes, req, res) {
-  console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+proxy.on('upstreamRes', function (upstreamRes, req, res) {
+  console.log('RAW Response from the target', JSON.stringify(upstreamRes.headers, true, 2));
 });
 
 //
@@ -486,9 +486,9 @@ proxy.close();
 
 ### Miscellaneous
 
-If you want to handle your own response after receiving the `proxyRes`, you can do
+If you want to handle your own response after receiving the `upstreamRes`, you can do
 so with `selfHandleResponse`. As you can see below, if you use this option, you
-are able to intercept and read the `proxyRes` but you must also make sure to
+are able to intercept and read the `upstreamRes` but you must also make sure to
 reply to the `res` itself otherwise the original client will never receive any
 data.
 
@@ -500,12 +500,12 @@ data.
       target: target,
       selfHandleResponse : true
     };
-    proxy.on('proxyRes', function (proxyRes, req, res) {
+    proxy.on('upstreamRes', function (upstreamRes, req, res) {
         var body = [];
-        proxyRes.on('data', function (chunk) {
+        upstreamRes.on('data', function (chunk) {
             body.push(chunk);
         });
-        proxyRes.on('end', function () {
+        upstreamRes.on('end', function () {
             body = Buffer.concat(body).toString();
             console.log("res from proxied server:", body);
             res.end("my response to cli");

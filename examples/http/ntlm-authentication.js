@@ -16,9 +16,9 @@ var proxy = httpProxy.createProxy({ target: 'http://whatever.com', agent: agent 
 // Modify headers of the response before it gets sent
 // So that we handle the NLTM authentication response
 //
-proxy.on('proxyRes', function (proxyRes) {
+proxy.on('upstreamRes', function (upstreamRes) {
   var key = 'www-authenticate';
-  proxyRes.headers[key] = proxyRes.headers[key] && proxyRes.headers[key].split(',');
+  upstreamRes.headers[key] = upstreamRes.headers[key] && upstreamRes.headers[key].split(',');
 });
 
 require('http').createServer(function (req, res) {

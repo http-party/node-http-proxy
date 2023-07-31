@@ -9,7 +9,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
           host: 'ext-auto.com'
         }
       };
-      this.proxyRes = {
+      this.upstreamRes = {
         statusCode: 301,
         headers: {
           location: 'http://backend.com/'
@@ -26,42 +26,42 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
       });
       [201, 301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
-          this.proxyRes.statusCode = code;
-          httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('http://ext-manual.com/');
+          this.upstreamRes.statusCode = code;
+          httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+          expect(this.upstreamRes.headers.location).to.eql('http://ext-manual.com/');
         });
       });
 
       it('not on 200', function() {
-        this.proxyRes.statusCode = 200;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
+        this.upstreamRes.statusCode = 200;
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when hostRewrite is unset', function() {
         delete this.options.hostRewrite;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('takes precedence over autoRewrite', function() {
         this.options.autoRewrite = true;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://ext-manual.com/');
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://ext-manual.com/');
       });
 
       it('not when the redirected location does not match target host', function() {
-        this.proxyRes.statusCode = 302;
-        this.proxyRes.headers.location = 'http://some-other/';
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://some-other/');
+        this.upstreamRes.statusCode = 302;
+        this.upstreamRes.headers.location = 'http://some-other/';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://some-other/');
       });
 
       it('not when the redirected location does not match target port', function() {
-        this.proxyRes.statusCode = 302;
-        this.proxyRes.headers.location = 'http://backend.com:8080/';
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com:8080/');
+        this.upstreamRes.statusCode = 302;
+        this.upstreamRes.headers.location = 'http://backend.com:8080/';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com:8080/');
       });
     });
 
@@ -71,36 +71,36 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
       });
       [201, 301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
-          this.proxyRes.statusCode = code;
-          httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('http://ext-auto.com/');
+          this.upstreamRes.statusCode = code;
+          httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+          expect(this.upstreamRes.headers.location).to.eql('http://ext-auto.com/');
         });
       });
 
       it('not on 200', function() {
-        this.proxyRes.statusCode = 200;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
+        this.upstreamRes.statusCode = 200;
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when autoRewrite is unset', function() {
         delete this.options.autoRewrite;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when the redirected location does not match target host', function() {
-        this.proxyRes.statusCode = 302;
-        this.proxyRes.headers.location = 'http://some-other/';
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://some-other/');
+        this.upstreamRes.statusCode = 302;
+        this.upstreamRes.headers.location = 'http://some-other/';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://some-other/');
       });
 
       it('not when the redirected location does not match target port', function() {
-        this.proxyRes.statusCode = 302;
-        this.proxyRes.headers.location = 'http://backend.com:8080/';
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com:8080/');
+        this.upstreamRes.statusCode = 302;
+        this.upstreamRes.headers.location = 'http://backend.com:8080/';
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com:8080/');
       });
     });
 
@@ -110,107 +110,107 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
       });
       [201, 301, 302, 307, 308].forEach(function(code) {
         it('on ' + code, function() {
-          this.proxyRes.statusCode = code;
-          httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-          expect(this.proxyRes.headers.location).to.eql('https://backend.com/');
+          this.upstreamRes.statusCode = code;
+          httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+          expect(this.upstreamRes.headers.location).to.eql('https://backend.com/');
         });
       });
 
       it('not on 200', function() {
-        this.proxyRes.statusCode = 200;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
+        this.upstreamRes.statusCode = 200;
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('not when protocolRewrite is unset', function() {
         delete this.options.protocolRewrite;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('http://backend.com/');
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('http://backend.com/');
       });
 
       it('works together with hostRewrite', function() {
         this.options.hostRewrite = 'ext-manual.com';
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('https://ext-manual.com/');
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('https://ext-manual.com/');
       });
 
       it('works together with autoRewrite', function() {
         this.options.autoRewrite = true;
-        httpProxy.setRedirectHostRewrite(this.req, {}, this.proxyRes, this.options);
-        expect(this.proxyRes.headers.location).to.eql('https://ext-auto.com/');
+        httpProxy.setRedirectHostRewrite(this.req, {}, this.upstreamRes, this.options);
+        expect(this.upstreamRes.headers.location).to.eql('https://ext-auto.com/');
       });
     });
   });
 
   describe('#setConnection', function () {
     it('set the right connection with 1.0 - `close`', function() {
-      var proxyRes = { headers: {} };
+      var upstreamRes = { headers: {} };
       httpProxy.setConnection({
         httpVersion: '1.0',
         headers: {
           connection: null
         }
-      }, {}, proxyRes);
+      }, {}, upstreamRes);
 
-      expect(proxyRes.headers.connection).to.eql('close');
+      expect(upstreamRes.headers.connection).to.eql('close');
     });
 
     it('set the right connection with 1.0 - req.connection', function() {
-      var proxyRes = { headers: {} };
+      var upstreamRes = { headers: {} };
       httpProxy.setConnection({
         httpVersion: '1.0',
         headers: {
           connection: 'hey'
         }
-      }, {}, proxyRes);
+      }, {}, upstreamRes);
 
-      expect(proxyRes.headers.connection).to.eql('hey');
+      expect(upstreamRes.headers.connection).to.eql('hey');
     });
 
     it('set the right connection - req.connection', function() {
-      var proxyRes = { headers: {} };
+      var upstreamRes = { headers: {} };
       httpProxy.setConnection({
         httpVersion: null,
         headers: {
           connection: 'hola'
         }
-      }, {}, proxyRes);
+      }, {}, upstreamRes);
 
-      expect(proxyRes.headers.connection).to.eql('hola');
+      expect(upstreamRes.headers.connection).to.eql('hola');
     });
 
     it('set the right connection - `keep-alive`', function() {
-      var proxyRes = { headers: {} };
+      var upstreamRes = { headers: {} };
       httpProxy.setConnection({
         httpVersion: null,
         headers: {
           connection: null
         }
-      }, {}, proxyRes);
+      }, {}, upstreamRes);
 
-      expect(proxyRes.headers.connection).to.eql('keep-alive');
+      expect(upstreamRes.headers.connection).to.eql('keep-alive');
     });
 
     it('don`t set connection with 2.0 if exist', function() {
-      var proxyRes = { headers: {} };
+      var upstreamRes = { headers: {} };
       httpProxy.setConnection({
         httpVersion: '2.0',
         headers: {
           connection: 'namstey'
         }
-      }, {}, proxyRes);
+      }, {}, upstreamRes);
 
-      expect(proxyRes.headers.connection).to.eql(undefined);
+      expect(upstreamRes.headers.connection).to.eql(undefined);
     });
 
     it('don`t set connection with 2.0 if doesn`t exist', function() {
-      var proxyRes = { headers: {} };
+      var upstreamRes = { headers: {} };
       httpProxy.setConnection({
         httpVersion: '2.0',
         headers: {}
-      }, {}, proxyRes);
+      }, {}, upstreamRes);
 
-      expect(proxyRes.headers.connection).to.eql(undefined);
+      expect(upstreamRes.headers.connection).to.eql(undefined);
     })
 
   });
@@ -229,7 +229,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
 
   describe('#writeHeaders', function() {
     beforeEach(function() {
-      this.proxyRes = {
+      this.upstreamRes = {
         headers: {
           hey: 'hello',
           how: 'are you?',
@@ -239,7 +239,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
           ]
         }
       };
-      this.rawProxyRes = {
+      this.rawupstreamRes = {
         headers: {
           hey: 'hello',
           how: 'are you?',
@@ -267,7 +267,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
 
     it('writes headers', function() {
       var options = {};
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers.hey).to.eql('hello');
       expect(this.res.headers.how).to.eql('are you?');
@@ -279,7 +279,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
 
     it('writes raw headers', function() {
       var options = {};
-      httpProxy.writeHeaders({}, this.res, this.rawProxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.rawupstreamRes, options);
 
       expect(this.res.headers.hey).to.eql('hello');
       expect(this.res.headers.how).to.eql('are you?');
@@ -294,7 +294,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
         cookiePathRewrite: '/dummyPath'
       };
 
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; domain=my.domain; path=/dummyPath');
@@ -303,7 +303,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
     it('does not rewrite path', function() {
       var options = {};
 
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; domain=my.domain; path=/');
@@ -314,7 +314,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
         cookiePathRewrite: ''
       };
 
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; domain=my.domain');
@@ -323,7 +323,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
     it('does not rewrite domain', function() {
       var options = {};
 
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; domain=my.domain; path=/');
@@ -334,7 +334,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
         cookieDomainRewrite: 'my.new.domain'
       };
 
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; domain=my.new.domain; path=/');
@@ -345,7 +345,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
         cookieDomainRewrite: ''
       };
 
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello; path=/');
@@ -359,12 +359,12 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
           'my.special.domain': 'my.special.domain'
         }
       };
-      this.proxyRes.headers['set-cookie'] = [
+      this.upstreamRes.headers['set-cookie'] = [
         'hello-on-my.domain; domain=my.domain; path=/',
         'hello-on-my.old.domain; domain=my.old.domain; path=/',
         'hello-on-my.special.domain; domain=my.special.domain; path=/'
       ];
-      httpProxy.writeHeaders({}, this.res, this.proxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.upstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello-on-my.domain; path=/');
@@ -382,12 +382,12 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
           'my.special.domain': 'my.special.domain'
         }
       };
-      this.rawProxyRes.headers['set-cookie'] = [
+      this.rawupstreamRes.headers['set-cookie'] = [
         'hello-on-my.domain; domain=my.domain; path=/',
         'hello-on-my.old.domain; domain=my.old.domain; path=/',
         'hello-on-my.special.domain; domain=my.special.domain; path=/'
       ];
-      this.rawProxyRes.rawHeaders = this.rawProxyRes.rawHeaders.concat([
+      this.rawupstreamRes.rawHeaders = this.rawupstreamRes.rawHeaders.concat([
         'Set-Cookie',
         'hello-on-my.domain; domain=my.domain; path=/',
         'Set-Cookie',
@@ -395,7 +395,7 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
         'Set-Cookie',
         'hello-on-my.special.domain; domain=my.special.domain; path=/'
       ]);
-      httpProxy.writeHeaders({}, this.res, this.rawProxyRes, options);
+      httpProxy.writeHeaders({}, this.res, this.rawupstreamRes, options);
 
       expect(this.res.headers['set-cookie'])
         .to.contain('hello-on-my.domain; path=/');
@@ -408,16 +408,16 @@ describe('module/http-proxy/passes/web-outgoing.js', function () {
 
 
   describe('#removeChunked', function() {
-    var proxyRes = {
+    var upstreamRes = {
       headers: {
         'transfer-encoding': 'hello'
       }
     };
 
 
-    httpProxy.removeChunked({ httpVersion: '1.0' }, {}, proxyRes);
+    httpProxy.removeChunked({ httpVersion: '1.0' }, {}, upstreamRes);
 
-    expect(proxyRes.headers['transfer-encoding']).to.eql(undefined);
+    expect(upstreamRes.headers['transfer-encoding']).to.eql(undefined);
   });
 
 });

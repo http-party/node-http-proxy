@@ -20,17 +20,17 @@ export default {
    *
    * @param {ClientRequest} Req Request object
    * @param {IncomingMessage} Res Response object
-   * @param {proxyResponse} Res Response object from the proxy request
+   * @param {upstreamResponse} Res Response object from the proxy request
    *
    * @api private
    */
   removeChunked: function removeChunked(
     req: IncomingMessage,
     res: ServerResponse,
-    proxyRes: IncomingMessage
+    upstreamRes: IncomingMessage
   ) {
     if (req.httpVersion === "1.0") {
-      delete proxyRes.headers["transfer-encoding"];
+      delete upstreamRes.headers["transfer-encoding"];
     }
   },
 
@@ -40,35 +40,35 @@ export default {
    *
    * @param {ClientRequest} Req Request object
    * @param {IncomingMessage} Res Response object
-   * @param {proxyResponse} Res Response object from the proxy request
+   * @param {upstreamResponse} Res Response object from the proxy request
    *
    * @api private
    */
   setConnection: function setConnection(
     req: IncomingMessage,
     res: ServerResponse,
-    proxyRes: IncomingMessage
+    upstreamRes: IncomingMessage
   ) {
     if (req.httpVersion === "1.0") {
-      proxyRes.headers.connection = req.headers.connection || "close";
-    } else if (req.httpVersion !== "2.0" && !proxyRes.headers.connection) {
-      proxyRes.headers.connection = req.headers.connection || "keep-alive";
+      upstreamRes.headers.connection = req.headers.connection || "close";
+    } else if (req.httpVersion !== "2.0" && !upstreamRes.headers.connection) {
+      upstreamRes.headers.connection = req.headers.connection || "keep-alive";
     }
   },
 
   setRedirectHostRewrite: function setRedirectHostRewrite(
     req: IncomingMessage,
     res: ServerResponse,
-    proxyRes: IncomingMessage,
+    upstreamRes: IncomingMessage,
     options: any
   ) {
     if (
       (options.hostRewrite || options.autoRewrite || options.protocolRewrite) &&
-      proxyRes.headers["location"] &&
-      redirectRegex.test(proxyRes.statusCode as any)
+      upstreamRes.headers["location"] &&
+      redirectRegex.test(upstreamRes.statusCode as any)
     ) {
       const target = url.parse(options.target);
-      const u = url.parse(proxyRes.headers["location"]);
+      const u = url.parse(upstreamRes.headers["location"]);
 
       // make sure the redirected host matches the target host before rewriting
       if (target.host != u.host) {
@@ -84,16 +84,16 @@ export default {
         u.protocol = options.protocolRewrite;
       }
       // @ts-ignore
-      proxyRes.headers["location"] = u.format();
+      upstreamRes.headers["location"] = u.format();
     }
   },
   /**
-   * Copy headers from proxyResponse to response
+   * Copy headers from upstreamResponse to response
    * set each header in response object.
    *
    * @param {ClientRequest} Req Request object
    * @param {IncomingMessage} Res Response object
-   * @param {proxyResponse} Res Response object from the proxy request
+   * @param {upstreamResponse} Res Response object from the proxy request
    * @param {Object} Options options.cookieDomainRewrite: Config to rewrite cookie domain
    *
    * @api private
@@ -101,7 +101,7 @@ export default {
   writeHeaders: function writeHeaders(
     req: IncomingMessage,
     res: ServerResponse,
-    proxyRes: IncomingMessage,
+    upstreamRes: IncomingMessage,
     options: any
   ) {
     let rewriteCookieDomainConfig = options.cookieDomainRewrite;
@@ -135,16 +135,16 @@ export default {
 
     // message.rawHeaders is added in: v0.11.6
     // https://nodejs.org/api/http.html#http_message_rawheaders
-    if (preserveHeaderKeyCase && proxyRes.rawHeaders != undefined) {
+    if (preserveHeaderKeyCase && upstreamRes.rawHeaders != undefined) {
       rawHeaderKeyMap = {};
-      for (var i = 0; i < proxyRes.rawHeaders.length; i += 2) {
-        var key = proxyRes.rawHeaders[i];
+      for (var i = 0; i < upstreamRes.rawHeaders.length; i += 2) {
+        var key = upstreamRes.rawHeaders[i];
         rawHeaderKeyMap[key.toLowerCase()] = key;
       }
     }
 
-    Object.keys(proxyRes.headers).forEach(function (key) {
-      var header = proxyRes.headers[key];
+    Object.keys(upstreamRes.headers).forEach(function (key) {
+      var header = upstreamRes.headers[key];
       if (preserveHeaderKeyCase && rawHeaderKeyMap) {
         key = rawHeaderKeyMap[key] || key;
       }
@@ -153,23 +153,23 @@ export default {
   },
 
   /**
-   * Set the statusCode from the proxyResponse
+   * Set the statusCode from the upstreamResponse
    *
    * @param {ClientRequest} Req Request object
    * @param {IncomingMessage} Res Response object
-   * @param {proxyResponse} Res Response object from the proxy request
+   * @param {upstreamResponse} Res Response object from the proxy request
    *
    * @api private
    */
   writeStatusCode: function writeStatusCode(
     req: IncomingMessage,
     res: ServerResponse,
-    proxyRes: IncomingMessage
+    upstreamRes: IncomingMessage
   ) {
     // From Node.js docs: response.writeHead(statusCode[, statusMessage][, headers])
-    res.statusCode = proxyRes.statusCode as number;
-    if (proxyRes.statusMessage) {
-      res.statusMessage = proxyRes.statusMessage;
+    res.statusCode = upstreamRes.statusCode as number;
+    if (upstreamRes.statusMessage) {
+      res.statusMessage = upstreamRes.statusMessage;
     }
   },
 };

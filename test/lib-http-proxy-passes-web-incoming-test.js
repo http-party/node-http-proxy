@@ -98,13 +98,13 @@ describe('#createProxyServer.web() using own http server', function () {
     http.request('http://127.0.0.1:8081', function() {}).end();
   });
 
-  it('should detect a proxyReq event and modify headers', function (done) {
+  it('should detect a upstreamReq event and modify headers', function (done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080',
     });
 
-    proxy.on('proxyReq', function(proxyReq, req, res, options) {
-      proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+    proxy.on('upstreamReq', function(upstreamReq, req, res, options) {
+      upstreamReq.setHeader('X-Special-Proxy-Header', 'foobar');
     });
 
     function requestHandler(req, res) {
@@ -126,13 +126,13 @@ describe('#createProxyServer.web() using own http server', function () {
     http.request('http://127.0.0.1:8081', function() {}).end();
   });
 
-  it('should skip proxyReq event when handling a request with header "expect: 100-continue" [https://www.npmjs.com/advisories/1486]', function (done) {
+  it('should skip upstreamReq event when handling a request with header "expect: 100-continue" [https://www.npmjs.com/advisories/1486]', function (done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080',
     });
 
-    proxy.on('proxyReq', function(proxyReq, req, res, options) {
-      proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
+    proxy.on('upstreamReq', function(upstreamReq, req, res, options) {
+      upstreamReq.setHeader('X-Special-Proxy-Header', 'foobar');
     });
 
     function requestHandler(req, res) {
@@ -287,6 +287,101 @@ describe('#createProxyServer.web() using own http server', function () {
     }, function() {}).end();
   });
 
+
+  it('response should end', function(done) {
+    var proxy = httpProxy.createProxyServer({
+      target: 'http://127.0.0.1:45002',
+      handleErrors: true
+    });
+
+
+    proxy.on('upstreamReq', function(upstreamReq, req, res, options) {
+      upstreamReq.on("response", function (upstreamRes) {
+        console.log('up response');
+        upstreamRes.on('end', () => {
+          console.log('up res end');
+        })
+        upstreamRes.on('close', () => {
+          console.log('up res close');
+        done();
+
+        })
+        upstreamRes.on('error', () => {
+          console.log('up res error');
+        })
+      });
+      upstreamReq.on('close', () => {
+        console.log('up req close');
+      })
+      console.log('upstreamReq');
+      // upstreamReq.setHeader('X-Special-Proxy-Header', 'foobar');
+    });
+
+     const source =  http.createServer(function(req, res) {
+      setTimeout(() => {
+        res.destroy();
+        res.end('ok');
+      }, 1000);
+      res.write('ok');
+      console.log('source');
+    }).listen(45002);
+
+ 
+    source.on('clientError', (err, socket) => {
+      console.log('clientError', err);
+      // socket.destroy();
+    });
+
+    var proxyServer = http.createServer(requestHandler);
+
+
+    proxyServer.on('clientError', (err, socket) => {
+      console.log('clientError', err);
+      // socket.destroy();
+    });
+
+    function requestHandler(req, res) {
+      // proxy.once('error', function (err, errReq, errRes) {
+      //   proxyServer.close();
+      //   expect(err).to.be.an(Error);
+      //   expect(errReq).to.be.equal(req);
+      //   expect(errRes).to.be.equal(res);
+      //   expect(new Date().getTime() - started).to.be.greaterThan(99);
+      //   expect(err.code).to.be('ECONNRESET');
+      //   done();
+      // });
+      // setTimeout(() => {
+      //   req.socket.emit('error', new Error('test'));
+      // }, 200);
+      req.on('close', () => {
+        console.log('down req close');
+      })
+      res.on('close', () => {
+        console.log('down res close');
+
+      })
+      res.on('finish', () => {
+        console.log('down res finish');
+      })
+      proxy.web(req, res);
+    }
+
+    proxyServer.listen('8010');
+
+    const req= http.request({
+      hostname: '127.0.0.1',
+      port: '8010',
+      method: 'GET',
+    }, function() {}).end();
+    setTimeout(() => {
+      // req.destroy();
+    } , 400);
+    req.on('error', (err) => {
+      // logger.error('req error', err);
+    }
+    );
+  });
+
   it('should proxy the request and handle timeout error', function(done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:45001',
@@ -330,13 +425,13 @@ describe('#createProxyServer.web() using own http server', function () {
     req.end();
   });
 
-  it('should proxy the request and provide a proxyRes event with the request and response parameters', function(done) {
+  it('should proxy the request and provide a upstreamRes event with the request and response parameters', function(done) {
     var proxy = httpProxy.createProxyServer({
       target: 'http://127.0.0.1:8080'
     });
 
     function requestHandler(req, res) {
-      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
+      proxy.once('upstreamRes', function (upstreamRes, pReq, pRes) {
         source.close();
         proxyServer.close();
         expect(pReq).to.be.equal(req);
@@ -365,8 +460,8 @@ describe('#createProxyServer.web() using own http server', function () {
     });
 
     function requestHandler(req, res) {
-      proxy.once('proxyRes', function (proxyRes, pReq, pRes) {
-        proxyRes.pipe(concat(function (body) {
+      proxy.once('upstreamRes', function (upstreamRes, pReq, pRes) {
+        upstreamRes.pipe(concat(function (body) {
           expect(body.toString('utf8')).eql('Response');
           pRes.end(Buffer.from('my-custom-response'));
         }))

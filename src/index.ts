@@ -1,6 +1,6 @@
 import { ProxyServer } from "./http-proxy/index";
 import { UrlWithStringQuery } from "url";
-import { RequestOptions } from "http";
+import { RequestOptions, ServerResponse } from "http";
 import { Agent } from "http";
 
 export type proxyOptions = {
@@ -78,10 +78,11 @@ export function createProxyServer(options: proxyOptions): ProxyServer {
   if (!options) throw new Error("options are required!");
   const proxy = new ProxyServer(options);
   if (options.handleErrors) {
-    proxy.on('error', (err, _req, res) => {
+    proxy.on('error', (err, _req, res: ServerResponse) => {
       console.error(err);
       if (!res.headersSent) {
-        res.status(502).send('Bad Gateway');
+        res.writeHead(502, { "content-type": "text/plain" });
+        res.end("Bad Gateway");
       }
     });
   }

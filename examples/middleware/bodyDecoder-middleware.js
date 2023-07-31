@@ -36,12 +36,12 @@ var http = require('http'),
 
 
 //restream parsed body before proxying
-proxy.on('proxyReq', function(proxyReq, req, res, options) {
+proxy.on('upstreamReq', function(upstreamReq, req, res, options) {
   if (!req.body || !Object.keys(req.body).length) {
     return;
   }
 
-  var contentType = proxyReq.getHeader('Content-Type');
+  var contentType = upstreamReq.getHeader('Content-Type');
   var bodyData;
 
   if (contentType === 'application/json') {
@@ -53,8 +53,8 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
   }
 
   if (bodyData) {
-    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-    proxyReq.write(bodyData);
+    upstreamReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+    upstreamReq.write(bodyData);
   }
 });
 
