@@ -17,7 +17,7 @@ import * as events from "events";
 import * as url from "url";
 import * as stream from "stream";
 import * as dns from "dns";
-import { LookupFunction } from 'node:net';
+import { LookupFunction } from 'net';
 
 interface ProxyTargetDetailed {
     host: string;
