@@ -191,7 +191,7 @@ declare namespace Server {
         /** Buffer */
         buffer?: stream.Stream | undefined;
         /** Custom lookup to pass to http(s).request */
-        lookup?: dns.lookup | undefined;
+        lookup?: typeof dns.lookup | undefined;
     }
 
     type StartCallback<TIncomingMessage = http.IncomingMessage, TServerResponse = http.ServerResponse> = (
