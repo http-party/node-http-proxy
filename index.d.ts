@@ -17,6 +17,7 @@ import * as events from "events";
 import * as url from "url";
 import * as stream from "stream";
 import * as dns from "dns";
+import { LookupFunction } from 'node:net';
 
 interface ProxyTargetDetailed {
     host: string;
@@ -191,7 +192,7 @@ declare namespace Server {
         /** Buffer */
         buffer?: stream.Stream | undefined;
         /** Custom lookup to pass to http(s).request */
-        lookup?: typeof dns.lookup | undefined;
+        lookup?: LookupFunction | undefined;
     }
 
     type StartCallback<TIncomingMessage = http.IncomingMessage, TServerResponse = http.ServerResponse> = (
