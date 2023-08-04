@@ -5,10 +5,10 @@
     "type": "git",
     "url": "https://github.com/http-party/node-http-proxy.git"
   },
-  "description": "Fork of http-proxy with custom lookup option",
-  "author": "Aaditya Taparia <aadityataparia@gmail.com>",
+  "description": "HTTP proxying for the masses",
+  "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "maintainers": [
-    "Aaditya Taparia <aadityataparia@gmail.com>"
+    "jcrugzz <jcrugzz@gmail.com>"
   ],
   "main": "index.js",
   "types": "index.d.ts",
