@@ -11,12 +11,14 @@
     "jcrugzz <jcrugzz@gmail.com>"
   ],
   "main": "index.js",
+  "types": "index.d.ts",
   "dependencies": {
     "eventemitter3": "^4.0.0",
-    "requires-port": "^1.0.0",
-    "follow-redirects": "^1.0.0"
+    "follow-redirects": "^1.0.0",
+    "requires-port": "^1.0.0"
   },
   "devDependencies": {
+    "@types/node": "^18",
     "async": "^3.0.0",
     "auto-changelog": "^1.15.0",
     "concat-stream": "^2.0.0",

@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "Node",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": ["index.d.ts"]
+}

@@ -395,6 +395,7 @@ proxyServer.listen(8015);
 
     };
     ```
+* **lookup**: Custom lookup function that will be passed to http(s).request
 
 **NOTE:**
 `options.ws` and `options.ssl` are optional.
