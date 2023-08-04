@@ -5,18 +5,20 @@
     "type": "git",
     "url": "https://github.com/http-party/node-http-proxy.git"
   },
-  "description": "HTTP proxying for the masses",
-  "author": "Charlie Robbins <charlie.robbins@gmail.com>",
+  "description": "Fork of http-proxy with custom lookup option",
+  "author": "Aaditya Taparia <aadityataparia@gmail.com>",
   "maintainers": [
-    "jcrugzz <jcrugzz@gmail.com>"
+    "Aaditya Taparia <aadityataparia@gmail.com>"
   ],
   "main": "index.js",
+  "types": "index.d.ts",
   "dependencies": {
     "eventemitter3": "^4.0.0",
-    "requires-port": "^1.0.0",
-    "follow-redirects": "^1.0.0"
+    "follow-redirects": "^1.0.0",
+    "requires-port": "^1.0.0"
   },
   "devDependencies": {
+    "@types/node": "^18",
     "async": "^3.0.0",
     "auto-changelog": "^1.15.0",
     "concat-stream": "^2.0.0",
@@ -35,7 +37,7 @@
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=18.0.0"
   },
   "license": "MIT"
 }
