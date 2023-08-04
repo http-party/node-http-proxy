@@ -191,7 +191,7 @@ declare namespace Server {
         selfHandleResponse?: boolean | undefined;
         /** Buffer */
         buffer?: stream.Stream | undefined;
-        /** Custom lookup to pass to http(s).request */
+        /** Custom lookup function to pass to http(s).request */
         lookup?: LookupFunction | undefined;
     }
 
