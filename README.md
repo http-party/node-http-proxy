@@ -374,6 +374,7 @@ proxyServer.listen(8015);
      ```
 *  **headers**: object with extra headers to be added to target requests.
 *  **proxyTimeout**: timeout (in millis) for outgoing proxy requests
+*  **proxyTimeoutCustomError**: true/false, default: false - specify whether you want to throw a custom `ETIMEDOUT` error when the `proxyTimeout` is reached. If false then the default `ECONNRESET` error will be thrown.
 *  **timeout**: timeout (in millis) for incoming requests
 *  **followRedirects**: true/false, Default: false - specify whether you want to follow redirects
 *  **selfHandleResponse** true/false, if set to true, none of the webOutgoing passes are called and it's your responsibility to appropriately return the response by listening and acting on the `proxyRes` event
