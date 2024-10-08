@@ -44,13 +44,21 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
   var contentType = proxyReq.getHeader('Content-Type');
   var bodyData;
 
-  if (contentType === 'application/json') {
+  // if (contentType === 'application/json') {
+  //   bodyData = JSON.stringify(req.body);
+  // }
+
+  // if (contentType === 'application/x-www-form-urlencoded') {
+  //   bodyData = queryString.stringify(req.body);
+  // }
+  if (contentType.startsWith('application/json')) {
     bodyData = JSON.stringify(req.body);
   }
-
-  if (contentType === 'application/x-www-form-urlencoded') {
+  
+  if (contentType.startsWith('application/x-www-form-urlencoded')) {
     bodyData = queryString.stringify(req.body);
   }
+  
 
   if (bodyData) {
     proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
