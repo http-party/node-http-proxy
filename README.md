@@ -510,8 +510,8 @@ data.
             console.log("res from proxied server:", body);
             res.end("my response to cli");
         });
+        proxy.web(req, res, option);
     });
-    proxy.web(req, res, option);
 
 
 ```
