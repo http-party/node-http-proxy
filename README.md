@@ -566,3 +566,9 @@ Logo created by [Diego Pasquali](http://dribbble.com/diegopq)
 >LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 >OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 >THE SOFTWARE.
+"format:check": "prettier --check ."
+>• "format:fix": "prettier --write ."
+>lint:fix": "eslint --fix
+>est:watch": "jest --watch"
+pre-commit hook
+>"test:coverage": "nyc npm test"
