@@ -2,7 +2,7 @@
   <img src="https://raw.github.com/http-party/node-http-proxy/master/doc/logo.png"/>
 </p>
 
-# node-http-proxy [![Build Status](https://travis-ci.org/http-party/node-http-proxy.svg?branch=master)](https://travis-ci.org/http-party/node-http-proxy) [![codecov](https://codecov.io/gh/http-party/node-http-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/http-party/node-http-proxy)
+# node-http-proxy [![npm](https://img.shields.io/npm/v/node-http-proxy.svg?style=flat-square)](https://www.npmjs.com/package/node-http-proxy) [![codecov](https://codecov.io/gh/http-party/node-http-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/http-party/node-http-proxy)
 
 `node-http-proxy` is an HTTP programmable proxying library that supports
 websockets. It is suitable for implementing components such as reverse
