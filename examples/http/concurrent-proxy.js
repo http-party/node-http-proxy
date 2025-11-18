@@ -40,7 +40,7 @@ httpProxy.createServer({
 // Target Http Server
 //
 // to check apparent problems with concurrent connections
-// make a server which only responds when there is a given nubmer on connections
+// make a server which only responds when there is a given number on connections
 //
 
 
