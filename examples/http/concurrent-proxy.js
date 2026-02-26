@@ -1,7 +1,7 @@
 /*
   concurrent-proxy.js: check levelof concurrency through proxy.
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -44,7 +44,7 @@ httpProxy.createServer({
 //
 
 
-var connections = [], 
+var connections = [],
     go;
 
 http.createServer(function (req, res) {
@@ -53,9 +53,9 @@ http.createServer(function (req, res) {
     res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
     res.end();
   });
-  
+
   process.stdout.write(connections.length + ', ');
-  
+
   if (connections.length > 110 || go) {
     go = true;
     while (connections.length) {

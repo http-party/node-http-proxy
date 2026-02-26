@@ -1,5 +1,5 @@
 /*
-  standalone-proxy.js: Example of proxying over HTTP with a standalone HTTP server.
+  sse.js: Basic example of proxying over HTTP
 
   Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
@@ -27,28 +27,41 @@
 var util = require('util'),
     colors = require('colors'),
     http = require('http'),
-    httpProxy = require('../../lib/http-proxy');
+    httpProxy = require('../../lib/http-proxy'),
+    SSE = require('sse');
 
 //
-// Http Server with proxyRequest Handler and Latency
+// Basic Http Proxy Server
 //
 var proxy = new httpProxy.createProxyServer();
 http.createServer(function (req, res) {
-  setTimeout(function () {
-    proxy.web(req, res, {
-      target: 'http://localhost:9002'
-    });
-  }, 200);
-}).listen(8002);
+  proxy.web(req, res, {
+    target: 'http://localhost:9003'
+  });
+}).listen(8003);
 
 //
 // Target Http Server
 //
-http.createServer(function (req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
+var server = http.createServer(function(req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'});
   res.write('request successfully proxied to: ' + req.url + '\n' + JSON.stringify(req.headers, true, 2));
   res.end();
-}).listen(9002);
+});
 
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '8002 '.yellow + 'with proxy.web() handler'.cyan.underline + ' and latency'.magenta);
-util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9002 '.yellow);
+//
+// Use SSE
+//
+
+var sse = new SSE(server, {path: '/'});
+sse.on('connection', function(client) {
+  var count = 0;
+  setInterval(function(){
+    client.send('message #' + count++);
+  }, 1500);
+});
+
+server.listen(9003);
+
+util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8003'.yellow);
+util.puts('http server '.blue + 'started '.green.bold + 'on port '.blue + '9003 '.yellow);

@@ -241,6 +241,28 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.path).to.eql('/' + google);
     });
 
+    it('should not replace :\ to :\\ when no https word before', function () {
+      var outgoing = {};
+      var google = 'https://google.com:/join/join.js'
+      common.setupOutgoing(outgoing, {
+        target: url.parse('http://sometarget.com:80'),
+        toProxy: true,
+      }, { url: google });
+
+      expect(outgoing.path).to.eql('/' + google);
+    });
+
+    it('should not replace :\ to :\\ when no http word before', function () {
+      var outgoing = {};
+      var google = 'http://google.com:/join/join.js'
+      common.setupOutgoing(outgoing, {
+        target: url.parse('http://sometarget.com:80'),
+        toProxy: true,
+      }, { url: google });
+
+      expect(outgoing.path).to.eql('/' + google);
+    });
+
     describe('when using ignorePath', function () {
       it('should ignore the path of the `req.url` passed in but use the target path', function () {
         var outgoing = {};
@@ -250,7 +272,7 @@ describe('lib/http-proxy/common.js', function () {
           ignorePath: true
         }, { url: '/more/crazy/pathness' });
 
-        expect(outgoing.path).to.eql('/some/crazy/path/whoooo/');
+        expect(outgoing.path).to.eql('/some/crazy/path/whoooo');
       });
 
       it('and prependPath: false, it should ignore path of target and incoming request', function () {
@@ -262,7 +284,7 @@ describe('lib/http-proxy/common.js', function () {
           prependPath: false
         }, { url: '/more/crazy/pathness' });
 
-        expect(outgoing.path).to.eql('/');
+        expect(outgoing.path).to.eql('');
       });
     });
 
@@ -325,6 +347,16 @@ describe('lib/http-proxy/common.js', function () {
       expect(outgoing.secureProtocol).eql('my-secure-protocol');
     });
 
+    it('should handle overriding the `method` of the http request', function () {
+      var outgoing = {};
+      common.setupOutgoing(outgoing, {
+        target: url.parse('https://whooooo.com'),
+        method: 'POST' ,
+      }, { method: 'GET', url: '' });
+
+      expect(outgoing.method).eql('POST');
+    });
+
     // url.parse('').path => null
     it('should not pass null as last arg to #urlJoin', function(){
       var outgoing = {};
@@ -332,7 +364,7 @@ describe('lib/http-proxy/common.js', function () {
         { path: '' }
       }, { url : '' });
 
-      expect(outgoing.path).to.be('/');
+      expect(outgoing.path).to.be('');
     });
 
   });

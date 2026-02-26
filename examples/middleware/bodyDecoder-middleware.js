@@ -1,7 +1,7 @@
 /*
   bodyDecoder-middleware.js: Basic example of `connect.bodyParser()` middleware in node-http-proxy
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -29,33 +29,42 @@ var http = require('http'),
     request = require('request'),
     colors = require('colors'),
     util = require('util'),
+    queryString = require('querystring'),
     bodyParser = require('body-parser'),
     httpProxy = require('../../lib/http-proxy'),
     proxy = httpProxy.createProxyServer({});
 
 
-//restreame
-var restreamer = function (){
-  return function (req, res, next) { //restreame
-    req.removeAllListeners('data')
-    req.removeAllListeners('end')
-    next()
-    process.nextTick(function () {
-      if(req.body) {
-        req.emit('data', JSON.stringify(req.body))
-      }
-      req.emit('end')
-    })
+//restream parsed body before proxying
+proxy.on('proxyReq', function(proxyReq, req, res, options) {
+  if (!req.body || !Object.keys(req.body).length) {
+    return;
   }
-}
+
+  var contentType = proxyReq.getHeader('Content-Type');
+  var bodyData;
+
+  if (contentType === 'application/json') {
+    bodyData = JSON.stringify(req.body);
+  }
+
+  if (contentType === 'application/x-www-form-urlencoded') {
+    bodyData = queryString.stringify(req.body);
+  }
+
+  if (bodyData) {
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+    proxyReq.write(bodyData);
+  }
+});
 
 
 //
 //  Basic Http Proxy Server
 //
 var app = connect()
-  .use(bodyParser.json())//json
-  .use(restreamer())//restreame
+  .use(bodyParser.json())//json parser
+  .use(bodyParser.urlencoded())//urlencoded parser
   .use(function(req, res){
     // modify body here,
     // eg: req.body = {a: 1}.
@@ -84,10 +93,16 @@ http.createServer(app1).listen(9013, function(){
   //request to 8013 to proxy
   request.post({//
     url: 'http://127.0.0.1:8013',
-    json: {content: 123, type: "greeting"}
+    json: {content: 123, type: "greeting from json request"}
   },function(err, res,data){
-    console.log('return:' ,err, data)
+    console.log('return for json request:' ,err, data)
+  })
+
+  // application/x-www-form-urlencoded request
+  request.post({//
+    url: 'http://127.0.0.1:8013',
+    form: {content: 123, type: "greeting from urlencoded request"}
+  },function(err, res,data){
+    console.log('return for urlencoded request:' ,err, data)
   })
 });
-
-

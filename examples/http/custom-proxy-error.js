@@ -1,7 +1,7 @@
 /*
   custom-proxy-error.js: Example of using the custom `proxyError` event.
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -47,7 +47,7 @@ proxy.on('error', function (err, req, res) {
   res.writeHead(500, {
     'Content-Type': 'text/plain'
   });
-  
+
   res.end('Something went wrong. And we are reporting a custom error message.');
 });
 

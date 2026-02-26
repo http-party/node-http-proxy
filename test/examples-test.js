@@ -1,7 +1,7 @@
 /*
   examples-test.js: Test to run all the examples
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
 */
 var path = require('path'),

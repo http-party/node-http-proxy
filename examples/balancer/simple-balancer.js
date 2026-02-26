@@ -1,7 +1,7 @@
 /*
   simple-balancer.js: Example of a simple round robin balancer
 
-  Copyright (c) Nodejitsu 2013
+  Copyright (c) 2013 - 2016 Charlie Robbins, Jarrett Cruger & the Contributors.
 
   Permission is hereby granted, free of charge, to any person obtaining
   a copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@ var http = require('http'),
     httpProxy = require('../../lib/http-proxy');
 //
 // A simple round-robin load balancing strategy.
-// 
+//
 // First, list the servers you want to use in your rotation.
 //
 var addresses = [

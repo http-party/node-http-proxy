@@ -1,44 +1,41 @@
 {
   "name": "http-proxy",
-  "version": "1.11.1",
+  "version": "1.18.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nodejitsu/node-http-proxy.git"
+    "url": "https://github.com/http-party/node-http-proxy.git"
   },
   "description": "HTTP proxying for the masses",
-  "author": "Nodejitsu Inc. <info@nodejitsu.com>",
+  "author": "Charlie Robbins <charlie.robbins@gmail.com>",
   "maintainers": [
-    "yawnt <yawnt@nodejitsu.com>",
-    "indexzero <charlie@nodejitsu.com>"
+    "jcrugzz <jcrugzz@gmail.com>"
   ],
   "main": "index.js",
   "dependencies": {
-    "eventemitter3": "1.x.x",
-    "requires-port": "0.x.x"
+    "eventemitter3": "^4.0.0",
+    "requires-port": "^1.0.0",
+    "follow-redirects": "^1.0.0"
   },
   "devDependencies": {
-    "async": "*",
-    "blanket": "*",
-    "coveralls": "*",
-    "dox": "*",
-    "expect.js": "*",
-    "mocha": "*",
-    "mocha-lcov-reporter": "*",
-    "semver": "^4.3.3",
-    "socket.io": "*",
-    "socket.io-client": "*",
-    "ws": "~0.5.0"
+    "async": "^3.0.0",
+    "auto-changelog": "^1.15.0",
+    "concat-stream": "^2.0.0",
+    "expect.js": "~0.3.1",
+    "mocha": "^3.5.3",
+    "nyc": "^14.0.0",
+    "semver": "^5.0.3",
+    "socket.io": "^2.1.0",
+    "socket.io-client": "^2.1.0",
+    "sse": "0.0.8",
+    "ws": "^3.0.0"
   },
   "scripts": {
-    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js",
-    "blanket": {
-      "pattern": "lib/http-proxy"
-    },
-    "test": "mocha -R landing test/*-test.js",
-    "test-cov": "mocha --require blanket -R html-cov > cov/coverage.html"
+    "mocha": "mocha test/*-test.js",
+    "test": "nyc --reporter=text --reporter=lcov npm run mocha",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=8.0.0"
   },
   "license": "MIT"
 }

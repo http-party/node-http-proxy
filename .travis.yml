@@ -1,13 +1,12 @@
+sudo: false
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
-  - "iojs"
-
-notifications:
-  email:
-    - travis@nodejitsu.com
-  irc: "irc.freenode.org#nodejitsu"
-
+  - "8"
+  - "10"
+  - "12"
 script:
-  npm test
+  - npm test
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+matrix:
+  fast_finish: true
