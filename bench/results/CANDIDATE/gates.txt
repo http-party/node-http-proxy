@@ -1,0 +1,48 @@
+
+=== GATE 1: differential wire oracle ===
+
+  [ok] simple-get
+  [ok] nested-path-query
+  [ok] double-question-mark
+  [ok] trailing-slash
+  [ok] encoded-path
+  [ok] empty-query
+  [ok] post-body
+  [ok] delete-no-length
+  [ok] options-no-length
+  [ok] many-headers
+  [ok] duplicate-cookie
+  [ok] backslash-path
+  [ok] space-path
+  [ok] http10-get
+  [ok] http10-connection-keepalive
+
+  ✅ PASS — 15/15 entries identical
+
+
+=== GATE 2: adversarial lifecycle corpus (candidate vs baseline) ===
+
+  [ok] client-abort  survived=true  handleLeak base=0 cand=0
+  [ok] slowloris  survived=true  handleLeak base=0 cand=0
+  [IMPROVED] half-open-upgrade  survived=true  handleLeak base=40 cand=0
+  [ok] origin-rst  survived=true  handleLeak base=0 cand=0
+
+  ✅ PASS (candidate must survive and leak no more than baseline)
+
+
+=== GATE 3: resource safety (candidate vs baseline) ===
+
+  burst: 2000 HTTP reqs + 300 WS churn cycles per lib
+
+  baseline:  handleLeak=600  rssGrowth=74.3MB
+  candidate: handleLeak=0  rssGrowth=72.7MB
+
+  ✅ PASS (IMPROVED — fewer leaked handles than baseline)
+
+=== GATE SUMMARY ===
+  ✅ wire-oracle
+  ✅ lifecycle
+  ✅ leak
+
+✅ ALL GATES PASS — performance numbers may be certified.
+

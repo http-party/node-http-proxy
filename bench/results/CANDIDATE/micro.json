@@ -1,0 +1,22 @@
+{
+  "iters": 200000,
+  "gcIters": 8000,
+  "trials": 15,
+  "gcAvailable": true,
+  "setupOutgoing": {
+    "baseline": {
+      "nsPerOp": 1240.704585,
+      "bytesPerOp": 2673.813,
+      "bytesSamples": 15
+    },
+    "candidate": {
+      "nsPerOp": 889.920625,
+      "bytesPerOp": 2033.314,
+      "bytesSamples": 15
+    },
+    "delta": {
+      "nsPerOpPct": -28.272963946530428,
+      "bytesPerOpPct": -23.954517387715597
+    }
+  }
+}

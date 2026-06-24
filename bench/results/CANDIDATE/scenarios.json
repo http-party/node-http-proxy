@@ -1,0 +1,87 @@
+{
+  "label": "CANDIDATE",
+  "trials": 4,
+  "noiseFloorPct": 5,
+  "maxCovPct": 8,
+  "node": "v24.16.0",
+  "calibration": {
+    "aaDeltaPct": 137.01065322634918,
+    "covA": 45.20754747009707,
+    "covB": 26.972698600717166,
+    "trustworthy": false
+  },
+  "scenarios": [
+    {
+      "name": "small-keepalive",
+      "primary": "latencyMs.p99_9",
+      "betterWhen": "lower",
+      "baselineMedian": 140.008792,
+      "candidateMedian": 131.756792,
+      "deltaPct": -5.893915576387524,
+      "covBaseline": 14.605242657185702,
+      "covCandidate": 13.969930093759523,
+      "significant": false,
+      "verdict": "no-change",
+      "baselineSamples": [
+        140.008792,
+        106.917334,
+        132.763208,
+        162.373167
+      ],
+      "candidateSamples": [
+        96.833417,
+        141.239042,
+        131.756792,
+        114.903041
+      ]
+    },
+    {
+      "name": "large-streaming",
+      "primary": "proxy.rssPeakMB",
+      "betterWhen": "lower",
+      "baselineMedian": 128.78125,
+      "candidateMedian": 129.328125,
+      "deltaPct": 0.4246542101431691,
+      "covBaseline": 4.591997621314585,
+      "covCandidate": 2.956089986857584,
+      "significant": false,
+      "verdict": "no-change",
+      "baselineSamples": [
+        128.78125,
+        123.578125,
+        139.484375,
+        126.90625
+      ],
+      "candidateSamples": [
+        126.859375,
+        129.328125,
+        136.65625,
+        127.828125
+      ]
+    },
+    {
+      "name": "mixed-prod",
+      "primary": "latencyMs.p99",
+      "betterWhen": "lower",
+      "baselineMedian": 56.149125,
+      "candidateMedian": 71.51425,
+      "deltaPct": 27.364852079173108,
+      "covBaseline": 35.01330565973056,
+      "covCandidate": 33.15987689567123,
+      "significant": false,
+      "verdict": "no-change",
+      "baselineSamples": [
+        31.63225,
+        79.473625,
+        40.394916,
+        56.149125
+      ],
+      "candidateSamples": [
+        35.781875,
+        71.51425,
+        41.868666,
+        80.754083
+      ]
+    }
+  ]
+}
