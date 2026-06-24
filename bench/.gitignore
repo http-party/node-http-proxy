@@ -1,0 +1,4 @@
+# Regenerated on demand from the baseline git ref via `node bench/freeze-baseline.js`
+.baseline-snapshot/
+# Scratch runs; committed baselines live under results/BASELINE
+results/_*
