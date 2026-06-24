@@ -1,0 +1,87 @@
+{
+  "label": "BASELINE",
+  "trials": 4,
+  "noiseFloorPct": 5,
+  "maxCovPct": 8,
+  "node": "v24.16.0",
+  "calibration": {
+    "aaDeltaPct": -13.840017213899838,
+    "covA": 21.07380988618798,
+    "covB": 24.495000777006016,
+    "trustworthy": false
+  },
+  "scenarios": [
+    {
+      "name": "small-keepalive",
+      "primary": "latencyMs.p99_9",
+      "betterWhen": "lower",
+      "baselineMedian": 116.26,
+      "candidateMedian": 180.496083,
+      "deltaPct": 55.2520927232066,
+      "covBaseline": 12.012459175682588,
+      "covCandidate": 27.55356676606115,
+      "significant": false,
+      "verdict": "no-change",
+      "baselineSamples": [
+        116.26,
+        93.697917,
+        114.501959,
+        132.310541
+      ],
+      "candidateSamples": [
+        100.488084,
+        113.327125,
+        193.167583,
+        180.496083
+      ]
+    },
+    {
+      "name": "large-streaming",
+      "primary": "proxy.rssPeakMB",
+      "betterWhen": "lower",
+      "baselineMedian": 133.515625,
+      "candidateMedian": 126.65625,
+      "deltaPct": -5.137507314218841,
+      "covBaseline": 7.3025217921562735,
+      "covCandidate": 5.888630890733825,
+      "significant": true,
+      "verdict": "IMPROVED",
+      "baselineSamples": [
+        147.03125,
+        133.515625,
+        133.171875,
+        119.5
+      ],
+      "candidateSamples": [
+        122.671875,
+        122.171875,
+        126.65625,
+        140.78125
+      ]
+    },
+    {
+      "name": "mixed-prod",
+      "primary": "latencyMs.p99",
+      "betterWhen": "lower",
+      "baselineMedian": 85.025583,
+      "candidateMedian": 63.702541,
+      "deltaPct": -25.078383761273358,
+      "covBaseline": 30.391405877959965,
+      "covCandidate": 30.23547325071344,
+      "significant": false,
+      "verdict": "no-change",
+      "baselineSamples": [
+        33.911125,
+        86.170708,
+        77.47725,
+        85.025583
+      ],
+      "candidateSamples": [
+        33.729042,
+        59.960792,
+        63.702541,
+        85.403958
+      ]
+    }
+  ]
+}
