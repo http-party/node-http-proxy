@@ -37,6 +37,13 @@ module.exports = [
   { name: 'duplicate-cookie', method: 'GET', path: '/c',
     headers: { cookie: 'a=1; b=2; a=3' } },
 
+  // Paths containing characters url.parse() normalises (backslash -> slash,
+  // space -> %20) MUST be forwarded identically by the fast-path/slow-path
+  // split — a security-relevant regression guard. Sent raw because the
+  // high-level client rejects spaces/backslashes in the path.
+  { name: 'backslash-path', raw: true, httpVersion: '1.1', method: 'GET', path: '/a\\b/c?x=1' },
+  { name: 'space-path', raw: true, httpVersion: '1.1', method: 'GET', path: '/a b/c?q=1' },
+
   // HTTP/1.0 over a raw socket exercises removeChunked / setConnection.
   { name: 'http10-get', raw: true, httpVersion: '1.0', method: 'GET', path: '/ten' },
   { name: 'http10-connection-keepalive', raw: true, httpVersion: '1.0', method: 'GET', path: '/ten',
